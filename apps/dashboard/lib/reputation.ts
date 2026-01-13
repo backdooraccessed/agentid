@@ -334,29 +334,30 @@ export async function getReputationLeaderboard(limit: number = 10): Promise<Arra
   issuer_name: string;
   issuer_verified: boolean;
 }>> {
-  const supabase = getServiceClient();
+  try {
+    const supabase = getServiceClient();
 
-  const { data: leaderboard, error } = await supabase
-    .from('agent_reputation')
-    .select(`
-      trust_score,
-      total_verifications,
-      credentials!inner (
-        agent_id,
-        agent_name,
-        status,
-        issuers!inner (name, is_verified)
-      )
-    `)
-    .order('trust_score', { ascending: false })
-    .limit(limit);
+    const { data: leaderboard, error } = await supabase
+      .from('agent_reputation')
+      .select(`
+        trust_score,
+        total_verifications,
+        credentials!inner (
+          agent_id,
+          agent_name,
+          status,
+          issuers!inner (name, is_verified)
+        )
+      `)
+      .order('trust_score', { ascending: false })
+      .limit(limit);
 
-  if (error) {
-    console.error('Leaderboard query error:', error);
-    return [];
-  }
+    if (error) {
+      console.error('Leaderboard query error:', error);
+      return [];
+    }
 
-  if (!leaderboard) return [];
+    if (!leaderboard || leaderboard.length === 0) return [];
 
   // Filter for active credentials client-side (PostgREST nested filtering limitation)
   const activeLeaderboard = leaderboard.filter((entry) => {
@@ -382,4 +383,8 @@ export async function getReputationLeaderboard(limit: number = 10): Promise<Arra
       issuer_verified: cred.issuers.is_verified,
     };
   });
+  } catch (err) {
+    console.error('Leaderboard error:', err);
+    return [];
+  }
 }
