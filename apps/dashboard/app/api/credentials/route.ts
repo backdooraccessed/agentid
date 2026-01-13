@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { issueCredentialRequestSchema } from '@agentid/shared';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const authClient = await createClient();
 
     // Demo mode: use test issuer if no authenticated user
     const testIssuerId = '4b874791-9a15-4808-83b3-ff26c59275b5';
 
     // 1. Check authentication (optional in demo mode)
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await authClient.auth.getUser();
+
+    // Use service client for demo mode (bypasses RLS)
+    const supabase = user ? authClient : createServiceClient();
 
     // 2. Get issuer profile (use test issuer in demo mode)
     const { data: issuer, error: issuerError } = user
@@ -154,13 +157,16 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const supabase = await createClient();
+    const authClient = await createClient();
 
     // Demo mode: use test issuer if no authenticated user
     const testIssuerId = '4b874791-9a15-4808-83b3-ff26c59275b5';
 
     // Check authentication (optional in demo mode)
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await authClient.auth.getUser();
+
+    // Use service client for demo mode (bypasses RLS)
+    const supabase = user ? authClient : createServiceClient();
 
     // Get issuer profile (use test issuer in demo mode)
     const { data: issuer } = user
