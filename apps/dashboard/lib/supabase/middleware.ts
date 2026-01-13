@@ -40,11 +40,12 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protected routes
+  // Protected routes (bypass if BYPASS_AUTH is set)
+  const bypassAuth = process.env.BYPASS_AUTH === 'true';
   const isProtectedRoute = request.nextUrl.pathname.startsWith('/credentials') ||
     request.nextUrl.pathname.startsWith('/settings');
 
-  if (isProtectedRoute && !user) {
+  if (isProtectedRoute && !user && !bypassAuth) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);
