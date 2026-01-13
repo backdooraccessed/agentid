@@ -12,7 +12,7 @@ import type {
 import { NetworkError, TimeoutError } from './errors';
 import { verifyCredential } from './verify';
 
-const DEFAULT_BASE_URL = 'https://agentid.vercel.app';
+const DEFAULT_BASE_URL = 'https://agentid-dashboard.vercel.app';
 const DEFAULT_TIMEOUT = 5000;
 
 /**

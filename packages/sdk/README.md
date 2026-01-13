@@ -40,7 +40,7 @@ The main client for online credential verification.
 import { AgentIDClient } from '@agentid/sdk';
 
 const client = new AgentIDClient({
-  baseUrl: 'https://agentid.vercel.app', // optional, this is the default
+  baseUrl: 'https://agentid-dashboard.vercel.app', // optional, this is the default
   timeout: 5000, // optional, request timeout in ms
 });
 ```
