@@ -12,16 +12,21 @@ export default async function CredentialsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect('/login');
-  }
+  // Demo mode: use test issuer if no user
+  const testIssuerId = '4b874791-9a15-4808-83b3-ff26c59275b5';
 
-  // Check if user has an issuer profile
-  const { data: issuer } = await supabase
-    .from('issuers')
-    .select('*')
-    .eq('user_id', user.id)
-    .single();
+  // Check if user has an issuer profile (or use test issuer in demo mode)
+  const { data: issuer } = user
+    ? await supabase
+        .from('issuers')
+        .select('*')
+        .eq('user_id', user.id)
+        .single()
+    : await supabase
+        .from('issuers')
+        .select('*')
+        .eq('id', testIssuerId)
+        .single();
 
   if (!issuer) {
     return (
