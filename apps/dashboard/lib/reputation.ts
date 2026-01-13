@@ -4,14 +4,17 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Lazy-initialized service client for reputation operations
 let serviceClient: SupabaseClient<any> | null = null;
 
 function getServiceClient(): SupabaseClient<any> {
   if (!serviceClient) {
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Missing Supabase configuration for reputation service');
+    }
     serviceClient = createClient(supabaseUrl, supabaseServiceKey);
   }
   return serviceClient;
