@@ -1,32 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, createServiceClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { issueCredentialRequestSchema } from '@agentid/shared';
 
 export async function POST(request: NextRequest) {
   try {
-    const authClient = await createClient();
+    const supabase = await createClient();
 
-    // Demo mode: use test issuer if no authenticated user
-    const testIssuerId = '4b874791-9a15-4808-83b3-ff26c59275b5';
+    // 1. Verify authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
 
-    // 1. Check authentication (optional in demo mode)
-    const { data: { user } } = await authClient.auth.getUser();
-
-    // Use service client for demo mode (bypasses RLS)
-    const supabase = user ? authClient : createServiceClient();
-
-    // 2. Get issuer profile (use test issuer in demo mode)
-    const { data: issuer, error: issuerError } = user
-      ? await supabase
-          .from('issuers')
-          .select('*')
-          .eq('user_id', user.id)
-          .single()
-      : await supabase
-          .from('issuers')
-          .select('*')
-          .eq('id', testIssuerId)
-          .single();
+    // 2. Get issuer profile
+    const { data: issuer, error: issuerError } = await supabase
+      .from('issuers')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
 
     if (issuerError || !issuer) {
       return NextResponse.json(
@@ -157,29 +151,23 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const authClient = await createClient();
+    const supabase = await createClient();
 
-    // Demo mode: use test issuer if no authenticated user
-    const testIssuerId = '4b874791-9a15-4808-83b3-ff26c59275b5';
+    // Verify authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
 
-    // Check authentication (optional in demo mode)
-    const { data: { user } } = await authClient.auth.getUser();
-
-    // Use service client for demo mode (bypasses RLS)
-    const supabase = user ? authClient : createServiceClient();
-
-    // Get issuer profile (use test issuer in demo mode)
-    const { data: issuer } = user
-      ? await supabase
-          .from('issuers')
-          .select('id')
-          .eq('user_id', user.id)
-          .single()
-      : await supabase
-          .from('issuers')
-          .select('id')
-          .eq('id', testIssuerId)
-          .single();
+    // Get issuer profile
+    const { data: issuer } = await supabase
+      .from('issuers')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
 
     if (!issuer) {
       return NextResponse.json({ credentials: [] });

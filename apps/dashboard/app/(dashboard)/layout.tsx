@@ -9,7 +9,14 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Auth check bypassed for demo mode
+  // Verify user is authenticated
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
