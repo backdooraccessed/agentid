@@ -19,7 +19,7 @@ from agentid.types import (
 from agentid.verify import verify_credential_offline
 
 
-DEFAULT_BASE_URL = "https://agentid-dashboard.vercel.app"
+DEFAULT_BASE_URL = "https://agentid-woad.vercel.app"
 DEFAULT_TIMEOUT = 5.0
 
 
