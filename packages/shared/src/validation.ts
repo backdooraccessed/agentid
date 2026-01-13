@@ -76,8 +76,11 @@ export const registerIssuerRequestSchema = z.object({
   issuer_type: issuerTypeSchema,
   domain: z
     .string()
-    .regex(/^[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}$/, 'Invalid domain format')
-    .optional(),
+    .optional()
+    .refine(
+      (val) => !val || /^[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}$/.test(val),
+      'Invalid domain format'
+    ),
   description: z.string().max(1000).optional(),
 });
 
