@@ -250,24 +250,30 @@ export async function getAgentReputation(credentialId: string): Promise<{
   credential_age_days: number;
   issuer_verified: boolean;
 } | null> {
-  const supabase = getServiceClient();
+  try {
+    const supabase = getServiceClient();
 
-  const { data: rep } = await supabase
-    .from('agent_reputation')
-    .select(`
-      trust_score,
-      total_verifications,
-      successful_verifications,
-      credential_id,
-      credentials!inner (
-        created_at,
-        issuers!inner (is_verified)
-      )
-    `)
-    .eq('credential_id', credentialId)
-    .single();
+    const { data: rep, error } = await supabase
+      .from('agent_reputation')
+      .select(`
+        trust_score,
+        total_verifications,
+        successful_verifications,
+        credential_id,
+        credentials!inner (
+          created_at,
+          issuers!inner (is_verified)
+        )
+      `)
+      .eq('credential_id', credentialId)
+      .single();
 
-  if (!rep) return null;
+    if (error) {
+      console.error('Agent reputation query error:', error);
+      return null;
+    }
+
+    if (!rep) return null;
 
   // Extract nested data with proper typing
   const cred = rep.credentials as unknown as {
@@ -287,6 +293,10 @@ export async function getAgentReputation(credentialId: string): Promise<{
     credential_age_days: credentialAgeDays,
     issuer_verified: cred.issuers.is_verified,
   };
+  } catch (err) {
+    console.error('getAgentReputation error:', err);
+    return null;
+  }
 }
 
 /**
