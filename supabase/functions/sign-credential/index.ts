@@ -3,6 +3,7 @@
 
 import { serve } from 'https://deno.land/std@0.208.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
+import * as ed from 'https://esm.sh/@noble/ed25519@2.1.0';
 
 // CORS headers for development
 const corsHeaders = {
@@ -10,8 +11,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Ed25519 implementation using Web Crypto + noble-ed25519 approach
-// We use the native crypto.subtle for key derivation and a simplified Ed25519 for signing
+// Real Ed25519 implementation using @noble/ed25519
+// Uses asymmetric cryptography - private key for signing, public key for verification
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -126,63 +127,45 @@ async function deriveKey(masterKey: string, identifier: string): Promise<Uint8Ar
 }
 
 /**
- * Generate Ed25519 key pair from seed
- * Using a simplified approach with Web Crypto for the demo
- * In production, consider using @noble/ed25519 for proper Ed25519
+ * Generate Ed25519 key pair from seed using @noble/ed25519
+ * Uses real asymmetric cryptography - only public key can verify signatures
  */
 async function generateKeyPair(
   masterKey: string,
   userId: string
 ): Promise<{ publicKey: string; privateKey: Uint8Array }> {
-  // Derive seed from master + user_id
+  // Derive 32-byte seed from master + user_id using HKDF
   const seed = await deriveKey(masterKey, userId);
 
-  // For Ed25519, we use the seed to derive a key pair
-  // This is a simplified implementation - in production use @noble/ed25519
-  // Here we use ECDSA P-256 as a placeholder that works with Web Crypto
-  // The actual Ed25519 implementation would require importing noble-ed25519
+  // In Ed25519, the 32-byte seed IS the private key
+  // The public key is derived from it using curve operations
+  const privateKey = seed;
+  const publicKeyBytes = await ed.getPublicKeyAsync(privateKey);
 
-  // Generate deterministic key by hashing seed
-  const hashBuffer = await crypto.subtle.digest('SHA-256', seed);
-  const hashArray = new Uint8Array(hashBuffer);
+  // Base64 encode the public key for storage
+  const publicKey = base64Encode(publicKeyBytes);
 
-  // For demo purposes, we'll base64 encode the hash as "public key"
-  // In production, this should use proper Ed25519 key derivation
-  const publicKey = base64Encode(hashArray);
-
-  return { publicKey, privateKey: seed };
+  return { publicKey, privateKey };
 }
 
 /**
- * Sign a payload with the derived private key
+ * Sign a payload with Ed25519 private key
+ * Uses real asymmetric signing - signature can only be created with private key
  */
 async function signPayload(
   masterKey: string,
   userId: string,
   payload: unknown
 ): Promise<string> {
-  // Derive the private key seed
-  const seed = await deriveKey(masterKey, userId);
-
-  // Hash the seed to get the signing key (matches public key generation)
-  const signingKeyBuffer = await crypto.subtle.digest('SHA-256', seed);
-  const signingKey = new Uint8Array(signingKeyBuffer);
+  // Derive the private key from master + user_id
+  const privateKey = await deriveKey(masterKey, userId);
 
   // Serialize payload with sorted keys for canonical representation
   const message = new TextEncoder().encode(canonicalJson(payload));
 
-  // Create signature using HMAC-SHA256 as a simplified approach
-  // In production, use proper Ed25519 signing with @noble/ed25519
-  const key = await crypto.subtle.importKey(
-    'raw',
-    signingKey,
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign']
-  );
-
-  const signatureBuffer = await crypto.subtle.sign('HMAC', key, message);
-  const signature = base64Encode(new Uint8Array(signatureBuffer));
+  // Create Ed25519 signature - 64 bytes
+  const signatureBytes = await ed.signAsync(message, privateKey);
+  const signature = base64Encode(signatureBytes);
 
   return signature;
 }

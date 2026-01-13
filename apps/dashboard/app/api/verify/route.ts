@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { verificationRequestSchema } from '@agentid/shared';
+import * as ed from '@noble/ed25519';
 
 // Lazy initialization of Supabase client for public access
 let supabase: SupabaseClient | null = null;
@@ -261,21 +262,13 @@ async function verifySignature(
     // Recreate message that was signed (canonical JSON for deterministic comparison)
     const message = new TextEncoder().encode(canonicalJson(payloadWithoutSignature));
 
-    // Decode signature and public key
-    const signatureBuffer = base64DecodeToBuffer(signature);
-    const publicKeyBuffer = base64DecodeToBuffer(publicKey);
+    // Decode signature and public key from base64
+    const signatureBytes = new Uint8Array(base64DecodeToBuffer(signature));
+    const publicKeyBytes = new Uint8Array(base64DecodeToBuffer(publicKey));
 
-    // Verify using HMAC (matching our Edge Function implementation)
-    // In production with proper Ed25519, you'd use ed.verify()
-    const key = await crypto.subtle.importKey(
-      'raw',
-      publicKeyBuffer,
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['verify']
-    );
-
-    const isValid = await crypto.subtle.verify('HMAC', key, signatureBuffer, message);
+    // Verify using real Ed25519 verification
+    // This is asymmetric - only the private key can create valid signatures
+    const isValid = await ed.verifyAsync(signatureBytes, message, publicKeyBytes);
     return isValid;
   } catch (error) {
     console.error('Signature verification error:', error);
