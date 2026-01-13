@@ -133,3 +133,69 @@ export interface OfflineVerifyOptions {
   /** Issuer's public key for signature verification (base64 encoded) */
   issuerPublicKey: string;
 }
+
+/**
+ * Options for batch verification
+ */
+export interface BatchVerifyOptions {
+  /** Array of credentials to verify */
+  credentials: Array<{
+    credential_id?: string;
+    credential?: CredentialPayload;
+  }>;
+  /** Stop on first failure (default: false) */
+  failFast?: boolean;
+  /** Include full credential details in response (default: true) */
+  includeDetails?: boolean;
+}
+
+/**
+ * Individual result in batch verification
+ */
+export interface BatchVerifyResultItem {
+  /** Index of this credential in the request array */
+  index: number;
+  /** Whether the credential is valid */
+  valid: boolean;
+  /** Credential details (only present if valid and includeDetails is true) */
+  credential?: VerifiedCredential;
+  /** Error details (only present if invalid) */
+  error?: {
+    code: ErrorCode;
+    message: string;
+  };
+}
+
+/**
+ * Result of batch credential verification
+ */
+export interface BatchVerifyResult {
+  /** Individual verification results */
+  results: BatchVerifyResultItem[];
+  /** Summary statistics */
+  summary: {
+    total: number;
+    valid: number;
+    invalid: number;
+  };
+  /** Time taken for verification in milliseconds */
+  verification_time_ms: number;
+  /** Request ID for correlation */
+  request_id: string;
+}
+
+/**
+ * Reputation information for an agent
+ */
+export interface ReputationInfo {
+  /** Trust score (0-100) */
+  trust_score: number;
+  /** Total number of verifications */
+  verification_count: number;
+  /** Success rate (0-1) */
+  success_rate: number;
+  /** Credential age in days */
+  credential_age_days: number;
+  /** Whether the issuer is verified */
+  issuer_verified: boolean;
+}

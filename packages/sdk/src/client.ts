@@ -8,6 +8,9 @@ import type {
   VerifyResult,
   CredentialPayload,
   OfflineVerifyOptions,
+  BatchVerifyOptions,
+  BatchVerifyResult,
+  ReputationInfo,
 } from './types';
 import { NetworkError, TimeoutError } from './errors';
 import { verifyCredential } from './verify';
@@ -129,5 +132,123 @@ export class AgentIDClient {
     options: OfflineVerifyOptions
   ): Promise<VerifyResult> {
     return verifyCredential(credential, options);
+  }
+
+  /**
+   * Verify multiple credentials in a single request
+   *
+   * This method allows batch verification of up to 100 credentials,
+   * reducing network overhead for high-volume verification scenarios.
+   *
+   * @param options - Batch verification options
+   * @returns Batch verification result with individual results and summary
+   *
+   * @example
+   * ```typescript
+   * const result = await client.verifyBatch({
+   *   credentials: [
+   *     { credential_id: 'uuid1' },
+   *     { credential_id: 'uuid2' },
+   *     { credential: fullCredentialPayload }
+   *   ],
+   *   failFast: false,
+   *   includeDetails: true
+   * });
+   *
+   * console.log(`Valid: ${result.summary.valid}/${result.summary.total}`);
+   * ```
+   */
+  async verifyBatch(options: BatchVerifyOptions): Promise<BatchVerifyResult> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/verify/batch`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          credentials: options.credentials,
+          options: {
+            fail_fast: options.failFast ?? false,
+            include_details: options.includeDetails ?? true,
+          },
+        }),
+        signal: AbortSignal.timeout(this.timeout * 2), // Double timeout for batch
+      });
+
+      const result = await response.json() as BatchVerifyResult;
+      return result;
+    } catch (error) {
+      // Handle timeout
+      if (error instanceof Error && error.name === 'TimeoutError') {
+        throw new TimeoutError(
+          `Batch request timed out after ${this.timeout * 2}ms`,
+          undefined
+        );
+      }
+
+      // Handle network errors
+      if (error instanceof TypeError) {
+        throw new NetworkError(
+          `Network error: ${error.message}`,
+          undefined
+        );
+      }
+
+      // Re-throw other errors
+      throw error;
+    }
+  }
+
+  /**
+   * Get reputation information for a credential
+   *
+   * @param credentialId - The credential ID to look up
+   * @returns Reputation information
+   *
+   * @example
+   * ```typescript
+   * const reputation = await client.getReputation('credential-uuid');
+   * console.log(`Trust score: ${reputation.trust_score}`);
+   * ```
+   */
+  async getReputation(credentialId: string): Promise<ReputationInfo> {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/api/reputation/agent/${credentialId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          signal: AbortSignal.timeout(this.timeout),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to get reputation: ${response.status}`);
+      }
+
+      const result = await response.json() as ReputationInfo;
+      return result;
+    } catch (error) {
+      // Handle timeout
+      if (error instanceof Error && error.name === 'TimeoutError') {
+        throw new TimeoutError(
+          `Request timed out after ${this.timeout}ms`,
+          undefined
+        );
+      }
+
+      // Handle network errors
+      if (error instanceof TypeError) {
+        throw new NetworkError(
+          `Network error: ${error.message}`,
+          undefined
+        );
+      }
+
+      // Re-throw other errors
+      throw error;
+    }
   }
 }

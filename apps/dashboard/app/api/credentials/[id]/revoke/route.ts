@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { revokeCredentialRequestSchema } from '@agentid/shared';
+import { triggerWebhooks } from '@/lib/webhooks';
 
 export async function POST(
   request: NextRequest,
@@ -55,6 +56,20 @@ export async function POST(
         { status: 404 }
       );
     }
+
+    // Trigger webhooks (fire and forget)
+    void triggerWebhooks(
+      issuer.id,
+      'credential.revoked',
+      {
+        credential_id: credential.id,
+        agent_id: credential.agent_id,
+        agent_name: credential.agent_name,
+        revoked_at: credential.revoked_at,
+        revocation_reason: credential.revocation_reason,
+      },
+      credential.id
+    );
 
     return NextResponse.json({
       success: true,

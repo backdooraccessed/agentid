@@ -186,3 +186,142 @@ export interface IssueCredentialResponse {
 export interface RegisterIssuerResponse {
   issuer: Issuer;
 }
+
+// =============================================================================
+// BATCH VERIFICATION
+// =============================================================================
+
+export interface BatchVerificationRequest {
+  credentials: Array<{
+    credential_id?: string;
+    credential?: CredentialPayload;
+  }>;
+  options?: {
+    fail_fast?: boolean;
+    include_details?: boolean;
+  };
+}
+
+export interface BatchVerificationResultItem {
+  index: number;
+  valid: boolean;
+  credential?: {
+    agent_id: string;
+    agent_name: string;
+    agent_type: AgentType;
+    issuer: IssuerPublic;
+    permissions: Permissions;
+    valid_until: string;
+  };
+  error?: {
+    code: string;
+    message: string;
+  };
+}
+
+export interface BatchVerificationResponse {
+  results: BatchVerificationResultItem[];
+  summary: {
+    total: number;
+    valid: number;
+    invalid: number;
+  };
+  verification_time_ms: number;
+  request_id: string;
+}
+
+// =============================================================================
+// WEBHOOKS
+// =============================================================================
+
+export type WebhookEvent = 'credential.revoked' | 'credential.issued' | 'credential.expired';
+
+export interface WebhookSubscription {
+  id: string;
+  issuer_id: string;
+  url: string;
+  events: WebhookEvent[];
+  secret: string;
+  is_active: boolean;
+  consecutive_failures: number;
+  last_failure_at?: string | null;
+  last_failure_reason?: string | null;
+  description?: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WebhookDelivery {
+  id: string;
+  subscription_id: string;
+  event_type: WebhookEvent;
+  payload: Record<string, unknown>;
+  status: 'pending' | 'delivered' | 'failed' | 'retrying';
+  attempts: number;
+  response_status?: number | null;
+  response_body?: string | null;
+  created_at: string;
+  delivered_at?: string | null;
+}
+
+export interface WebhookPayload {
+  event: WebhookEvent;
+  timestamp: string;
+  data: Record<string, unknown>;
+}
+
+export interface CreateWebhookRequest {
+  url: string;
+  events?: WebhookEvent[];
+  description?: string;
+}
+
+export interface UpdateWebhookRequest {
+  url?: string;
+  events?: WebhookEvent[];
+  is_active?: boolean;
+  description?: string;
+}
+
+// =============================================================================
+// REPUTATION
+// =============================================================================
+
+export interface AgentReputation {
+  id: string;
+  agent_id: string;
+  credential_id: string;
+  issuer_id: string;
+  trust_score: number;
+  verification_score: number;
+  longevity_score: number;
+  total_verifications: number;
+  successful_verifications: number;
+  failed_verifications: number;
+  last_verification_at?: string | null;
+  score_factors: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IssuerReputation {
+  id: string;
+  issuer_id: string;
+  trust_score: number;
+  total_credentials: number;
+  active_credentials: number;
+  revoked_credentials: number;
+  total_verifications: number;
+  avg_credential_age_days?: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReputationResponse {
+  trust_score: number;
+  verification_count: number;
+  success_rate: number;
+  credential_age_days: number;
+  issuer_verified: boolean;
+}

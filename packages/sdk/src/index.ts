@@ -41,6 +41,10 @@ export type {
   VerifyOptions,
   VerifyResult,
   OfflineVerifyOptions,
+  // Batch verification types
+  BatchVerifyOptions,
+  BatchVerifyResult,
+  BatchVerifyResultItem,
   // Credential types
   CredentialPayload,
   CredentialConstraints,
@@ -51,6 +55,8 @@ export type {
   IssuerType,
   // Agent types
   AgentType,
+  // Reputation types
+  ReputationInfo,
   // Error types
   ErrorCode,
 } from './types';

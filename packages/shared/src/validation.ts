@@ -117,6 +117,73 @@ export const verificationRequestSchema = z
   });
 
 // =============================================================================
+// BATCH VERIFICATION REQUESTS
+// =============================================================================
+
+const singleCredentialSchema = z
+  .object({
+    credential_id: z.string().uuid().optional(),
+    credential: z
+      .object({
+        credential_id: z.string().uuid(),
+        agent_id: z.string(),
+        agent_name: z.string(),
+        agent_type: agentTypeSchema,
+        issuer: z.object({
+          issuer_id: z.string().uuid(),
+          issuer_type: issuerTypeSchema,
+          issuer_verified: z.boolean(),
+          name: z.string(),
+        }),
+        permissions: permissionsSchema,
+        constraints: z.object({
+          valid_from: z.string().datetime(),
+          valid_until: z.string().datetime(),
+          geographic_restrictions: z.array(z.string()),
+          allowed_services: z.array(z.string()),
+        }),
+        issued_at: z.string().datetime(),
+        signature: z.string(),
+      })
+      .optional(),
+  })
+  .refine((data) => data.credential_id || data.credential, {
+    message: 'Either credential_id or credential must be provided',
+  });
+
+export const batchVerificationRequestSchema = z.object({
+  credentials: z
+    .array(singleCredentialSchema)
+    .min(1, 'At least one credential is required')
+    .max(100, 'Maximum 100 credentials per batch'),
+  options: z
+    .object({
+      fail_fast: z.boolean().default(false),
+      include_details: z.boolean().default(true),
+    })
+    .optional(),
+});
+
+// =============================================================================
+// WEBHOOK REQUESTS
+// =============================================================================
+
+export const webhookEventSchema = z.enum(['credential.revoked', 'credential.issued', 'credential.expired']);
+
+export const createWebhookRequestSchema = z.object({
+  url: z.string().url('Invalid webhook URL'),
+  events: z.array(webhookEventSchema).min(1).default(['credential.revoked']),
+  description: z.string().max(500).optional(),
+});
+
+export const updateWebhookRequestSchema = z.object({
+  url: z.string().url('Invalid webhook URL').optional(),
+  events: z.array(webhookEventSchema).min(1).optional(),
+  is_active: z.boolean().optional(),
+  description: z.string().max(500).optional(),
+});
+
+// =============================================================================
 // TYPE EXPORTS
 // =============================================================================
 
@@ -124,3 +191,6 @@ export type IssueCredentialRequestInput = z.infer<typeof issueCredentialRequestS
 export type RevokeCredentialRequestInput = z.infer<typeof revokeCredentialRequestSchema>;
 export type RegisterIssuerRequestInput = z.infer<typeof registerIssuerRequestSchema>;
 export type VerificationRequestInput = z.infer<typeof verificationRequestSchema>;
+export type BatchVerificationRequestInput = z.infer<typeof batchVerificationRequestSchema>;
+export type CreateWebhookRequestInput = z.infer<typeof createWebhookRequestSchema>;
+export type UpdateWebhookRequestInput = z.infer<typeof updateWebhookRequestSchema>;

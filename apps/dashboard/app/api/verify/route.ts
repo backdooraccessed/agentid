@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { verificationRequestSchema } from '@agentid/shared';
 import * as ed from '@noble/ed25519';
+import { updateAgentReputation } from '@/lib/reputation';
 
 // Error codes for structured error responses
 const ErrorCodes = {
@@ -391,7 +392,7 @@ async function logAndRespond({
 }: LogAndRespondParams) {
   const verificationTimeMs = Math.round(performance.now() - startTime);
 
-  // Log verification (fire and forget - don't block response)
+  // Log verification and update reputation (fire and forget - don't block response)
   void (async () => {
     try {
       await getSupabase().from('verification_logs').insert({
@@ -401,8 +402,13 @@ async function logAndRespond({
         failure_reason: failureReason,
         verification_time_ms: verificationTimeMs,
       });
+
+      // Update reputation if we have a credential ID
+      if (credentialId) {
+        await updateAgentReputation(credentialId, isValid);
+      }
     } catch (err) {
-      console.error(`[${requestId}] Failed to log verification:`, err);
+      console.error(`[${requestId}] Failed to log verification or update reputation:`, err);
     }
   })();
 
