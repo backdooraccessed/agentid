@@ -56,7 +56,9 @@ export default function CredentialDetailPage({
   const [data, setData] = useState<CredentialDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [revoking, setRevoking] = useState(false);
+  const [renewing, setRenewing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -87,6 +89,7 @@ export default function CredentialDetailPage({
     }
 
     setRevoking(true);
+    setError(null);
     try {
       const response = await fetch(`/api/credentials/${id}/revoke`, {
         method: 'POST',
@@ -106,6 +109,38 @@ export default function CredentialDetailPage({
       setError('Network error');
     } finally {
       setRevoking(false);
+    }
+  };
+
+  const handleRenew = async (days: number) => {
+    setRenewing(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const response = await fetch(`/api/credentials/${id}/renew`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ extend_days: days }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.error || 'Failed to renew');
+        return;
+      }
+
+      setSuccess(`Credential renewed for ${days} days`);
+      // Refresh the data
+      const refreshResponse = await fetch(`/api/credentials/${id}`);
+      const refreshData = await refreshResponse.json();
+      if (refreshResponse.ok) {
+        setData(refreshData);
+      }
+    } catch {
+      setError('Network error');
+    } finally {
+      setRenewing(false);
     }
   };
 
@@ -149,12 +184,31 @@ export default function CredentialDetailPage({
         <StatusBadge status={status} />
       </div>
 
-      {/* Status Alert */}
+      {/* Status Alerts */}
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-800">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="p-4 bg-green-50 border border-green-200 rounded-md text-green-800">
+          {success}
+        </div>
+      )}
       {!is_valid && (
         <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md text-yellow-800">
           This credential is not currently valid.{' '}
           {status === 'revoked' && 'It has been revoked.'}
           {status === 'expired' && 'It has expired.'}
+          {status === 'expired' && (
+            <button
+              onClick={() => handleRenew(90)}
+              disabled={renewing}
+              className="ml-2 underline hover:no-underline"
+            >
+              {renewing ? 'Renewing...' : 'Renew now'}
+            </button>
+          )}
         </div>
       )}
 
@@ -284,20 +338,52 @@ export default function CredentialDetailPage({
       </Card>
 
       {/* Actions */}
-      <div className="flex gap-4">
-        <Button variant="outline" onClick={() => router.back()}>
-          Back
-        </Button>
-        {status === 'active' && (
-          <Button
-            variant="destructive"
-            onClick={handleRevoke}
-            disabled={revoking}
-          >
-            {revoking ? 'Revoking...' : 'Revoke Credential'}
-          </Button>
-        )}
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Actions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="outline" onClick={() => router.back()}>
+              Back
+            </Button>
+            {(status === 'active' || status === 'expired') && (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => handleRenew(30)}
+                  disabled={renewing}
+                >
+                  {renewing ? 'Renewing...' : 'Extend 30 days'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => handleRenew(90)}
+                  disabled={renewing}
+                >
+                  {renewing ? 'Renewing...' : 'Extend 90 days'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => handleRenew(365)}
+                  disabled={renewing}
+                >
+                  {renewing ? 'Renewing...' : 'Extend 1 year'}
+                </Button>
+              </>
+            )}
+            {status === 'active' && (
+              <Button
+                variant="destructive"
+                onClick={handleRevoke}
+                disabled={revoking}
+              >
+                {revoking ? 'Revoking...' : 'Revoke Credential'}
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
