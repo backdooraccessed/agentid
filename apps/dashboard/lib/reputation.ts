@@ -333,7 +333,7 @@ export async function getReputationLeaderboard(limit: number = 10): Promise<Arra
 }>> {
   const supabase = getServiceClient();
 
-  const { data: leaderboard } = await supabase
+  const { data: leaderboard, error } = await supabase
     .from('agent_reputation')
     .select(`
       trust_score,
@@ -345,13 +345,23 @@ export async function getReputationLeaderboard(limit: number = 10): Promise<Arra
         issuers!inner (name, is_verified)
       )
     `)
-    .eq('credentials.status', 'active')
     .order('trust_score', { ascending: false })
     .limit(limit);
 
+  if (error) {
+    console.error('Leaderboard query error:', error);
+    return [];
+  }
+
   if (!leaderboard) return [];
 
-  return leaderboard.map((entry, index) => {
+  // Filter for active credentials client-side (PostgREST nested filtering limitation)
+  const activeLeaderboard = leaderboard.filter((entry) => {
+    const cred = entry.credentials as unknown as { status: string };
+    return cred.status === 'active';
+  });
+
+  return activeLeaderboard.map((entry, index) => {
     // Extract nested data with proper typing
     const cred = entry.credentials as unknown as {
       agent_id: string;
