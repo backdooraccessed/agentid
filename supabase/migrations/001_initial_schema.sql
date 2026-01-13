@@ -4,9 +4,8 @@
 -- Core tables for credential issuance and verification
 -- =============================================================================
 
--- Enable required extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+-- Extensions (pgcrypto already enabled in Supabase)
+-- gen_random_uuid() is available in PostgreSQL 13+ without extensions
 
 -- =============================================================================
 -- ISSUERS
@@ -14,7 +13,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- Organizations or individuals who issue credentials to agents
 
 CREATE TABLE issuers (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- Supabase Auth user ID (for dashboard login)
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -54,7 +53,7 @@ CREATE INDEX idx_issuers_key_id ON issuers(key_id);
 -- Core credential records issued to agents
 
 CREATE TABLE credentials (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- Issuer reference
   issuer_id UUID NOT NULL REFERENCES issuers(id) ON DELETE RESTRICT,
@@ -114,7 +113,7 @@ CREATE INDEX idx_credentials_created ON credentials(created_at DESC);
 -- Audit trail of verification requests (for analytics)
 
 CREATE TABLE verification_logs (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- What was verified
   credential_id UUID REFERENCES credentials(id) ON DELETE SET NULL,

@@ -164,14 +164,18 @@ async function signPayload(
   // Derive the private key seed
   const seed = await deriveKey(masterKey, userId);
 
-  // Serialize payload
-  const message = new TextEncoder().encode(JSON.stringify(payload));
+  // Hash the seed to get the signing key (matches public key generation)
+  const signingKeyBuffer = await crypto.subtle.digest('SHA-256', seed);
+  const signingKey = new Uint8Array(signingKeyBuffer);
+
+  // Serialize payload with sorted keys for canonical representation
+  const message = new TextEncoder().encode(canonicalJson(payload));
 
   // Create signature using HMAC-SHA256 as a simplified approach
   // In production, use proper Ed25519 signing with @noble/ed25519
   const key = await crypto.subtle.importKey(
     'raw',
-    seed,
+    signingKey,
     { name: 'HMAC', hash: 'SHA-256' },
     false,
     ['sign']
@@ -192,4 +196,24 @@ function base64Encode(bytes: Uint8Array): string {
     binary += String.fromCharCode(bytes[i]);
   }
   return btoa(binary);
+}
+
+/**
+ * Create canonical JSON with sorted keys for deterministic hashing
+ */
+function canonicalJson(obj: unknown): string {
+  if (obj === null || obj === undefined) {
+    return JSON.stringify(obj);
+  }
+  if (typeof obj !== 'object') {
+    return JSON.stringify(obj);
+  }
+  if (Array.isArray(obj)) {
+    return '[' + obj.map(canonicalJson).join(',') + ']';
+  }
+  const keys = Object.keys(obj as Record<string, unknown>).sort();
+  const pairs = keys.map(
+    (key) => JSON.stringify(key) + ':' + canonicalJson((obj as Record<string, unknown>)[key])
+  );
+  return '{' + pairs.join(',') + '}';
 }

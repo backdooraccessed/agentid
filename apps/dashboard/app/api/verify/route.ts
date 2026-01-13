@@ -258,10 +258,8 @@ async function verifySignature(
       return false;
     }
 
-    // Recreate message that was signed
-    const message = new TextEncoder().encode(
-      JSON.stringify(payloadWithoutSignature)
-    );
+    // Recreate message that was signed (canonical JSON for deterministic comparison)
+    const message = new TextEncoder().encode(canonicalJson(payloadWithoutSignature));
 
     // Decode signature and public key
     const signatureBuffer = base64DecodeToBuffer(signature);
@@ -292,6 +290,26 @@ function base64DecodeToBuffer(str: string): ArrayBuffer {
     bytes[i] = binary.charCodeAt(i);
   }
   return bytes.buffer as ArrayBuffer;
+}
+
+/**
+ * Create canonical JSON with sorted keys for deterministic hashing
+ */
+function canonicalJson(obj: unknown): string {
+  if (obj === null || obj === undefined) {
+    return JSON.stringify(obj);
+  }
+  if (typeof obj !== 'object') {
+    return JSON.stringify(obj);
+  }
+  if (Array.isArray(obj)) {
+    return '[' + obj.map(canonicalJson).join(',') + ']';
+  }
+  const keys = Object.keys(obj as Record<string, unknown>).sort();
+  const pairs = keys.map(
+    (key) => JSON.stringify(key) + ':' + canonicalJson((obj as Record<string, unknown>)[key])
+  );
+  return '{' + pairs.join(',') + '}';
 }
 
 interface LogAndRespondParams {
