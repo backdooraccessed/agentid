@@ -253,46 +253,43 @@ export async function getAgentReputation(credentialId: string): Promise<{
   try {
     const supabase = getServiceClient();
 
-    const { data: rep, error } = await supabase
+    // Get reputation data
+    const { data: rep, error: repError } = await supabase
       .from('agent_reputation')
-      .select(`
-        trust_score,
-        total_verifications,
-        successful_verifications,
-        credential_id,
-        credentials!inner (
-          created_at,
-          issuers!inner (is_verified)
-        )
-      `)
+      .select('trust_score, total_verifications, successful_verifications')
       .eq('credential_id', credentialId)
       .single();
 
-    if (error) {
-      console.error('Agent reputation query error:', error);
+    if (repError || !rep) {
+      console.error('Agent reputation query error:', repError);
       return null;
     }
 
-    if (!rep) return null;
+    // Get credential data separately
+    const { data: cred, error: credError } = await supabase
+      .from('credentials')
+      .select('created_at, issuers!inner (is_verified)')
+      .eq('id', credentialId)
+      .single();
 
-  // Extract nested data with proper typing
-  const cred = rep.credentials as unknown as {
-    created_at: string;
-    issuers: { is_verified: boolean };
-  };
+    if (credError || !cred) {
+      console.error('Credential query error:', credError);
+      return null;
+    }
 
-  const credentialAgeMs = Date.now() - new Date(cred.created_at).getTime();
-  const credentialAgeDays = Math.floor(credentialAgeMs / (1000 * 60 * 60 * 24));
+    const issuerData = cred.issuers as unknown as { is_verified: boolean };
+    const credentialAgeMs = Date.now() - new Date(cred.created_at).getTime();
+    const credentialAgeDays = Math.floor(credentialAgeMs / (1000 * 60 * 60 * 24));
 
-  return {
-    trust_score: rep.trust_score,
-    verification_count: rep.total_verifications,
-    success_rate: rep.total_verifications > 0
-      ? rep.successful_verifications / rep.total_verifications
-      : 1,
-    credential_age_days: credentialAgeDays,
-    issuer_verified: cred.issuers.is_verified,
-  };
+    return {
+      trust_score: rep.trust_score,
+      verification_count: rep.total_verifications,
+      success_rate: rep.total_verifications > 0
+        ? rep.successful_verifications / rep.total_verifications
+        : 1,
+      credential_age_days: credentialAgeDays,
+      issuer_verified: issuerData.is_verified,
+    };
   } catch (err) {
     console.error('getAgentReputation error:', err);
     return null;
