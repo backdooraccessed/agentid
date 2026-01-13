@@ -71,3 +71,30 @@ Required:
 
 Edge Function secrets (via `supabase secrets set`):
 - `SIGNING_KEY_SEED`
+
+## Project Best Practices Checklist
+
+> Review before starting any new project or major feature.
+
+### Pre-Coding
+- [ ] Write a detailed spec/PRD first (user flows, features, edge cases)
+- [ ] Create state machine diagrams for complex components
+- [ ] Gather real UI references from production apps (Mobbin)
+- [ ] Ask clarifying questions before writing code
+- [ ] Confirm tech stack (prefer Svelte + Vite over React)
+
+### During Development
+- Be specific, break tasks into small chunks
+- Use structured tags: `<role>`, `<task>`, `<constraints>`
+- Role-play expert personas for specialized tasks
+- Compact context regularly
+- Test manually after autonomous runs
+
+### Long Sessions (40+ min)
+- Use Ralph technique for autonomous loops
+- Or compact context and restart fresh
+
+### Useful Tools
+- Claude-Mem (persistent memory)
+- Hyperbrowser MCP (`/docs fetch <url>`)
+- Claude Skills (for niche frameworks)
