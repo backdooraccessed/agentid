@@ -3,6 +3,13 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { verificationRequestSchema } from '@agentid/shared';
 import * as ed from '@noble/ed25519';
 import { updateAgentReputation } from '@/lib/reputation';
+import {
+  checkRateLimit,
+  getClientIdentifier,
+  RateLimits,
+  rateLimitHeaders,
+  rateLimitExceededResponse,
+} from '@/lib/rate-limit';
 
 // Error codes for structured error responses
 const ErrorCodes = {
@@ -40,6 +47,13 @@ function getSupabase(): SupabaseClient {
 export async function POST(request: NextRequest) {
   const startTime = performance.now();
   const requestId = generateRequestId();
+
+  // Rate limiting
+  const clientId = getClientIdentifier(request);
+  const rateLimit = checkRateLimit(clientId, RateLimits.verify);
+  if (!rateLimit.success) {
+    return rateLimitExceededResponse(rateLimit);
+  }
 
   try {
     const body = await request.json();
@@ -395,6 +409,7 @@ async function logAndRespond({
   // Log verification and update reputation (fire and forget - don't block response)
   void (async () => {
     try {
+      // Log to verification_logs
       await getSupabase().from('verification_logs').insert({
         credential_id: credentialId,
         agent_id: agentId,
@@ -406,6 +421,23 @@ async function logAndRespond({
       // Update reputation if we have a credential ID
       if (credentialId) {
         await updateAgentReputation(credentialId, isValid);
+
+        // Also log to verification_events for analytics (get issuer_id from credential)
+        const { data: credData } = await getSupabase()
+          .from('credentials')
+          .select('issuer_id')
+          .eq('id', credentialId)
+          .single();
+
+        if (credData?.issuer_id && agentId) {
+          await getSupabase().from('verification_events').insert({
+            credential_id: credentialId,
+            issuer_id: credData.issuer_id,
+            agent_id: agentId,
+            success: isValid,
+            failure_reason: failureReason,
+          });
+        }
       }
     } catch (err) {
       console.error(`[${requestId}] Failed to log verification or update reputation:`, err);

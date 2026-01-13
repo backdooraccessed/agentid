@@ -27,12 +27,15 @@ export default async function DashboardLayout({
           </Link>
         </div>
 
-        <nav className="space-y-2 flex-1">
+        <nav className="space-y-1 flex-1">
+          <div className="text-xs font-semibold text-muted-foreground px-3 py-2 uppercase tracking-wider">
+            Credentials
+          </div>
           <Link
             href="/credentials"
             className="block px-3 py-2 rounded-md hover:bg-accent transition-colors"
           >
-            Credentials
+            All Credentials
           </Link>
           <Link
             href="/credentials/new"
@@ -40,6 +43,38 @@ export default async function DashboardLayout({
           >
             Issue New
           </Link>
+          <Link
+            href="/templates"
+            className="block px-3 py-2 rounded-md hover:bg-accent transition-colors"
+          >
+            Templates
+          </Link>
+
+          <div className="text-xs font-semibold text-muted-foreground px-3 py-2 pt-4 uppercase tracking-wider">
+            Developer
+          </div>
+          <Link
+            href="/api-keys"
+            className="block px-3 py-2 rounded-md hover:bg-accent transition-colors"
+          >
+            API Keys
+          </Link>
+          <Link
+            href="/webhooks"
+            className="block px-3 py-2 rounded-md hover:bg-accent transition-colors"
+          >
+            Webhooks
+          </Link>
+          <Link
+            href="/analytics"
+            className="block px-3 py-2 rounded-md hover:bg-accent transition-colors"
+          >
+            Analytics
+          </Link>
+
+          <div className="text-xs font-semibold text-muted-foreground px-3 py-2 pt-4 uppercase tracking-wider">
+            Account
+          </div>
           <Link
             href="/settings"
             className="block px-3 py-2 rounded-md hover:bg-accent transition-colors"

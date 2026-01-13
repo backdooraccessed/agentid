@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { batchVerificationRequestSchema } from '@agentid/shared';
 import * as ed from '@noble/ed25519';
+import {
+  checkRateLimit,
+  getClientIdentifier,
+  RateLimits,
+  rateLimitExceededResponse,
+} from '@/lib/rate-limit';
 
 // Maximum concurrent verifications to prevent overwhelming the database
 const MAX_CONCURRENCY = 10;
@@ -288,6 +294,13 @@ async function processWithConcurrency<T, R>(
 export async function POST(request: NextRequest) {
   const startTime = performance.now();
   const requestId = generateRequestId();
+
+  // Rate limiting (stricter for batch)
+  const clientId = getClientIdentifier(request);
+  const rateLimit = checkRateLimit(clientId, RateLimits.batchVerify);
+  if (!rateLimit.success) {
+    return rateLimitExceededResponse(rateLimit);
+  }
 
   try {
     const body = await request.json();

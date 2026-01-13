@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAgentReputation } from '@/lib/reputation';
+import {
+  checkRateLimit,
+  getClientIdentifier,
+  RateLimits,
+  rateLimitExceededResponse,
+} from '@/lib/rate-limit';
 
 /**
  * GET /api/reputation/agent/[id] - Get agent reputation
@@ -10,6 +16,13 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Rate limiting
+  const clientId = getClientIdentifier(request);
+  const rateLimit = checkRateLimit(clientId, RateLimits.reputation);
+  if (!rateLimit.success) {
+    return rateLimitExceededResponse(rateLimit);
+  }
+
   try {
     const { id } = await params;
 

@@ -1,12 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
-import { updateWebhookRequestSchema } from '@agentid/shared';
+import { z } from 'zod';
 import { authenticateRequest, checkScope } from '@/lib/auth';
 import { ApiKeyScopes } from '@/lib/api-keys';
 
+const updateTemplateSchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+  description: z.string().max(500).optional(),
+  agent_type: z.string().min(1).optional(),
+  permissions: z.array(z.string()).optional(),
+  geographic_restrictions: z.array(z.string()).optional(),
+  allowed_services: z.array(z.string()).optional(),
+  validity_days: z.number().positive().nullable().optional(),
+  metadata_schema: z.record(z.unknown()).optional(),
+  default_metadata: z.record(z.unknown()).optional(),
+  is_active: z.boolean().optional(),
+});
+
 /**
- * GET /api/webhooks/[id] - Get webhook details
+ * GET /api/templates/[id] - Get template details
  */
 export async function GET(
   request: NextRequest,
@@ -33,9 +46,9 @@ export async function GET(
     }
 
     // Check scope for API key auth
-    if (auth.apiKeyInfo && !checkScope(auth, ApiKeyScopes.WEBHOOKS_READ)) {
+    if (auth.apiKeyInfo && !checkScope(auth, ApiKeyScopes.CREDENTIALS_READ)) {
       return NextResponse.json(
-        { error: 'API key lacks webhooks:read scope' },
+        { error: 'API key lacks credentials:read scope' },
         { status: 403 }
       );
     }
@@ -47,56 +60,35 @@ export async function GET(
         )
       : await createClient();
 
-    // Get webhook with delivery history
-    const { data: webhook, error } = await supabase
-      .from('webhook_subscriptions')
-      .select(`
-        id,
-        url,
-        events,
-        description,
-        is_active,
-        consecutive_failures,
-        last_triggered_at,
-        last_success_at,
-        last_failure_at,
-        last_failure_reason,
-        created_at,
-        updated_at
-      `)
+    // Get template
+    const { data: template, error } = await supabase
+      .from('credential_templates')
+      .select('*')
       .eq('id', id)
       .eq('issuer_id', auth.issuerId)
       .single();
 
-    if (error || !webhook) {
+    if (error || !template) {
       return NextResponse.json(
-        { error: 'Webhook not found' },
+        { error: 'Template not found' },
         { status: 404 }
       );
     }
 
-    // Get recent deliveries
-    const { data: deliveries } = await supabase
-      .from('webhook_deliveries')
-      .select(`
-        id,
-        event_type,
-        status,
-        attempts,
-        response_status,
-        delivered_at,
-        created_at
-      `)
-      .eq('subscription_id', id)
+    // Get recent credentials using this template
+    const { data: credentials } = await supabase
+      .from('credentials')
+      .select('id, agent_id, agent_name, created_at, status')
+      .eq('template_id', id)
       .order('created_at', { ascending: false })
-      .limit(20);
+      .limit(10);
 
     return NextResponse.json({
-      webhook,
-      deliveries: deliveries || [],
+      template,
+      recent_credentials: credentials || [],
     });
   } catch (error) {
-    console.error('Webhook fetch error:', error);
+    console.error('Template fetch error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -105,7 +97,7 @@ export async function GET(
 }
 
 /**
- * PATCH /api/webhooks/[id] - Update webhook
+ * PATCH /api/templates/[id] - Update template
  */
 export async function PATCH(
   request: NextRequest,
@@ -132,9 +124,9 @@ export async function PATCH(
     }
 
     // Check scope for API key auth
-    if (auth.apiKeyInfo && !checkScope(auth, ApiKeyScopes.WEBHOOKS_WRITE)) {
+    if (auth.apiKeyInfo && !checkScope(auth, ApiKeyScopes.CREDENTIALS_WRITE)) {
       return NextResponse.json(
-        { error: 'API key lacks webhooks:write scope' },
+        { error: 'API key lacks credentials:write scope' },
         { status: 403 }
       );
     }
@@ -148,7 +140,7 @@ export async function PATCH(
 
     // Parse and validate request
     const body = await request.json();
-    const parsed = updateWebhookRequestSchema.safeParse(body);
+    const parsed = updateTemplateSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -157,18 +149,20 @@ export async function PATCH(
       );
     }
 
-    // Build update object
+    // Build update object (only include provided fields)
     const updates: Record<string, unknown> = {};
-    if (parsed.data.url !== undefined) updates.url = parsed.data.url;
-    if (parsed.data.events !== undefined) updates.events = parsed.data.events;
-    if (parsed.data.is_active !== undefined) {
-      updates.is_active = parsed.data.is_active;
-      // Reset failure count when re-enabling
-      if (parsed.data.is_active) {
-        updates.consecutive_failures = 0;
-      }
-    }
-    if (parsed.data.description !== undefined) updates.description = parsed.data.description;
+    const data = parsed.data;
+
+    if (data.name !== undefined) updates.name = data.name;
+    if (data.description !== undefined) updates.description = data.description;
+    if (data.agent_type !== undefined) updates.agent_type = data.agent_type;
+    if (data.permissions !== undefined) updates.permissions = data.permissions;
+    if (data.geographic_restrictions !== undefined) updates.geographic_restrictions = data.geographic_restrictions;
+    if (data.allowed_services !== undefined) updates.allowed_services = data.allowed_services;
+    if (data.validity_days !== undefined) updates.validity_days = data.validity_days;
+    if (data.metadata_schema !== undefined) updates.metadata_schema = data.metadata_schema;
+    if (data.default_metadata !== undefined) updates.default_metadata = data.default_metadata;
+    if (data.is_active !== undefined) updates.is_active = data.is_active;
 
     if (Object.keys(updates).length === 0) {
       return NextResponse.json(
@@ -177,25 +171,31 @@ export async function PATCH(
       );
     }
 
-    // Update webhook
-    const { data: webhook, error } = await supabase
-      .from('webhook_subscriptions')
+    // Update template
+    const { data: template, error } = await supabase
+      .from('credential_templates')
       .update(updates)
       .eq('id', id)
       .eq('issuer_id', auth.issuerId)
-      .select('id, url, events, description, is_active, updated_at')
+      .select()
       .single();
 
-    if (error || !webhook) {
+    if (error) {
+      if (error.code === '23505') {
+        return NextResponse.json(
+          { error: 'A template with this name already exists' },
+          { status: 409 }
+        );
+      }
       return NextResponse.json(
-        { error: 'Webhook not found or update failed' },
+        { error: 'Template not found or update failed' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({ webhook });
+    return NextResponse.json({ template });
   } catch (error) {
-    console.error('Webhook update error:', error);
+    console.error('Template update error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -204,7 +204,7 @@ export async function PATCH(
 }
 
 /**
- * DELETE /api/webhooks/[id] - Delete webhook
+ * DELETE /api/templates/[id] - Delete template
  */
 export async function DELETE(
   request: NextRequest,
@@ -231,9 +231,9 @@ export async function DELETE(
     }
 
     // Check scope for API key auth
-    if (auth.apiKeyInfo && !checkScope(auth, ApiKeyScopes.WEBHOOKS_WRITE)) {
+    if (auth.apiKeyInfo && !checkScope(auth, ApiKeyScopes.CREDENTIALS_WRITE)) {
       return NextResponse.json(
-        { error: 'API key lacks webhooks:write scope' },
+        { error: 'API key lacks credentials:write scope' },
         { status: 403 }
       );
     }
@@ -245,23 +245,23 @@ export async function DELETE(
         )
       : await createClient();
 
-    // Delete webhook (cascades to deliveries)
+    // Delete template
     const { error } = await supabase
-      .from('webhook_subscriptions')
+      .from('credential_templates')
       .delete()
       .eq('id', id)
       .eq('issuer_id', auth.issuerId);
 
     if (error) {
       return NextResponse.json(
-        { error: 'Failed to delete webhook' },
+        { error: 'Failed to delete template' },
         { status: 500 }
       );
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Webhook delete error:', error);
+    console.error('Template delete error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

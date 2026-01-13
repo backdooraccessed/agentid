@@ -1,13 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
-import { createWebhookRequestSchema } from '@agentid/shared';
-import { generateWebhookSecret } from '@/lib/webhooks';
+import { z } from 'zod';
 import { authenticateRequest, checkScope } from '@/lib/auth';
 import { ApiKeyScopes } from '@/lib/api-keys';
 
+const createTemplateSchema = z.object({
+  name: z.string().min(1).max(100),
+  description: z.string().max(500).optional(),
+  agent_type: z.string().min(1),
+  permissions: z.array(z.string()).default([]),
+  geographic_restrictions: z.array(z.string()).optional(),
+  allowed_services: z.array(z.string()).optional(),
+  validity_days: z.number().positive().optional(),
+  metadata_schema: z.record(z.unknown()).optional(),
+  default_metadata: z.record(z.unknown()).optional(),
+});
+
 /**
- * GET /api/webhooks - List webhook subscriptions
+ * GET /api/templates - List credential templates
  */
 export async function GET(request: NextRequest) {
   try {
@@ -29,9 +40,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Check scope for API key auth
-    if (auth.apiKeyInfo && !checkScope(auth, ApiKeyScopes.WEBHOOKS_READ)) {
+    if (auth.apiKeyInfo && !checkScope(auth, ApiKeyScopes.CREDENTIALS_READ)) {
       return NextResponse.json(
-        { error: 'API key lacks webhooks:read scope' },
+        { error: 'API key lacks credentials:read scope' },
         { status: 403 }
       );
     }
@@ -43,36 +54,34 @@ export async function GET(request: NextRequest) {
         )
       : await createClient();
 
-    // Get webhooks with recent delivery stats
-    const { data: webhooks, error } = await supabase
-      .from('webhook_subscriptions')
-      .select(`
-        id,
-        url,
-        events,
-        description,
-        is_active,
-        consecutive_failures,
-        last_triggered_at,
-        last_success_at,
-        last_failure_at,
-        last_failure_reason,
-        created_at
-      `)
+    // Get query params
+    const { searchParams } = new URL(request.url);
+    const activeOnly = searchParams.get('active') === 'true';
+
+    // Build query
+    let query = supabase
+      .from('credential_templates')
+      .select('*')
       .eq('issuer_id', auth.issuerId)
       .order('created_at', { ascending: false });
 
+    if (activeOnly) {
+      query = query.eq('is_active', true);
+    }
+
+    const { data: templates, error } = await query;
+
     if (error) {
-      console.error('Failed to fetch webhooks:', error);
+      console.error('Failed to fetch templates:', error);
       return NextResponse.json(
-        { error: 'Failed to fetch webhooks' },
+        { error: 'Failed to fetch templates' },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ webhooks });
+    return NextResponse.json({ templates });
   } catch (error) {
-    console.error('Webhooks list error:', error);
+    console.error('Templates list error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -81,7 +90,7 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * POST /api/webhooks - Create webhook subscription
+ * POST /api/templates - Create credential template
  */
 export async function POST(request: NextRequest) {
   try {
@@ -103,9 +112,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Check scope for API key auth
-    if (auth.apiKeyInfo && !checkScope(auth, ApiKeyScopes.WEBHOOKS_WRITE)) {
+    if (auth.apiKeyInfo && !checkScope(auth, ApiKeyScopes.CREDENTIALS_WRITE)) {
       return NextResponse.json(
-        { error: 'API key lacks webhooks:write scope' },
+        { error: 'API key lacks credentials:write scope' },
         { status: 403 }
       );
     }
@@ -119,7 +128,7 @@ export async function POST(request: NextRequest) {
 
     // Parse and validate request
     const body = await request.json();
-    const parsed = createWebhookRequestSchema.safeParse(body);
+    const parsed = createTemplateSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -128,57 +137,53 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { url, events, description } = parsed.data;
+    const {
+      name,
+      description,
+      agent_type,
+      permissions,
+      geographic_restrictions,
+      allowed_services,
+      validity_days,
+      metadata_schema,
+      default_metadata,
+    } = parsed.data;
 
-    // Check for duplicate URL
-    const { data: existing } = await supabase
-      .from('webhook_subscriptions')
-      .select('id')
-      .eq('issuer_id', auth.issuerId)
-      .eq('url', url)
-      .single();
-
-    if (existing) {
-      return NextResponse.json(
-        { error: 'A webhook with this URL already exists' },
-        { status: 409 }
-      );
-    }
-
-    // Generate secret
-    const secret = generateWebhookSecret();
-
-    // Create subscription
-    const { data: webhook, error } = await supabase
-      .from('webhook_subscriptions')
+    // Create template
+    const { data: template, error } = await supabase
+      .from('credential_templates')
       .insert({
         issuer_id: auth.issuerId,
-        url,
-        events,
+        name,
         description,
-        secret,
+        agent_type,
+        permissions,
+        geographic_restrictions: geographic_restrictions || [],
+        allowed_services: allowed_services || [],
+        validity_days,
+        metadata_schema: metadata_schema || {},
+        default_metadata: default_metadata || {},
       })
-      .select('id, url, events, description, is_active, created_at')
+      .select()
       .single();
 
     if (error) {
-      console.error('Failed to create webhook:', error);
+      if (error.code === '23505') {
+        return NextResponse.json(
+          { error: 'A template with this name already exists' },
+          { status: 409 }
+        );
+      }
+      console.error('Failed to create template:', error);
       return NextResponse.json(
-        { error: 'Failed to create webhook' },
+        { error: 'Failed to create template' },
         { status: 500 }
       );
     }
 
-    // Return webhook with secret (only shown once)
-    return NextResponse.json({
-      webhook: {
-        ...webhook,
-        secret,
-      },
-      message: 'Webhook created. Save the secret - it will not be shown again.',
-    }, { status: 201 });
+    return NextResponse.json({ template }, { status: 201 });
   } catch (error) {
-    console.error('Webhook creation error:', error);
+    console.error('Template creation error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
