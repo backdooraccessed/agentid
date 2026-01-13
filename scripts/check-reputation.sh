@@ -18,9 +18,9 @@ curl -s "$SUPABASE_URL/rest/v1/issuer_reputation?select=*" \
 echo ""
 echo ""
 echo "=== API Leaderboard ==="
-curl -s "https://agentid-dashboard.vercel.app/api/reputation/leaderboard"
+curl -s "https://agentid-woad.vercel.app/api/reputation/leaderboard"
 
 echo ""
 echo ""
 echo "=== Agent Reputation via API ==="
-curl -s "https://agentid-dashboard.vercel.app/api/reputation/agent/a749aeb8-61fb-4419-b808-1079893cd996"
+curl -s "https://agentid-woad.vercel.app/api/reputation/agent/a749aeb8-61fb-4419-b808-1079893cd996"
