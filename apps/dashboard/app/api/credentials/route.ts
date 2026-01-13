@@ -6,18 +6,24 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
 
-    // 1. Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // Demo mode: use test issuer if no authenticated user
+    const testIssuerId = '4b874791-9a15-4808-83b3-ff26c59275b5';
 
-    // 2. Get issuer profile
-    const { data: issuer, error: issuerError } = await supabase
-      .from('issuers')
-      .select('*')
-      .eq('user_id', user.id)
-      .single();
+    // 1. Check authentication (optional in demo mode)
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // 2. Get issuer profile (use test issuer in demo mode)
+    const { data: issuer, error: issuerError } = user
+      ? await supabase
+          .from('issuers')
+          .select('*')
+          .eq('user_id', user.id)
+          .single()
+      : await supabase
+          .from('issuers')
+          .select('*')
+          .eq('id', testIssuerId)
+          .single();
 
     if (issuerError || !issuer) {
       return NextResponse.json(
@@ -150,18 +156,24 @@ export async function GET() {
   try {
     const supabase = await createClient();
 
-    // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // Demo mode: use test issuer if no authenticated user
+    const testIssuerId = '4b874791-9a15-4808-83b3-ff26c59275b5';
 
-    // Get issuer profile
-    const { data: issuer } = await supabase
-      .from('issuers')
-      .select('id')
-      .eq('user_id', user.id)
-      .single();
+    // Check authentication (optional in demo mode)
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Get issuer profile (use test issuer in demo mode)
+    const { data: issuer } = user
+      ? await supabase
+          .from('issuers')
+          .select('id')
+          .eq('user_id', user.id)
+          .single()
+      : await supabase
+          .from('issuers')
+          .select('id')
+          .eq('id', testIssuerId)
+          .single();
 
     if (!issuer) {
       return NextResponse.json({ credentials: [] });
