@@ -9,11 +9,15 @@ AgentID enables organizations to issue verifiable credentials to their AI agents
 ## Features
 
 - **Credential Issuance**: Issue cryptographically signed credentials to AI agents
+- **Credential Templates**: Reusable templates for faster credential issuance
 - **Public Verification**: Verify credentials via simple REST API (single or batch)
 - **Revocation**: Instantly revoke compromised or misbehaving agents
 - **Reputation System**: Trust scores based on verification history and credential age
 - **Webhooks**: Real-time notifications for credential events
-- **Dashboard**: Web UI for managing credentials and settings
+- **API Keys**: Programmatic access with scoped permissions
+- **Rate Limiting**: Built-in protection for all public endpoints
+- **Analytics**: Usage metrics, verification stats, and daily activity tracking
+- **Dashboard**: Web UI for managing credentials, API keys, webhooks, templates, and analytics
 - **SDKs**: JavaScript/TypeScript and Python SDKs for easy integration
 
 ## Tech Stack
@@ -253,6 +257,105 @@ Response (agent reputation):
 }
 ```
 
+### API Keys
+
+Create API keys for programmatic access with scoped permissions.
+
+```bash
+# Create API key
+POST /api/keys
+Authorization: Bearer <session-token>
+
+{
+  "name": "Production Key",
+  "description": "For production integration",
+  "scopes": ["credentials:read", "credentials:write", "webhooks:read"],
+  "expires_in_days": 90
+}
+```
+
+Response:
+
+```json
+{
+  "id": "uuid",
+  "key": "agid_a1b2c3d4_...",
+  "message": "API key created. Save this key - it will not be shown again."
+}
+```
+
+Available scopes:
+- `credentials:read` - Read credentials
+- `credentials:write` - Issue and revoke credentials
+- `webhooks:read` - List webhooks
+- `webhooks:write` - Create and manage webhooks
+- `reputation:read` - Read reputation data
+
+Use API keys via Bearer token:
+
+```bash
+curl -H "Authorization: Bearer agid_a1b2c3d4_..." \
+  https://agentid-woad.vercel.app/api/credentials
+```
+
+### Credential Templates
+
+Create reusable templates for faster credential issuance.
+
+```bash
+# Create template
+POST /api/templates
+Authorization: Bearer <token>
+
+{
+  "name": "Production Assistant",
+  "description": "Template for production AI assistants",
+  "agent_type": "assistant",
+  "permissions": ["read", "write", "api_access"],
+  "validity_days": 90
+}
+```
+
+Use template when issuing credentials:
+
+```bash
+POST /api/credentials
+Authorization: Bearer <token>
+
+{
+  "template_id": "uuid",
+  "agent_id": "my-agent-v1",
+  "agent_name": "My Agent"
+}
+```
+
+### Analytics
+
+```bash
+# Get usage analytics (last 30 days)
+GET /api/analytics?days=30
+Authorization: Bearer <token>
+```
+
+Response:
+
+```json
+{
+  "period": { "start": "2025-12-14", "end": "2026-01-13", "days": 30 },
+  "summary": {
+    "total_credentials": 25,
+    "active_credentials": 20,
+    "credentials_issued": 5,
+    "credentials_revoked": 2,
+    "verifications_total": 1250,
+    "verifications_successful": 1200,
+    "verification_success_rate": "96.0%"
+  },
+  "daily": [...],
+  "recent_verifications": [...]
+}
+```
+
 ### Webhooks
 
 ```bash
@@ -262,7 +365,7 @@ Authorization: Bearer <token>
 
 {
   "url": "https://your-server.com/webhook",
-  "events": ["credential.revoked", "credential.issued"]
+  "events": ["credential.revoked", "credential.expired"]
 }
 ```
 
@@ -291,6 +394,36 @@ def verify_webhook(payload: bytes, signature: str, secret: str) -> bool:
     expected = hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
     return hmac.compare_digest(signature, expected)
 ```
+
+## Rate Limiting
+
+All public API endpoints are rate limited to prevent abuse:
+
+| Endpoint | Limit | Window |
+|----------|-------|--------|
+| `/api/verify` | 100 requests | 60 seconds |
+| `/api/verify/batch` | 20 requests | 60 seconds |
+| `/api/reputation/*` | 60 requests | 60 seconds |
+| `/api/reputation/leaderboard` | 120 requests | 60 seconds |
+
+Rate limit headers are included in responses:
+- `X-RateLimit-Limit` - Maximum requests allowed
+- `X-RateLimit-Remaining` - Requests remaining in window
+- `X-RateLimit-Reset` - Unix timestamp when limit resets
+
+## Dashboard
+
+The web dashboard provides a UI for managing all features:
+
+| Page | Path | Description |
+|------|------|-------------|
+| Credentials | `/credentials` | View and manage issued credentials |
+| Issue New | `/credentials/new` | Issue new credentials |
+| Templates | `/templates` | Create and manage credential templates |
+| API Keys | `/api-keys` | Create and manage API keys |
+| Webhooks | `/webhooks` | Configure webhook subscriptions |
+| Analytics | `/analytics` | View usage metrics and statistics |
+| Settings | `/settings` | Manage issuer profile |
 
 ## Trust Score Calculation
 
