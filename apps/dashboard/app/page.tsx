@@ -9,6 +9,8 @@ import {
   ExternalLink,
   Bell,
   TrendingUp,
+  Cable,
+  Fingerprint,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -161,8 +163,92 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Code Example */}
+      {/* AgentID vs MCP */}
       <section className="py-24 bg-muted/30">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <Badge variant="secondary" className="mb-4">Understanding the Difference</Badge>
+            <h2 className="text-3xl font-bold mb-4">AgentID vs MCP</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Different problems, complementary solutions. Here&apos;s how AgentID compares to the Model Context Protocol.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {/* AgentID Card */}
+            <div className="bg-background rounded-xl border-2 border-primary/20 p-8 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Fingerprint className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold">AgentID</h3>
+                    <p className="text-sm text-muted-foreground">Identity & Trust</p>
+                  </div>
+                </div>
+                <p className="text-muted-foreground mb-6">
+                  Answers: <span className="text-foreground font-medium">&quot;WHO is this agent and CAN IT BE TRUSTED?&quot;</span>
+                </p>
+                <ul className="space-y-3">
+                  <ComparisonItem text="Cryptographic identity credentials" />
+                  <ComparisonItem text="Permission & capability verification" />
+                  <ComparisonItem text="Trust scores & reputation tracking" />
+                  <ComparisonItem text="Authorization for agent actions" />
+                </ul>
+                <div className="mt-6 pt-6 border-t">
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">Human equivalent:</span> Passport + Work Permit
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* MCP Card */}
+            <div className="bg-background rounded-xl border p-8 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-muted/50 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
+                    <Cable className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold">MCP</h3>
+                    <p className="text-sm text-muted-foreground">Connectivity Protocol</p>
+                  </div>
+                </div>
+                <p className="text-muted-foreground mb-6">
+                  Answers: <span className="text-foreground font-medium">&quot;HOW does AI connect to external tools?&quot;</span>
+                </p>
+                <ul className="space-y-3 text-muted-foreground">
+                  <ComparisonItem text="Standardized tool integration" muted />
+                  <ComparisonItem text="File & database access" muted />
+                  <ComparisonItem text="API connections for AI" muted />
+                  <ComparisonItem text="Capability extension" muted />
+                </ul>
+                <div className="mt-6 pt-6 border-t">
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">Human equivalent:</span> USB Cable
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Complementary Note */}
+          <div className="bg-primary/5 border border-primary/20 rounded-xl p-6 text-center">
+            <h4 className="font-semibold mb-2">Better Together</h4>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              MCP servers can use AgentID to verify which agents are authorized to connect.
+              AgentID fills the gap MCP doesn&apos;t address: <span className="text-foreground font-medium">who should be allowed to use these tools?</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Code Example */}
+      <section className="py-24">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -324,5 +410,14 @@ function StepCard({
         <p className="text-muted-foreground">{description}</p>
       </div>
     </div>
+  );
+}
+
+function ComparisonItem({ text, muted = false }: { text: string; muted?: boolean }) {
+  return (
+    <li className="flex items-center gap-2">
+      <CheckCircle className={`h-4 w-4 flex-shrink-0 ${muted ? 'text-muted-foreground/50' : 'text-primary'}`} />
+      <span className={muted ? 'text-muted-foreground' : ''}>{text}</span>
+    </li>
   );
 }
