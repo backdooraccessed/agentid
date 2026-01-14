@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Users, UserPlus, Mail, Shield, Eye, Settings, Trash2, X, Check, AlertCircle, CheckCircle, Loader2, Clock } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface TeamMember {
   id: string;
@@ -35,11 +37,11 @@ const ROLE_DESCRIPTIONS: Record<string, string> = {
   viewer: 'Can view credentials and analytics',
 };
 
-const ROLE_COLORS: Record<string, string> = {
-  owner: 'bg-purple-100 text-purple-800',
-  admin: 'bg-blue-100 text-blue-800',
-  member: 'bg-green-100 text-green-800',
-  viewer: 'bg-gray-100 text-gray-800',
+const ROLE_ICONS: Record<string, React.ReactNode> = {
+  owner: <Shield className="h-4 w-4" />,
+  admin: <Settings className="h-4 w-4" />,
+  member: <Users className="h-4 w-4" />,
+  viewer: <Eye className="h-4 w-4" />,
 };
 
 export default function TeamPage() {
@@ -126,50 +128,69 @@ export default function TeamPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="flex items-center gap-3 text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          Loading team...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Team</h1>
-          <p className="text-muted-foreground">
-            Manage team members and their permissions
-          </p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex justify-between items-start">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+            <Users className="h-7 w-7 text-white/70" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Team</h1>
+            <p className="text-muted-foreground">
+              Manage team members and their permissions
+            </p>
+          </div>
         </div>
-        <Button onClick={() => setShowInviteForm(true)}>
+        <Button onClick={() => setShowInviteForm(true)} className="gap-2">
+          <UserPlus className="h-4 w-4" />
           Invite Member
         </Button>
       </div>
 
       {error && (
-        <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
-          {error}
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+          <AlertCircle className="h-4 w-4 text-red-400" />
+          <p className="text-sm text-red-400">{error}</p>
         </div>
       )}
 
       {success && (
-        <div className="p-3 text-sm text-green-700 bg-green-50 rounded-md">
-          {success}
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+          <CheckCircle className="h-4 w-4 text-emerald-400" />
+          <p className="text-sm text-emerald-400">{success}</p>
         </div>
       )}
 
-      {/* Invite Form Modal */}
+      {/* Invite Form Card */}
       {showInviteForm && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Invite Team Member</CardTitle>
-            <CardDescription>
-              Send an invitation to join your organization
-            </CardDescription>
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                <UserPlus className="h-5 w-5 text-white/70" />
+              </div>
+              <div>
+                <CardTitle className="text-base">Invite Team Member</CardTitle>
+                <CardDescription>
+                  Send an invitation to join your organization
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <form onSubmit={handleInvite} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
                 <Input
                   id="email"
                   type="email"
@@ -177,25 +198,28 @@ export default function TeamPage() {
                   onChange={(e) => setInviteEmail(e.target.value)}
                   placeholder="colleague@example.com"
                   required
+                  className="bg-white/[0.02] border-white/10 focus:border-white/30"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Role</Label>
+                <Label className="text-sm font-medium">Role</Label>
                 <div className="grid grid-cols-3 gap-3">
                   {['admin', 'member', 'viewer'].map((role) => (
                     <button
                       key={role}
                       type="button"
                       onClick={() => setInviteRole(role)}
-                      className={`p-3 rounded-md border text-left transition-colors ${
+                      className={cn(
+                        'p-3 rounded-lg border text-left transition-all',
                         inviteRole === role
-                          ? 'border-primary bg-primary/5'
-                          : 'border-input hover:bg-accent'
-                      }`}
+                          ? 'border-white/30 bg-white/[0.04]'
+                          : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+                      )}
                     >
-                      <div className="font-medium text-sm">
-                        {ROLE_LABELS[role]}
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-white/70">{ROLE_ICONS[role]}</span>
+                        <span className="font-medium text-sm">{ROLE_LABELS[role]}</span>
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {ROLE_DESCRIPTIONS[role]}
@@ -205,15 +229,27 @@ export default function TeamPage() {
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <Button type="submit" disabled={inviting}>
-                  {inviting ? 'Sending...' : 'Send Invitation'}
+              <div className="flex gap-3 pt-2">
+                <Button type="submit" disabled={inviting} className="gap-2">
+                  {inviting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="h-4 w-4" />
+                      Send Invitation
+                    </>
+                  )}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setShowInviteForm(false)}
+                  className="gap-2 border-white/10 hover:bg-white/[0.04]"
                 >
+                  <X className="h-4 w-4" />
                   Cancel
                 </Button>
               </div>
@@ -223,53 +259,63 @@ export default function TeamPage() {
       )}
 
       {/* Team Members */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Team Members</CardTitle>
-          <CardDescription>
-            {members.length} member{members.length !== 1 ? 's' : ''} in your organization
-          </CardDescription>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <Users className="h-4 w-4 text-white/70" />
+            </div>
+            <div>
+              <CardTitle className="text-base">Team Members</CardTitle>
+              <CardDescription>
+                {members.length} member{members.length !== 1 ? 's' : ''} in your organization
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {members.length === 0 ? (
-            <p className="text-muted-foreground text-center py-4">
-              No team members yet. Start by inviting someone.
-            </p>
+            <div className="text-center py-8">
+              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
+                <Users className="h-6 w-6 text-white/30" />
+              </div>
+              <p className="text-muted-foreground">No team members yet</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Start by inviting someone to join
+              </p>
+            </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {members.map((member) => (
                 <div
                   key={member.id}
-                  className="flex items-center justify-between py-3 border-b last:border-0"
+                  className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center text-sm font-medium">
+                    <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-sm font-medium">
                       {member.user_id.slice(0, 2).toUpperCase()}
                     </div>
                     <div>
                       <div className="font-medium text-sm">
                         User {member.user_id.slice(0, 8)}...
                       </div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
                         Joined {new Date(member.created_at).toLocaleDateString()}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${
-                        ROLE_COLORS[member.role]
-                      }`}
-                    >
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-white/5 border border-white/10">
+                      {ROLE_ICONS[member.role]}
                       {ROLE_LABELS[member.role]}
                     </span>
-                    <span
-                      className={`text-xs ${
-                        member.status === 'active'
-                          ? 'text-green-600'
-                          : 'text-muted-foreground'
-                      }`}
-                    >
+                    <span className={cn(
+                      'text-xs font-medium px-2 py-0.5 rounded-full',
+                      member.status === 'active'
+                        ? 'bg-emerald-500/10 text-emerald-400'
+                        : 'bg-white/5 text-muted-foreground'
+                    )}>
                       {member.status}
                     </span>
                   </div>
@@ -282,40 +328,53 @@ export default function TeamPage() {
 
       {/* Pending Invitations */}
       {invitations.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Pending Invitations</CardTitle>
-            <CardDescription>
-              {invitations.length} invitation{invitations.length !== 1 ? 's' : ''} awaiting acceptance
-            </CardDescription>
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                <Mail className="h-4 w-4 text-amber-400" />
+              </div>
+              <div>
+                <CardTitle className="text-base">Pending Invitations</CardTitle>
+                <CardDescription>
+                  {invitations.length} invitation{invitations.length !== 1 ? 's' : ''} awaiting acceptance
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
+          <CardContent className="pt-6">
+            <div className="space-y-2">
               {invitations.map((invitation) => (
                 <div
                   key={invitation.id}
-                  className="flex items-center justify-between py-3 border-b last:border-0"
+                  className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] border border-white/5"
                 >
-                  <div>
-                    <div className="font-medium text-sm">{invitation.email}</div>
-                    <div className="text-xs text-muted-foreground">
-                      Expires {new Date(invitation.expires_at).toLocaleDateString()}
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center">
+                      <Mail className="h-4 w-4 text-amber-400" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm">{invitation.email}</div>
+                      <div className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        Expires {new Date(invitation.expires_at).toLocaleDateString()}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${
-                        ROLE_COLORS[invitation.role]
-                      }`}
-                    >
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-white/5 border border-white/10">
+                      {ROLE_ICONS[invitation.role]}
                       {ROLE_LABELS[invitation.role]}
                     </span>
-                    <button
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => cancelInvitation(invitation.id)}
-                      className="text-xs text-destructive hover:underline"
+                      className="gap-1.5 border-red-500/20 text-red-400 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30"
                     >
+                      <Trash2 className="h-3.5 w-3.5" />
                       Cancel
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -325,20 +384,25 @@ export default function TeamPage() {
       )}
 
       {/* Role Permissions Info */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Role Permissions</CardTitle>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <Shield className="h-4 w-4 text-white/70" />
+            </div>
+            <CardTitle className="text-base">Role Permissions</CardTitle>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b">
-                  <th className="text-left py-2">Permission</th>
-                  <th className="text-center py-2">Owner</th>
-                  <th className="text-center py-2">Admin</th>
-                  <th className="text-center py-2">Member</th>
-                  <th className="text-center py-2">Viewer</th>
+                <tr className="border-b border-white/5">
+                  <th className="text-left py-3 font-medium text-muted-foreground">Permission</th>
+                  <th className="text-center py-3 font-medium text-muted-foreground">Owner</th>
+                  <th className="text-center py-3 font-medium text-muted-foreground">Admin</th>
+                  <th className="text-center py-3 font-medium text-muted-foreground">Member</th>
+                  <th className="text-center py-3 font-medium text-muted-foreground">Viewer</th>
                 </tr>
               </thead>
               <tbody>
@@ -354,14 +418,14 @@ export default function TeamPage() {
                   ['Manage settings', true, true, false, false],
                   ['Delete organization', true, false, false, false],
                 ].map(([permission, ...roles]) => (
-                  <tr key={permission as string} className="border-b last:border-0">
-                    <td className="py-2">{permission}</td>
+                  <tr key={permission as string} className="border-b border-white/5 last:border-0">
+                    <td className="py-3 text-muted-foreground">{permission}</td>
                     {roles.map((hasPermission, i) => (
-                      <td key={i} className="text-center py-2">
+                      <td key={i} className="text-center py-3">
                         {hasPermission ? (
-                          <span className="text-green-600">Yes</span>
+                          <Check className="h-4 w-4 text-emerald-400 mx-auto" />
                         ) : (
-                          <span className="text-muted-foreground">-</span>
+                          <span className="text-white/20">—</span>
                         )}
                       </td>
                     ))}
