@@ -22,6 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Plus, Key, Copy, Check, Shield, Clock, Hash, Activity, Trash2, XCircle, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ApiKey {
   id: string;
@@ -37,11 +39,11 @@ interface ApiKey {
 }
 
 const AVAILABLE_SCOPES = [
-  { value: 'credentials:read', label: 'Read Credentials' },
-  { value: 'credentials:write', label: 'Write Credentials' },
-  { value: 'webhooks:read', label: 'Read Webhooks' },
-  { value: 'webhooks:write', label: 'Write Webhooks' },
-  { value: 'reputation:read', label: 'Read Reputation' },
+  { value: 'credentials:read', label: 'Read Credentials', description: 'View credentials' },
+  { value: 'credentials:write', label: 'Write Credentials', description: 'Create & modify' },
+  { value: 'webhooks:read', label: 'Read Webhooks', description: 'View webhooks' },
+  { value: 'webhooks:write', label: 'Write Webhooks', description: 'Manage webhooks' },
+  { value: 'reputation:read', label: 'Read Reputation', description: 'View scores' },
 ];
 
 export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
@@ -150,79 +152,125 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
       {/* Create Key Dialog */}
       <Dialog onOpenChange={(open) => !open && resetForm()}>
         <DialogTrigger asChild>
-          <Button>Create API Key</Button>
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            Create API Key
+          </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-black border-white/10">
           {newKeyData ? (
             <>
               <DialogHeader>
-                <DialogTitle>API Key Created</DialogTitle>
-                <DialogDescription>
-                  Copy your API key now. It will not be shown again.
-                </DialogDescription>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                    <CheckCircle className="h-5 w-5 text-emerald-400" />
+                  </div>
+                  <div>
+                    <DialogTitle>API Key Created</DialogTitle>
+                    <DialogDescription>
+                      Copy your API key now. It will not be shown again.
+                    </DialogDescription>
+                  </div>
+                </div>
               </DialogHeader>
               <div className="space-y-4">
-                <div className="p-3 bg-muted rounded-md font-mono text-sm break-all">
+                <div className="p-4 bg-white/[0.02] border border-white/10 rounded-xl font-mono text-sm break-all">
                   {newKeyData.key}
                 </div>
-                <Button onClick={handleCopy} className="w-full">
-                  {copied ? 'Copied!' : 'Copy to Clipboard'}
+                <Button onClick={handleCopy} className="w-full gap-2">
+                  {copied ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4" />
+                      Copy to Clipboard
+                    </>
+                  )}
                 </Button>
               </div>
             </>
           ) : (
             <>
               <DialogHeader>
-                <DialogTitle>Create API Key</DialogTitle>
-                <DialogDescription>
-                  Create a new API key for programmatic access
-                </DialogDescription>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                    <Key className="h-5 w-5 text-white/70" />
+                  </div>
+                  <div>
+                    <DialogTitle>Create API Key</DialogTitle>
+                    <DialogDescription>
+                      Create a new API key for programmatic access
+                    </DialogDescription>
+                  </div>
+                </div>
               </DialogHeader>
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Name</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-sm font-medium">Name</Label>
                   <Input
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="My API Key"
+                    className="bg-white/[0.02] border-white/10 focus:border-white/30"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="description">Description (optional)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="description" className="text-sm font-medium">Description (optional)</Label>
                   <Input
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Used for production integration"
+                    className="bg-white/[0.02] border-white/10 focus:border-white/30"
                   />
                 </div>
-                <div>
-                  <Label>Scopes</Label>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Scopes</Label>
                   <div className="grid grid-cols-2 gap-2 mt-2">
                     {AVAILABLE_SCOPES.map((scope) => (
                       <label
                         key={scope.value}
-                        className="flex items-center gap-2 text-sm cursor-pointer"
+                        className={cn(
+                          'flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-all',
+                          scopes.includes(scope.value)
+                            ? 'bg-white/[0.04] border-white/20'
+                            : 'bg-white/[0.02] border-white/10 hover:border-white/15'
+                        )}
                       >
+                        <div className={cn(
+                          'w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0',
+                          scopes.includes(scope.value)
+                            ? 'bg-white border-white'
+                            : 'border-white/30'
+                        )}>
+                          {scopes.includes(scope.value) && (
+                            <Check className="h-2.5 w-2.5 text-black" />
+                          )}
+                        </div>
                         <input
                           type="checkbox"
                           checked={scopes.includes(scope.value)}
                           onChange={() => toggleScope(scope.value)}
-                          className="rounded"
+                          className="sr-only"
                         />
-                        {scope.label}
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium truncate">{scope.label}</div>
+                        </div>
                       </label>
                     ))}
                   </div>
                 </div>
-                <div>
-                  <Label htmlFor="expires">Expires In (days, optional)</Label>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Expiration</Label>
                   <Select value={expiresInDays} onValueChange={setExpiresInDays}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white/[0.02] border-white/10">
                       <SelectValue placeholder="Never expires" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-black border-white/10">
                       <SelectItem value="">Never expires</SelectItem>
                       <SelectItem value="30">30 days</SelectItem>
                       <SelectItem value="90">90 days</SelectItem>
@@ -232,15 +280,29 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
                   </Select>
                 </div>
                 {error && (
-                  <p className="text-sm text-red-500">{error}</p>
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <AlertCircle className="h-4 w-4 text-red-400" />
+                    <p className="text-sm text-red-400">{error}</p>
+                  </div>
                 )}
               </div>
               <DialogFooter>
                 <Button
                   onClick={handleCreate}
                   disabled={isCreating || !name || scopes.length === 0}
+                  className="w-full gap-2"
                 >
-                  {isCreating ? 'Creating...' : 'Create Key'}
+                  {isCreating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-4 w-4" />
+                      Create Key
+                    </>
+                  )}
                 </Button>
               </DialogFooter>
             </>
@@ -251,62 +313,102 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
       {/* Keys List */}
       <div className="space-y-4 mt-6">
         {keys.length === 0 ? (
-          <Card>
-            <CardContent className="py-8 text-center text-muted-foreground">
-              No API keys yet. Create your first key to get started.
+          <Card className="overflow-hidden">
+            <CardContent className="py-12 text-center">
+              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
+                <Key className="h-6 w-6 text-white/30" />
+              </div>
+              <p className="text-muted-foreground">No API keys yet</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Create your first key to get started
+              </p>
             </CardContent>
           </Card>
         ) : (
           keys.map((key) => (
-            <Card key={key.id} className={!key.is_active ? 'opacity-60' : ''}>
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      {key.name}
-                      {!key.is_active && (
-                        <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">
-                          Revoked
-                        </span>
-                      )}
-                    </CardTitle>
-                    <CardDescription className="font-mono text-xs">
+            <Card
+              key={key.id}
+              className={cn(
+                'overflow-hidden transition-opacity',
+                !key.is_active && 'opacity-60'
+              )}
+            >
+              <CardHeader className="bg-white/[0.02] border-b border-white/5 pb-4">
+                <div className="flex justify-between items-start gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className={cn(
+                        'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
+                        key.is_active ? 'bg-white/5' : 'bg-red-500/10'
+                      )}>
+                        {key.is_active ? (
+                          <Key className="h-4 w-4 text-white/70" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-400" />
+                        )}
+                      </div>
+                      <CardTitle className="text-base flex items-center gap-2">
+                        {key.name}
+                        {!key.is_active && (
+                          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">
+                            Revoked
+                          </span>
+                        )}
+                      </CardTitle>
+                    </div>
+                    <CardDescription className="font-mono text-xs ml-11">
                       agid_{key.key_prefix}_••••••••
                     </CardDescription>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-shrink-0">
                     {key.is_active && (
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleRevoke(key.id)}
+                        className="gap-1.5 border-white/10 hover:bg-white/[0.04]"
                       >
+                        <XCircle className="h-3.5 w-3.5" />
                         Revoke
                       </Button>
                     )}
                     <Button
-                      variant="destructive"
+                      variant="outline"
                       size="sm"
                       onClick={() => handleDelete(key.id)}
+                      className="gap-1.5 border-red-500/20 text-red-400 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30"
                     >
+                      <Trash2 className="h-3.5 w-3.5" />
                       Delete
                     </Button>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                  <span>Scopes: {key.scopes.join(', ')}</span>
-                  <span>Used: {key.usage_count} times</span>
+              <CardContent className="pt-4">
+                <div className="flex flex-wrap gap-4 text-sm">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Shield className="h-3.5 w-3.5" />
+                    <span>Scopes: {key.scopes.join(', ')}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Hash className="h-3.5 w-3.5" />
+                    <span>Used {key.usage_count} times</span>
+                  </div>
                   {key.last_used_at && (
-                    <span>Last used: {new Date(key.last_used_at).toLocaleDateString()}</span>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Activity className="h-3.5 w-3.5" />
+                      <span>Last used: {new Date(key.last_used_at).toLocaleDateString()}</span>
+                    </div>
                   )}
                   {key.expires_at && (
-                    <span>Expires: {new Date(key.expires_at).toLocaleDateString()}</span>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Clock className="h-3.5 w-3.5" />
+                      <span>Expires: {new Date(key.expires_at).toLocaleDateString()}</span>
+                    </div>
                   )}
                 </div>
                 {key.description && (
-                  <p className="text-sm mt-2">{key.description}</p>
+                  <p className="text-sm text-muted-foreground mt-3">{key.description}</p>
                 )}
               </CardContent>
             </Card>
