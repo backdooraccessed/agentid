@@ -87,19 +87,19 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-card border-r flex flex-col shadow-sm">
+    <aside className="w-64 bg-black border-r border-white/5 flex flex-col">
       {/* Logo */}
-      <div className="p-4 border-b bg-muted/30">
+      <div className="p-4 border-b border-white/5">
         <Link href="/" className="block">
           <LogoFull />
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-3 space-y-6 overflow-y-auto">
+      <nav className="flex-1 p-3 space-y-6 overflow-y-auto scrollbar-hide">
         {navItems.map((group) => (
           <div key={group.section}>
-            <div className="text-[10px] font-semibold text-muted-foreground/60 px-3 py-2 uppercase tracking-widest">
+            <div className="text-[10px] font-semibold text-muted-foreground/50 px-3 py-2 uppercase tracking-widest">
               {group.section}
             </div>
             <div className="space-y-1">
@@ -113,8 +113,8 @@ export function Sidebar() {
                     className={cn(
                       'group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200',
                       active
-                        ? 'bg-indigo-50 text-indigo-700 font-medium dark:bg-indigo-950/50 dark:text-indigo-300'
-                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        ? 'bg-white/[0.08] text-white font-medium'
+                        : 'text-muted-foreground hover:bg-white/[0.04] hover:text-white'
                     )}
                   >
                     {/* Active indicator */}
@@ -122,21 +122,21 @@ export function Sidebar() {
                       className={cn(
                         'absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full transition-all duration-200',
                         active
-                          ? 'bg-indigo-600 dark:bg-indigo-400'
-                          : 'bg-transparent group-hover:bg-muted-foreground/20'
+                          ? 'bg-white'
+                          : 'bg-transparent group-hover:bg-white/20'
                       )}
                     />
                     <Icon
                       className={cn(
                         'h-4 w-4 shrink-0 transition-colors',
                         active
-                          ? 'text-indigo-600 dark:text-indigo-400'
-                          : 'text-muted-foreground group-hover:text-foreground'
+                          ? 'text-white'
+                          : 'text-muted-foreground group-hover:text-white'
                       )}
                     />
                     <span className="flex-1">{item.label}</span>
                     {item.badge && (
-                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">
+                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-white/10 text-white">
                         {item.badge}
                       </span>
                     )}
@@ -156,10 +156,10 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t bg-muted/20 space-y-1">
+      <div className="p-3 border-t border-white/5 space-y-1">
         <Link
           href="/directory"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-white/[0.04] hover:text-white transition-all"
         >
           <Globe className="h-4 w-4" />
           <span>Public Directory</span>
@@ -167,7 +167,7 @@ export function Sidebar() {
         <form action="/api/auth/signout" method="post">
           <button
             type="submit"
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30 dark:hover:text-red-400 transition-all"
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-red-500/10 hover:text-red-400 transition-all"
           >
             <LogOut className="h-4 w-4" />
             <span>Sign out</span>

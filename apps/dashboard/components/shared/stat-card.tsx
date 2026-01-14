@@ -12,7 +12,6 @@ interface StatCardProps {
     isPositive: boolean;
   };
   className?: string;
-  variant?: 'default' | 'indigo' | 'emerald' | 'amber';
 }
 
 export function StatCard({
@@ -22,39 +21,12 @@ export function StatCard({
   icon: Icon,
   trend,
   className,
-  variant = 'default',
 }: StatCardProps) {
-  const variantStyles = {
-    default: {
-      icon: 'bg-indigo-100 dark:bg-indigo-900/30',
-      iconColor: 'text-indigo-600 dark:text-indigo-400',
-      glow: '',
-    },
-    indigo: {
-      icon: 'bg-indigo-100 dark:bg-indigo-900/30',
-      iconColor: 'text-indigo-600 dark:text-indigo-400',
-      glow: 'hover:shadow-indigo-500/10',
-    },
-    emerald: {
-      icon: 'bg-emerald-100 dark:bg-emerald-900/30',
-      iconColor: 'text-emerald-600 dark:text-emerald-400',
-      glow: 'hover:shadow-emerald-500/10',
-    },
-    amber: {
-      icon: 'bg-amber-100 dark:bg-amber-900/30',
-      iconColor: 'text-amber-600 dark:text-amber-400',
-      glow: 'hover:shadow-amber-500/10',
-    },
-  };
-
-  const styles = variantStyles[variant];
-
   return (
     <Card
       className={cn(
-        'relative overflow-hidden transition-all duration-300',
-        'hover:shadow-lg hover:-translate-y-0.5',
-        styles.glow,
+        'relative overflow-hidden transition-all duration-300 card-hover',
+        'hover:-translate-y-0.5',
         className
       )}
     >
@@ -69,8 +41,8 @@ export function StatCard({
                   className={cn(
                     'inline-flex items-center text-xs font-medium px-1.5 py-0.5 rounded',
                     trend.isPositive
-                      ? 'text-emerald-700 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/30'
-                      : 'text-red-700 bg-red-100 dark:text-red-400 dark:bg-red-900/30'
+                      ? 'text-emerald-400 bg-emerald-500/10'
+                      : 'text-red-400 bg-red-500/10'
                   )}
                 >
                   {trend.isPositive ? (
@@ -87,8 +59,8 @@ export function StatCard({
             )}
           </div>
           {Icon && (
-            <div className={cn('rounded-xl p-3', styles.icon)}>
-              <Icon className={cn('h-5 w-5', styles.iconColor)} />
+            <div className="rounded-xl p-3 bg-white/5 border border-white/10">
+              <Icon className="h-5 w-5 text-white/70" />
             </div>
           )}
         </div>

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CREDENTIAL_STATUS_LABELS, AGENT_TYPE_LABELS } from '@agentid/shared';
 import type { CredentialStatus, AgentType } from '@agentid/shared';
+import { Plus, Search, Shield, CheckCircle, XCircle, Clock, Bot, ArrowRight } from 'lucide-react';
 
 interface Credential {
   id: string;
@@ -157,7 +158,7 @@ export default function CredentialsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
       </div>
     );
   }
@@ -165,7 +166,7 @@ export default function CredentialsPage() {
   if (!hasIssuer) {
     return (
       <div className="max-w-2xl mx-auto">
-        <Card>
+        <Card className="border-white/10 bg-white/[0.02]">
           <CardHeader>
             <CardTitle>Complete Your Setup</CardTitle>
             <CardDescription>
@@ -174,7 +175,10 @@ export default function CredentialsPage() {
           </CardHeader>
           <CardContent>
             <Link href="/settings">
-              <Button>Create Issuer Profile</Button>
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                Create Issuer Profile
+              </Button>
             </Link>
           </CardContent>
         </Card>
@@ -184,111 +188,149 @@ export default function CredentialsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Credentials</h1>
+          <h1 className="font-display text-3xl font-bold">Credentials</h1>
           <p className="text-muted-foreground">
             Manage credentials for your AI agents
           </p>
         </div>
         <Link href="/credentials/new">
-          <Button>Issue New Credential</Button>
+          <Button className="gap-2 btn-glow">
+            <Plus className="h-4 w-4" />
+            Issue Credential
+          </Button>
         </Link>
       </div>
 
       {error && (
-        <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
+        <div className="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg">
           {error}
         </div>
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
-        <Card
-          className={`cursor-pointer transition-colors ${status === 'all' ? 'ring-2 ring-primary' : 'hover:bg-muted/50'}`}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <button
           onClick={() => updateFilter('status', 'all')}
+          className={`text-left p-4 rounded-xl border transition-all ${
+            status === 'all'
+              ? 'border-white/30 bg-white/[0.04]'
+              : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+          }`}
         >
-          <CardHeader className="pb-2">
-            <CardDescription>Total</CardDescription>
-            <CardTitle className="text-3xl">{totalCredentials}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card
-          className={`cursor-pointer transition-colors ${status === 'active' ? 'ring-2 ring-primary' : 'hover:bg-muted/50'}`}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
+              <Shield className="h-5 w-5 text-white/70" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{totalCredentials}</p>
+              <p className="text-xs text-muted-foreground">Total</p>
+            </div>
+          </div>
+        </button>
+        <button
           onClick={() => updateFilter('status', 'active')}
+          className={`text-left p-4 rounded-xl border transition-all ${
+            status === 'active'
+              ? 'border-emerald-500/30 bg-emerald-500/10'
+              : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+          }`}
         >
-          <CardHeader className="pb-2">
-            <CardDescription>Active</CardDescription>
-            <CardTitle className="text-3xl text-green-600">{activeCredentials}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card
-          className={`cursor-pointer transition-colors ${status === 'expired' ? 'ring-2 ring-primary' : 'hover:bg-muted/50'}`}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+              <CheckCircle className="h-5 w-5 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-emerald-400">{activeCredentials}</p>
+              <p className="text-xs text-muted-foreground">Active</p>
+            </div>
+          </div>
+        </button>
+        <button
           onClick={() => updateFilter('status', 'expired')}
+          className={`text-left p-4 rounded-xl border transition-all ${
+            status === 'expired'
+              ? 'border-amber-500/30 bg-amber-500/10'
+              : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+          }`}
         >
-          <CardHeader className="pb-2">
-            <CardDescription>Expired</CardDescription>
-            <CardTitle className="text-3xl text-yellow-600">{expiredCredentials}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card
-          className={`cursor-pointer transition-colors ${status === 'revoked' ? 'ring-2 ring-primary' : 'hover:bg-muted/50'}`}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
+              <Clock className="h-5 w-5 text-amber-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-amber-400">{expiredCredentials}</p>
+              <p className="text-xs text-muted-foreground">Expired</p>
+            </div>
+          </div>
+        </button>
+        <button
           onClick={() => updateFilter('status', 'revoked')}
+          className={`text-left p-4 rounded-xl border transition-all ${
+            status === 'revoked'
+              ? 'border-red-500/30 bg-red-500/10'
+              : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+          }`}
         >
-          <CardHeader className="pb-2">
-            <CardDescription>Revoked</CardDescription>
-            <CardTitle className="text-3xl text-red-600">{revokedCredentials}</CardTitle>
-          </CardHeader>
-        </Card>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+              <XCircle className="h-5 w-5 text-red-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-red-400">{revokedCredentials}</p>
+              <p className="text-xs text-muted-foreground">Revoked</p>
+            </div>
+          </div>
+        </button>
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="pt-4">
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-[200px]">
-              <Input
-                placeholder="Search by name or agent ID..."
-                value={search}
-                onChange={(e) => updateFilter('search', e.target.value)}
-              />
-            </div>
-            <select
-              value={status}
-              onChange={(e) => updateFilter('status', e.target.value)}
-              className="px-3 py-2 border rounded-md bg-background"
-            >
-              {STATUS_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            <select
-              value={type}
-              onChange={(e) => updateFilter('type', e.target.value)}
-              className="px-3 py-2 border rounded-md bg-background"
-            >
-              {TYPE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            <select
-              value={sort}
-              onChange={(e) => updateFilter('sort', e.target.value)}
-              className="px-3 py-2 border rounded-md bg-background"
-            >
-              {SORT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex flex-wrap gap-4 p-4 rounded-xl border border-white/10 bg-white/[0.02]">
+        <div className="flex-1 min-w-[200px] relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by name or agent ID..."
+            value={search}
+            onChange={(e) => updateFilter('search', e.target.value)}
+            className="pl-9 bg-white/[0.02] border-white/10"
+          />
+        </div>
+        <select
+          value={status}
+          onChange={(e) => updateFilter('status', e.target.value)}
+          className="px-3 py-2 border border-white/10 rounded-lg bg-white/[0.02] text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
+        >
+          {STATUS_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value} className="bg-black">
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        <select
+          value={type}
+          onChange={(e) => updateFilter('type', e.target.value)}
+          className="px-3 py-2 border border-white/10 rounded-lg bg-white/[0.02] text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
+        >
+          {TYPE_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value} className="bg-black">
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        <select
+          value={sort}
+          onChange={(e) => updateFilter('sort', e.target.value)}
+          className="px-3 py-2 border border-white/10 rounded-lg bg-white/[0.02] text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
+        >
+          {SORT_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value} className="bg-black">
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* Results count */}
       <div className="text-sm text-muted-foreground">
@@ -296,7 +338,7 @@ export default function CredentialsPage() {
         {(search || status !== 'all' || type !== 'all') && (
           <button
             onClick={() => router.push('/credentials')}
-            className="ml-2 text-primary hover:underline"
+            className="ml-2 text-white hover:text-white/80 underline underline-offset-2"
           >
             Clear filters
           </button>
@@ -305,41 +347,63 @@ export default function CredentialsPage() {
 
       {/* Credentials List */}
       {filteredCredentials.length === 0 ? (
-        <Card>
-          <CardContent className="py-8 text-center text-muted-foreground">
+        <div className="text-center py-16 px-4 rounded-xl border border-white/10 bg-white/[0.02]">
+          <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
+            <Bot className="h-8 w-8 text-muted-foreground/30" />
+          </div>
+          <p className="text-muted-foreground font-medium">
             {credentials.length === 0
-              ? 'No credentials issued yet. Create your first credential to get started.'
-              : 'No credentials match your filters.'}
-          </CardContent>
-        </Card>
+              ? 'No credentials issued yet'
+              : 'No credentials match your filters'}
+          </p>
+          <p className="text-sm text-muted-foreground mt-1 mb-4">
+            {credentials.length === 0
+              ? 'Create your first credential to get started'
+              : 'Try adjusting your search or filters'}
+          </p>
+          {credentials.length === 0 && (
+            <Link href="/credentials/new">
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                Issue First Credential
+              </Button>
+            </Link>
+          )}
+        </div>
       ) : (
         <div className="space-y-3">
           {filteredCredentials.map((credential) => (
-            <Link key={credential.id} href={`/credentials/${credential.id}`}>
-              <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-lg">{credential.agent_name}</CardTitle>
-                      <CardDescription className="font-mono text-xs">
-                        {credential.agent_id}
-                      </CardDescription>
+            <Link key={credential.id} href={`/credentials/${credential.id}`} className="block group">
+              <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04] transition-all">
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
+                      <Bot className="h-5 w-5 text-white/70" />
                     </div>
+                    <div>
+                      <h3 className="font-medium">{credential.agent_name}</h3>
+                      <p className="font-mono text-xs text-muted-foreground">
+                        {credential.agent_id}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
                     <StatusBadge status={credential.status} />
+                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex gap-4 text-sm text-muted-foreground">
-                    <span>Type: {AGENT_TYPE_LABELS[credential.agent_type]}</span>
-                    <span>
-                      Valid until: {new Date(credential.valid_until).toLocaleDateString()}
-                    </span>
-                    <span>
-                      Created: {new Date(credential.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+                <div className="flex gap-4 text-xs text-muted-foreground pl-13">
+                  <span className="px-2 py-1 rounded bg-white/5">
+                    {AGENT_TYPE_LABELS[credential.agent_type]}
+                  </span>
+                  <span>
+                    Valid until {new Date(credential.valid_until).toLocaleDateString()}
+                  </span>
+                  <span>
+                    Created {new Date(credential.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
             </Link>
           ))}
         </div>
@@ -349,15 +413,15 @@ export default function CredentialsPage() {
 }
 
 function StatusBadge({ status }: { status: CredentialStatus }) {
-  const colors = {
-    active: 'bg-green-100 text-green-800',
-    revoked: 'bg-red-100 text-red-800',
-    expired: 'bg-yellow-100 text-yellow-800',
-    suspended: 'bg-orange-100 text-orange-800',
+  const styles = {
+    active: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    revoked: 'bg-red-500/10 text-red-400 border-red-500/20',
+    expired: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    suspended: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
   };
 
   return (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[status]}`}>
+    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${styles[status]}`}>
       {CREDENTIAL_STATUS_LABELS[status]}
     </span>
   );

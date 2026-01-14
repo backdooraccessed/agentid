@@ -48,18 +48,18 @@ export default async function DashboardPage() {
           <div className="flex justify-center">
             <LogoIcon size="xl" className="animate-float" />
           </div>
-          <h1 className="text-3xl font-bold">
-            Welcome to <span className="gradient-text">AgentID</span>
+          <h1 className="font-display text-3xl font-bold">
+            Welcome to AgentID
           </h1>
           <p className="text-muted-foreground max-w-md mx-auto">
             Get started by creating your issuer profile to begin issuing verifiable credentials to your AI agents.
           </p>
         </div>
 
-        <Card className="border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50/50 to-transparent dark:from-indigo-950/30">
+        <Card className="border-white/10 bg-white/[0.02]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              <Shield className="h-5 w-5 text-white/70" />
               Create Your Issuer Profile
             </CardTitle>
             <CardDescription>
@@ -87,23 +87,23 @@ export default async function DashboardPage() {
               allowing services to verify agent identity, permissions, and trustworthiness.
             </p>
             <div className="grid md:grid-cols-3 gap-4 pt-2">
-              <div className="p-4 rounded-lg bg-muted/50 space-y-2">
-                <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                  <Shield className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
+                  <Shield className="h-5 w-5 text-white/70" />
                 </div>
                 <div className="font-medium text-foreground">Issue Credentials</div>
                 <p className="text-xs">Create cryptographically signed credentials for your AI agents</p>
               </div>
-              <div className="p-4 rounded-lg bg-muted/50 space-y-2">
-                <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                  <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
+                  <CheckCircle className="h-5 w-5 text-emerald-400" />
                 </div>
                 <div className="font-medium text-foreground">Verify Identity</div>
                 <p className="text-xs">Allow services to verify your agents via simple API</p>
               </div>
-              <div className="p-4 rounded-lg bg-muted/50 space-y-2">
-                <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                  <Sparkles className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
+                  <Sparkles className="h-5 w-5 text-white/70" />
                 </div>
                 <div className="font-medium text-foreground">Build Trust</div>
                 <p className="text-xs">Establish reputation through verification history</p>
@@ -171,11 +171,11 @@ export default async function DashboardPage() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="font-display text-3xl font-bold tracking-tight">Dashboard</h1>
           <div className="flex items-center gap-2 text-muted-foreground">
             <span>Welcome back, {issuer.name}</span>
             {issuer.is_verified && (
-              <Badge variant="verified" className="gap-1">
+              <Badge className="gap-1 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
                 <ShieldCheck className="h-3 w-3" />
                 Verified
               </Badge>
@@ -183,7 +183,7 @@ export default async function DashboardPage() {
           </div>
         </div>
         <Link href="/credentials/new">
-          <Button className="gap-2 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 transition-shadow">
+          <Button className="gap-2 btn-glow">
             <Plus className="h-4 w-4" />
             Issue Credential
           </Button>
@@ -192,13 +192,13 @@ export default async function DashboardPage() {
 
       {/* Alert for expiring credentials */}
       {expiringCredentials > 0 && (
-        <Alert variant="warning" className="border-amber-200 bg-amber-50/50 dark:border-amber-800 dark:bg-amber-950/30">
-          <AlertTriangle className="h-4 w-4 text-amber-600" />
+        <Alert className="border-amber-500/20 bg-amber-500/5">
+          <AlertTriangle className="h-4 w-4 text-amber-400" />
           <AlertDescription className="flex items-center justify-between">
-            <span className="text-amber-800 dark:text-amber-200">
+            <span className="text-amber-200">
               {expiringCredentials} credential{expiringCredentials > 1 ? 's' : ''} expiring within 7 days
             </span>
-            <Link href="/credentials?status=expiring" className="text-amber-700 dark:text-amber-300 hover:underline font-medium flex items-center gap-1">
+            <Link href="/credentials?status=expiring" className="text-amber-400 hover:text-amber-300 font-medium flex items-center gap-1">
               Review now
               <ArrowRight className="h-3 w-3" />
             </Link>
@@ -214,7 +214,6 @@ export default async function DashboardPage() {
             value={activeCredentials}
             icon={Shield}
             description={`${credentials.length} total`}
-            variant="indigo"
           />
         </Link>
         <Link href="/analytics" className="block">
@@ -224,7 +223,6 @@ export default async function DashboardPage() {
             icon={Activity}
             description={`${verificationRate}% success rate`}
             trend={verifications.length > 0 ? { value: verificationRate, isPositive: verificationRate >= 90 } : undefined}
-            variant="emerald"
           />
         </Link>
         <Link href="/webhooks" className="block">
@@ -249,19 +247,19 @@ export default async function DashboardPage() {
       <div className="grid md:grid-cols-2 gap-6">
         {/* Quick Actions */}
         <Card className="overflow-hidden">
-          <CardHeader className="bg-muted/30">
+          <CardHeader className="bg-white/[0.02] border-b border-white/5">
             <CardTitle className="text-lg flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                <Zap className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <Zap className="h-4 w-4 text-white/70" />
               </div>
               Quick Actions
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 space-y-2">
             <Link href="/credentials/new" className="block group">
-              <div className="p-3 rounded-lg border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition-all flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <Plus className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              <div className="p-3 rounded-lg border border-transparent hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                  <Plus className="h-5 w-5 text-white/70" />
                 </div>
                 <div className="flex-1">
                   <div className="font-medium text-sm">Issue New Credential</div>
@@ -269,13 +267,13 @@ export default async function DashboardPage() {
                     Create a credential for an AI agent
                   </p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
             <Link href="/templates" className="block group">
-              <div className="p-3 rounded-lg border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition-all flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <FileText className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              <div className="p-3 rounded-lg border border-transparent hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                  <FileText className="h-5 w-5 text-white/70" />
                 </div>
                 <div className="flex-1">
                   <div className="font-medium text-sm">Manage Templates</div>
@@ -283,13 +281,13 @@ export default async function DashboardPage() {
                     Create reusable credential templates
                   </p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
             <Link href="/api-keys" className="block group">
-              <div className="p-3 rounded-lg border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition-all flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <Key className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              <div className="p-3 rounded-lg border border-transparent hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                  <Key className="h-5 w-5 text-white/70" />
                 </div>
                 <div className="flex-1">
                   <div className="font-medium text-sm">Create API Key</div>
@@ -297,13 +295,13 @@ export default async function DashboardPage() {
                     Generate keys for programmatic access
                   </p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
             <Link href="/analytics" className="block group">
-              <div className="p-3 rounded-lg border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition-all flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <BarChart3 className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              <div className="p-3 rounded-lg border border-transparent hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                  <BarChart3 className="h-5 w-5 text-white/70" />
                 </div>
                 <div className="flex-1">
                   <div className="font-medium text-sm">View Analytics</div>
@@ -311,7 +309,7 @@ export default async function DashboardPage() {
                     Detailed usage metrics and statistics
                   </p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
           </CardContent>
@@ -319,10 +317,10 @@ export default async function DashboardPage() {
 
         {/* Recent Activity */}
         <Card className="overflow-hidden">
-          <CardHeader className="bg-muted/30">
+          <CardHeader className="bg-white/[0.02] border-b border-white/5">
             <CardTitle className="text-lg flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                <Activity className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <Activity className="h-4 w-4 text-white/70" />
               </div>
               Recent Activity
             </CardTitle>
@@ -331,7 +329,7 @@ export default async function DashboardPage() {
           <CardContent className="p-4">
             {recentAnalytics.length === 0 ? (
               <div className="text-center py-8">
-                <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
                   <Activity className="h-8 w-8 text-muted-foreground/30" />
                 </div>
                 <p className="text-muted-foreground text-sm font-medium">No activity recorded yet</p>
@@ -342,7 +340,7 @@ export default async function DashboardPage() {
             ) : (
               <div className="space-y-2">
                 {recentAnalytics.slice(0, 5).map((day) => (
-                  <div key={day.date} className="flex justify-between items-center p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                  <div key={day.date} className="flex justify-between items-center p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
                     <span className="text-sm font-medium">
                       {new Date(day.date).toLocaleDateString('en-US', {
                         weekday: 'short',
@@ -352,22 +350,22 @@ export default async function DashboardPage() {
                     </span>
                     <div className="flex gap-2">
                       {day.verifications_total > 0 && (
-                        <span className="px-2 py-1 text-xs rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400">
+                        <span className="px-2 py-1 text-xs rounded-full bg-white/5 text-white/70">
                           {day.verifications_total} verifications
                         </span>
                       )}
                       {day.credentials_issued > 0 && (
-                        <span className="px-2 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                        <span className="px-2 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-400">
                           +{day.credentials_issued} issued
                         </span>
                       )}
                       {day.credentials_revoked > 0 && (
-                        <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                        <span className="px-2 py-1 text-xs rounded-full bg-red-500/10 text-red-400">
                           -{day.credentials_revoked} revoked
                         </span>
                       )}
                       {day.verifications_total === 0 && day.credentials_issued === 0 && day.credentials_revoked === 0 && (
-                        <span className="px-2 py-1 text-xs rounded-full bg-muted text-muted-foreground">No activity</span>
+                        <span className="px-2 py-1 text-xs rounded-full bg-white/5 text-muted-foreground">No activity</span>
                       )}
                     </div>
                   </div>
@@ -380,11 +378,11 @@ export default async function DashboardPage() {
 
       {/* Getting Started Guide for new issuers */}
       {credentials.length === 0 && (
-        <Card className="border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50/50 to-transparent dark:from-indigo-950/30 overflow-hidden">
-          <CardHeader className="bg-indigo-50/50 dark:bg-indigo-950/30">
+        <Card className="border-white/10 bg-white/[0.02] overflow-hidden">
+          <CardHeader className="bg-white/[0.02] border-b border-white/5">
             <CardTitle className="text-lg flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                <Sparkles className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-white/70" />
               </div>
               Getting Started
             </CardTitle>
@@ -395,19 +393,19 @@ export default async function DashboardPage() {
           <CardContent className="p-6">
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                  <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                  <CheckCircle className="h-5 w-5 text-emerald-400" />
                 </div>
                 <div className="flex-1">
                   <span className="line-through text-muted-foreground">Create issuer profile</span>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-indigo-600 dark:bg-indigo-500 text-white flex items-center justify-center font-semibold text-sm">
+                <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center font-semibold text-sm">
                   2
                 </div>
                 <div className="flex-1">
-                  <Link href="/credentials/new" className="font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-2">
+                  <Link href="/credentials/new" className="font-medium hover:text-white/80 transition-colors flex items-center gap-2">
                     Issue your first credential
                     <ArrowRight className="h-4 w-4" />
                   </Link>
@@ -415,7 +413,7 @@ export default async function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center font-semibold text-sm">
+                <div className="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center font-semibold text-sm">
                   3
                 </div>
                 <div className="flex-1">
@@ -424,7 +422,7 @@ export default async function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center font-semibold text-sm">
+                <div className="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center font-semibold text-sm">
                   4
                 </div>
                 <div className="flex-1">
