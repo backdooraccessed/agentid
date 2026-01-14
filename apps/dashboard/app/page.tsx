@@ -11,6 +11,12 @@ import {
   TrendingUp,
   Cable,
   Fingerprint,
+  ShoppingCart,
+  HeadphonesIcon,
+  Bot,
+  Building2,
+  CreditCard,
+  Database,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -247,6 +253,76 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Real-World Use Cases */}
+      <section className="py-24">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <Badge variant="secondary" className="mb-4">Real-World Examples</Badge>
+            <h2 className="text-3xl font-bold mb-4">When to use AgentID</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              See how organizations use AgentID to secure their AI agents in production environments.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <UseCaseCard
+              icon={ShoppingCart}
+              title="E-commerce Purchasing Agent"
+              scenario="Your AI agent needs to make purchases on behalf of customers"
+              problem="Without verification, any bot could claim to represent your company and make unauthorized purchases"
+              solution="Issue credentials with spending limits ($500/transaction, $2000/day). Merchants verify the credential before processing orders."
+              tags={["Spending Limits", "Merchant Trust"]}
+            />
+            <UseCaseCard
+              icon={HeadphonesIcon}
+              title="Customer Support Bot"
+              scenario="Your support bot needs to access customer data from third-party services"
+              problem="Third-party APIs can't distinguish your legitimate bot from imposters or malicious agents"
+              solution="Your bot presents its AgentID credential. The API verifies it's authorized to access support data, not billing or admin functions."
+              tags={["Data Access", "Permission Scoping"]}
+            />
+            <UseCaseCard
+              icon={CreditCard}
+              title="Financial Trading Agent"
+              scenario="An autonomous agent executes trades on a crypto exchange"
+              problem="Exchanges need to verify the agent is authorized and has trading limits before executing orders"
+              solution="Credential specifies max trade size, allowed pairs, and daily volume limits. Exchange verifies before each trade."
+              tags={["Trading Limits", "Compliance"]}
+            />
+            <UseCaseCard
+              icon={Bot}
+              title="Multi-Agent Collaboration"
+              scenario="Multiple AI agents from different companies need to work together"
+              problem="Agent A can't trust that Agent B is who it claims to be or has the permissions it claims"
+              solution="Both agents verify each other's credentials before sharing data. Trust scores help decide collaboration depth."
+              tags={["Agent-to-Agent", "Trust Scores"]}
+            />
+            <UseCaseCard
+              icon={Database}
+              title="Data Pipeline Agent"
+              scenario="An ETL agent needs read access to production databases"
+              problem="You need to ensure the agent can only READ data, never write or delete"
+              solution="Credential explicitly grants only 'data_read' permission. Database proxy verifies credential and enforces read-only access."
+              tags={["Read-Only", "Data Protection"]}
+            />
+            <UseCaseCard
+              icon={Building2}
+              title="Enterprise SaaS Integration"
+              scenario="A customer's AI agent wants to access your SaaS API"
+              problem="You need to verify the agent is from a paying customer and within their plan limits"
+              solution="Customer issues credentials to their agents with your API. You verify the issuer is a valid customer and check their tier."
+              tags={["B2B", "Plan Enforcement"]}
+            />
+          </div>
+
+          <div className="mt-12 text-center">
+            <p className="text-muted-foreground mb-4">
+              The common thread: <span className="text-foreground font-medium">AgentID answers &quot;Should I trust this agent?&quot; before any action is taken.</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Code Example */}
       <section className="py-24">
         <div className="max-w-6xl mx-auto px-4">
@@ -419,5 +495,57 @@ function ComparisonItem({ text, muted = false }: { text: string; muted?: boolean
       <CheckCircle className={`h-4 w-4 flex-shrink-0 ${muted ? 'text-muted-foreground/50' : 'text-primary'}`} />
       <span className={muted ? 'text-muted-foreground' : ''}>{text}</span>
     </li>
+  );
+}
+
+function UseCaseCard({
+  icon: Icon,
+  title,
+  scenario,
+  problem,
+  solution,
+  tags,
+}: {
+  icon: typeof Shield;
+  title: string;
+  scenario: string;
+  problem: string;
+  solution: string;
+  tags: string[];
+}) {
+  return (
+    <div className="bg-background rounded-xl border p-6 hover:shadow-lg transition-all hover:border-primary/30 group">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+          <Icon className="h-5 w-5 text-primary" />
+        </div>
+        <h3 className="font-semibold">{title}</h3>
+      </div>
+
+      <div className="space-y-3 text-sm">
+        <div>
+          <span className="text-muted-foreground">Scenario: </span>
+          <span>{scenario}</span>
+        </div>
+
+        <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 rounded-lg p-3">
+          <span className="text-red-700 dark:text-red-400 font-medium text-xs uppercase tracking-wide">Problem</span>
+          <p className="text-red-900 dark:text-red-300 mt-1">{problem}</p>
+        </div>
+
+        <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/30 rounded-lg p-3">
+          <span className="text-green-700 dark:text-green-400 font-medium text-xs uppercase tracking-wide">With AgentID</span>
+          <p className="text-green-900 dark:text-green-300 mt-1">{solution}</p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mt-4">
+        {tags.map((tag) => (
+          <span key={tag} className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
