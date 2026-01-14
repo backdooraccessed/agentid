@@ -8,6 +8,7 @@ const navItems = [
     section: 'Overview',
     items: [
       { href: '/', label: 'Dashboard', exact: true },
+      { href: '/guide', label: 'User Guide' },
     ],
   },
   {
