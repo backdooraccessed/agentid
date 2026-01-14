@@ -1,6 +1,11 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { StatCard } from '@/components/shared/stat-card';
+import { VerificationChart } from '@/components/analytics/verification-chart';
+import { StatusChart } from '@/components/analytics/status-chart';
+import { Shield, CheckCircle, XCircle, TrendingUp } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -75,6 +80,8 @@ export default async function AnalyticsPage() {
     .eq('issuer_id', issuer.id);
 
   const activeCredentials = (currentStats || []).filter(c => c.status === 'active').length;
+  const expiredCredentials = (currentStats || []).filter(c => c.status === 'expired').length;
+  const revokedCredentials = (currentStats || []).filter(c => c.status === 'revoked').length;
   const totalCredentials = (currentStats || []).length;
 
   // Get recent verifications
@@ -87,7 +94,7 @@ export default async function AnalyticsPage() {
 
   const successRate = totals.verifications_total > 0
     ? (totals.verifications_successful / totals.verifications_total * 100).toFixed(1)
-    : '0.0';
+    : '100.0';
 
   return (
     <div className="space-y-8">
@@ -100,30 +107,42 @@ export default async function AnalyticsPage() {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Total Credentials</CardDescription>
-            <CardTitle className="text-3xl">{totalCredentials}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Active Credentials</CardDescription>
-            <CardTitle className="text-3xl text-green-600">{activeCredentials}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Total Verifications</CardDescription>
-            <CardTitle className="text-3xl">{totals.verifications_total}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Success Rate</CardDescription>
-            <CardTitle className="text-3xl text-blue-600">{successRate}%</CardTitle>
-          </CardHeader>
-        </Card>
+        <StatCard
+          title="Total Credentials"
+          value={totalCredentials}
+          icon={Shield}
+          description="All time"
+        />
+        <StatCard
+          title="Active Credentials"
+          value={activeCredentials}
+          icon={CheckCircle}
+          trend={totals.credentials_issued > 0 ? { value: totals.credentials_issued, isPositive: true } : undefined}
+        />
+        <StatCard
+          title="Total Verifications"
+          value={totals.verifications_total}
+          icon={TrendingUp}
+          description="Last 30 days"
+        />
+        <StatCard
+          title="Success Rate"
+          value={`${successRate}%`}
+          icon={CheckCircle}
+          description="Verification success"
+        />
+      </div>
+
+      {/* Charts */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <VerificationChart data={dailyAnalytics || []} />
+        </div>
+        <StatusChart
+          active={activeCredentials}
+          expired={expiredCredentials}
+          revoked={revokedCredentials}
+        />
       </div>
 
       {/* Period Stats */}
@@ -136,11 +155,11 @@ export default async function AnalyticsPage() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Issued</span>
-                <span className="font-semibold text-green-600">+{totals.credentials_issued}</span>
+                <Badge variant="success">+{totals.credentials_issued}</Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Revoked</span>
-                <span className="font-semibold text-red-600">-{totals.credentials_revoked}</span>
+                <Badge variant="destructive">-{totals.credentials_revoked}</Badge>
               </div>
               <div className="flex justify-between items-center pt-2 border-t">
                 <span className="text-muted-foreground">Net Change</span>
@@ -161,11 +180,11 @@ export default async function AnalyticsPage() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Successful</span>
-                <span className="font-semibold text-green-600">{totals.verifications_successful}</span>
+                <Badge variant="success">{totals.verifications_successful}</Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Failed</span>
-                <span className="font-semibold text-red-600">{totals.verifications_failed}</span>
+                <Badge variant="destructive">{totals.verifications_failed}</Badge>
               </div>
               <div className="flex justify-between items-center pt-2 border-t">
                 <span className="text-muted-foreground">Total</span>
@@ -184,29 +203,32 @@ export default async function AnalyticsPage() {
         </CardHeader>
         <CardContent>
           {(!recentVerifications || recentVerifications.length === 0) ? (
-            <p className="text-muted-foreground text-center py-4">
-              No verifications recorded yet
-            </p>
+            <div className="text-center py-8">
+              <XCircle className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+              <p className="text-muted-foreground">No verifications recorded yet</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Verifications will appear here when your credentials are verified
+              </p>
+            </div>
           ) : (
             <div className="space-y-2">
               {recentVerifications.map((v) => (
                 <div
                   key={v.id}
-                  className="flex justify-between items-center py-2 border-b last:border-0"
+                  className="flex justify-between items-center py-3 px-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
                 >
-                  <div>
+                  <div className="flex items-center gap-3">
+                    {v.success ? (
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <XCircle className="h-4 w-4 text-red-600" />
+                    )}
                     <span className="font-mono text-sm">{v.agent_id}</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span
-                      className={`text-xs px-2 py-1 rounded ${
-                        v.success
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}
-                    >
+                    <Badge variant={v.success ? 'success' : 'destructive'}>
                       {v.success ? 'Valid' : 'Invalid'}
-                    </span>
+                    </Badge>
                     <span className="text-xs text-muted-foreground">
                       {new Date(v.verified_at).toLocaleString()}
                     </span>
@@ -217,43 +239,6 @@ export default async function AnalyticsPage() {
           )}
         </CardContent>
       </Card>
-
-      {/* Daily Breakdown */}
-      {dailyAnalytics && dailyAnalytics.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Daily Activity</CardTitle>
-            <CardDescription>Verification activity by day</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {[...dailyAnalytics].reverse().map((day) => (
-                <div
-                  key={day.date}
-                  className="flex justify-between items-center py-2 border-b last:border-0"
-                >
-                  <span className="text-sm">{new Date(day.date).toLocaleDateString()}</span>
-                  <div className="flex gap-4 text-sm">
-                    <span className="text-green-600">
-                      {day.verifications_successful} verified
-                    </span>
-                    {day.verifications_failed > 0 && (
-                      <span className="text-red-600">
-                        {day.verifications_failed} failed
-                      </span>
-                    )}
-                    {day.credentials_issued > 0 && (
-                      <span className="text-blue-600">
-                        +{day.credentials_issued} issued
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }

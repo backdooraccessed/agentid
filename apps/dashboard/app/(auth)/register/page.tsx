@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,12 +39,14 @@ export default function RegisterPage() {
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      toast.error('Validation error', { description: 'Passwords do not match' });
       setLoading(false);
       return;
     }
 
     if (password.length < 8) {
       setError('Password must be at least 8 characters');
+      toast.error('Validation error', { description: 'Password must be at least 8 characters' });
       setLoading(false);
       return;
     }
@@ -55,10 +58,12 @@ export default function RegisterPage() {
 
     if (error) {
       setError(error.message);
+      toast.error('Registration failed', { description: error.message });
       setLoading(false);
       return;
     }
 
+    toast.success('Account created!', { description: 'Welcome to AgentID' });
     router.push('/credentials');
     router.refresh();
   };

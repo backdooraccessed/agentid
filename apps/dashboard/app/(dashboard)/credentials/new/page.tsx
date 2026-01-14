@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,12 +41,14 @@ export default function NewCredentialPage() {
 
     if (formData.actions.length === 0) {
       setError('Please select at least one permission action');
+      toast.error('Validation error', { description: 'Please select at least one permission action' });
       setLoading(false);
       return;
     }
 
     if (formData.domains.length === 0) {
       setError('Please select at least one permission domain');
+      toast.error('Validation error', { description: 'Please select at least one permission domain' });
       setLoading(false);
       return;
     }
@@ -84,14 +87,17 @@ export default function NewCredentialPage() {
 
       if (!response.ok) {
         setError(data.error || 'Failed to issue credential');
+        toast.error('Failed to issue credential', { description: data.error || 'Please try again' });
         setLoading(false);
         return;
       }
 
+      toast.success('Credential issued!', { description: `Created credential for ${formData.agent_name}` });
       router.push('/credentials');
       router.refresh();
     } catch {
       setError('Network error. Please try again.');
+      toast.error('Network error', { description: 'Please check your connection and try again' });
       setLoading(false);
     }
   };

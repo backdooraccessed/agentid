@@ -3,6 +3,22 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { StatCard } from '@/components/shared/stat-card';
+import {
+  Shield,
+  CheckCircle,
+  Webhook,
+  Key,
+  Plus,
+  FileText,
+  BarChart3,
+  AlertTriangle,
+  Sparkles,
+  ArrowRight,
+  Zap,
+  Activity
+} from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -148,71 +164,54 @@ export default async function DashboardPage() {
 
       {/* Alert for expiring credentials */}
       {expiringCredentials > 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <span className="text-yellow-600 font-medium">
-              {expiringCredentials} credential{expiringCredentials > 1 ? 's' : ''} expiring soon
+        <Alert variant="warning">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription className="flex items-center justify-between">
+            <span>
+              {expiringCredentials} credential{expiringCredentials > 1 ? 's' : ''} expiring within 7 days
             </span>
-            <Link href="/credentials?status=expiring" className="text-yellow-700 underline text-sm">
-              View
+            <Link href="/credentials?status=expiring" className="text-yellow-700 hover:underline font-medium">
+              Review now
             </Link>
-          </div>
-        </div>
+          </AlertDescription>
+        </Alert>
       )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Active Credentials</CardDescription>
-            <CardTitle className="text-3xl">{activeCredentials}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Link href="/credentials" className="text-xs text-primary hover:underline">
-              View all
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Verifications (30d)</CardDescription>
-            <CardTitle className="text-3xl">{verifications.length}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <span className="text-xs text-muted-foreground">
-              {verificationRate}% success rate
-            </span>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Active Webhooks</CardDescription>
-            <CardTitle className="text-3xl">
-              {webhooks.filter(w => w.is_active).length}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Link href="/webhooks" className="text-xs text-primary hover:underline">
-              Manage
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>API Keys</CardDescription>
-            <CardTitle className="text-3xl">
-              {apiKeys.filter(k => k.is_active).length}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Link href="/api-keys" className="text-xs text-primary hover:underline">
-              Manage
-            </Link>
-          </CardContent>
-        </Card>
+        <Link href="/credentials">
+          <StatCard
+            title="Active Credentials"
+            value={activeCredentials}
+            icon={Shield}
+            description={`${credentials.length} total`}
+          />
+        </Link>
+        <Link href="/analytics">
+          <StatCard
+            title="Verifications (30d)"
+            value={verifications.length}
+            icon={Activity}
+            description={`${verificationRate}% success rate`}
+            trend={verifications.length > 0 ? { value: verificationRate, isPositive: verificationRate >= 90 } : undefined}
+          />
+        </Link>
+        <Link href="/webhooks">
+          <StatCard
+            title="Active Webhooks"
+            value={webhooks.filter(w => w.is_active).length}
+            icon={Webhook}
+            description={`${webhooks.length} configured`}
+          />
+        </Link>
+        <Link href="/api-keys">
+          <StatCard
+            title="API Keys"
+            value={apiKeys.filter(k => k.is_active).length}
+            icon={Key}
+            description={`${apiKeys.length} total`}
+          />
+        </Link>
       </div>
 
       {/* Quick Actions & Recent Activity */}
@@ -220,39 +219,66 @@ export default async function DashboardPage() {
         {/* Quick Actions */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Quick Actions</CardTitle>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Zap className="h-5 w-5 text-primary" />
+              Quick Actions
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <Link href="/credentials/new" className="block">
-              <div className="p-3 rounded-md border hover:bg-accent transition-colors">
-                <div className="font-medium text-sm">Issue New Credential</div>
-                <p className="text-xs text-muted-foreground">
-                  Create a credential for an AI agent
-                </p>
+            <Link href="/credentials/new" className="block group">
+              <div className="p-3 rounded-lg border hover:border-primary hover:bg-primary/5 transition-all flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Plus className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-sm">Issue New Credential</div>
+                  <p className="text-xs text-muted-foreground">
+                    Create a credential for an AI agent
+                  </p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
-            <Link href="/templates" className="block">
-              <div className="p-3 rounded-md border hover:bg-accent transition-colors">
-                <div className="font-medium text-sm">Manage Templates</div>
-                <p className="text-xs text-muted-foreground">
-                  Create reusable credential templates
-                </p>
+            <Link href="/templates" className="block group">
+              <div className="p-3 rounded-lg border hover:border-primary hover:bg-primary/5 transition-all flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <FileText className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-sm">Manage Templates</div>
+                  <p className="text-xs text-muted-foreground">
+                    Create reusable credential templates
+                  </p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
-            <Link href="/api-keys" className="block">
-              <div className="p-3 rounded-md border hover:bg-accent transition-colors">
-                <div className="font-medium text-sm">Create API Key</div>
-                <p className="text-xs text-muted-foreground">
-                  Generate keys for programmatic access
-                </p>
+            <Link href="/api-keys" className="block group">
+              <div className="p-3 rounded-lg border hover:border-primary hover:bg-primary/5 transition-all flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Key className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-sm">Create API Key</div>
+                  <p className="text-xs text-muted-foreground">
+                    Generate keys for programmatic access
+                  </p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
-            <Link href="/analytics" className="block">
-              <div className="p-3 rounded-md border hover:bg-accent transition-colors">
-                <div className="font-medium text-sm">View Analytics</div>
-                <p className="text-xs text-muted-foreground">
-                  Detailed usage metrics and statistics
-                </p>
+            <Link href="/analytics" className="block group">
+              <div className="p-3 rounded-lg border hover:border-primary hover:bg-primary/5 transition-all flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <BarChart3 className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-sm">View Analytics</div>
+                  <p className="text-xs text-muted-foreground">
+                    Detailed usage metrics and statistics
+                  </p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
           </CardContent>
@@ -261,42 +287,50 @@ export default async function DashboardPage() {
         {/* Recent Activity */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Recent Activity (7 days)</CardTitle>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Activity className="h-5 w-5 text-primary" />
+              Recent Activity
+            </CardTitle>
+            <CardDescription>Last 7 days of activity</CardDescription>
           </CardHeader>
           <CardContent>
             {recentAnalytics.length === 0 ? (
-              <p className="text-muted-foreground text-sm text-center py-4">
-                No activity recorded yet
-              </p>
+              <div className="text-center py-8">
+                <Activity className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+                <p className="text-muted-foreground text-sm">No activity recorded yet</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Activity will appear here as you use AgentID
+                </p>
+              </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {recentAnalytics.slice(0, 5).map((day) => (
-                  <div key={day.date} className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">
+                  <div key={day.date} className="flex justify-between items-center p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                    <span className="text-sm font-medium">
                       {new Date(day.date).toLocaleDateString('en-US', {
                         weekday: 'short',
                         month: 'short',
                         day: 'numeric'
                       })}
                     </span>
-                    <div className="flex gap-3 text-xs">
+                    <div className="flex gap-2">
                       {day.verifications_total > 0 && (
-                        <span className="text-blue-600">
+                        <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
                           {day.verifications_total} verifications
                         </span>
                       )}
                       {day.credentials_issued > 0 && (
-                        <span className="text-green-600">
+                        <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
                           +{day.credentials_issued} issued
                         </span>
                       )}
                       {day.credentials_revoked > 0 && (
-                        <span className="text-red-600">
+                        <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
                           -{day.credentials_revoked} revoked
                         </span>
                       )}
                       {day.verifications_total === 0 && day.credentials_issued === 0 && day.credentials_revoked === 0 && (
-                        <span className="text-muted-foreground">No activity</span>
+                        <span className="px-2 py-1 text-xs rounded-full bg-muted text-muted-foreground">No activity</span>
                       )}
                     </div>
                   </div>
@@ -309,40 +343,55 @@ export default async function DashboardPage() {
 
       {/* Getting Started Guide for new issuers */}
       {credentials.length === 0 && (
-        <Card>
+        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
           <CardHeader>
-            <CardTitle className="text-lg">Getting Started</CardTitle>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              Getting Started
+            </CardTitle>
             <CardDescription>
               Complete these steps to start using AgentID
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">
-                  1
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
-                <span className="line-through text-muted-foreground">Create issuer profile</span>
+                <div className="flex-1">
+                  <span className="line-through text-muted-foreground">Create issuer profile</span>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs">
+              <div className="flex items-center gap-4">
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold text-sm">
                   2
                 </div>
-                <Link href="/credentials/new" className="hover:underline">
-                  Issue your first credential
-                </Link>
+                <div className="flex-1">
+                  <Link href="/credentials/new" className="font-medium hover:text-primary transition-colors flex items-center gap-2">
+                    Issue your first credential
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <p className="text-xs text-muted-foreground mt-0.5">Create a credential for an AI agent</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-xs">
+              <div className="flex items-center gap-4">
+                <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center font-semibold text-sm">
                   3
                 </div>
-                <span className="text-muted-foreground">Set up webhooks for notifications</span>
+                <div className="flex-1">
+                  <span className="text-muted-foreground">Set up webhooks for notifications</span>
+                  <p className="text-xs text-muted-foreground mt-0.5">Get notified when credentials are verified</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-xs">
+              <div className="flex items-center gap-4">
+                <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center font-semibold text-sm">
                   4
                 </div>
-                <span className="text-muted-foreground">Create API keys for integration</span>
+                <div className="flex-1">
+                  <span className="text-muted-foreground">Create API keys for integration</span>
+                  <p className="text-xs text-muted-foreground mt-0.5">Programmatically manage credentials</p>
+                </div>
               </div>
             </div>
           </CardContent>

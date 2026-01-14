@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,10 +31,12 @@ export default function LoginPage() {
 
     if (error) {
       setError(error.message);
+      toast.error('Sign in failed', { description: error.message });
       setLoading(false);
       return;
     }
 
+    toast.success('Welcome back!', { description: 'Redirecting to dashboard...' });
     router.push('/credentials');
     router.refresh();
   };
