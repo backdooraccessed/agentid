@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Loader2, Check, X, ArrowRight, Shield } from 'lucide-react';
+import { AlertCircle, Loader2, Check, X, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function RegisterPage() {
@@ -35,15 +35,15 @@ export default function RegisterPage() {
   const getStrengthColor = (passed: number) => {
     if (passed <= 1) return 'bg-red-500';
     if (passed === 2) return 'bg-amber-500';
-    if (passed === 3) return 'bg-indigo-500';
+    if (passed === 3) return 'bg-white/50';
     return 'bg-emerald-500';
   };
 
   const getStrengthLabel = (passed: number) => {
-    if (passed <= 1) return { text: 'Weak', color: 'text-red-600 dark:text-red-400' };
-    if (passed === 2) return { text: 'Fair', color: 'text-amber-600 dark:text-amber-400' };
-    if (passed === 3) return { text: 'Good', color: 'text-indigo-600 dark:text-indigo-400' };
-    return { text: 'Strong', color: 'text-emerald-600 dark:text-emerald-400' };
+    if (passed <= 1) return { text: 'Weak', color: 'text-red-400' };
+    if (passed === 2) return { text: 'Fair', color: 'text-amber-400' };
+    if (passed === 3) return { text: 'Good', color: 'text-white/70' };
+    return { text: 'Strong', color: 'text-emerald-400' };
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -88,7 +88,7 @@ export default function RegisterPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="space-y-2 text-center lg:text-left">
-        <h1 className="text-3xl font-bold tracking-tight">Create an account</h1>
+        <h1 className="font-display text-3xl font-bold tracking-tight">Create an account</h1>
         <p className="text-muted-foreground">
           Start issuing verifiable credentials for your AI agents
         </p>
@@ -97,9 +97,9 @@ export default function RegisterPage() {
       {/* Form */}
       <form onSubmit={handleRegister} className="space-y-5">
         {error && (
-          <Alert variant="destructive" className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/30">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+          <Alert className="border-red-500/20 bg-red-500/5">
+            <AlertCircle className="h-4 w-4 text-red-400" />
+            <AlertDescription className="text-red-200">{error}</AlertDescription>
           </Alert>
         )}
 
@@ -115,7 +115,7 @@ export default function RegisterPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="email"
-            className="h-12 px-4 border-muted-foreground/20 focus:border-indigo-500 focus:ring-indigo-500/20"
+            className="h-12 px-4 bg-white/[0.02] border-white/10 focus:border-white/30 focus:ring-white/10"
           />
         </div>
 
@@ -131,10 +131,10 @@ export default function RegisterPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="new-password"
-            className="h-12 px-4 border-muted-foreground/20 focus:border-indigo-500 focus:ring-indigo-500/20"
+            className="h-12 px-4 bg-white/[0.02] border-white/10 focus:border-white/30 focus:ring-white/10"
           />
           {password && (
-            <div className="space-y-3 p-4 rounded-lg bg-muted/30 border">
+            <div className="space-y-3 p-4 rounded-lg bg-white/[0.02] border border-white/10">
               {/* Strength bar */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
@@ -151,7 +151,7 @@ export default function RegisterPage() {
                         'h-1.5 flex-1 rounded-full transition-all duration-300',
                         i < passwordStrength.passed
                           ? getStrengthColor(passwordStrength.passed)
-                          : 'bg-muted'
+                          : 'bg-white/10'
                       )}
                     />
                   ))}
@@ -181,18 +181,18 @@ export default function RegisterPage() {
             required
             autoComplete="new-password"
             className={cn(
-              'h-12 px-4 border-muted-foreground/20 focus:border-indigo-500 focus:ring-indigo-500/20',
-              confirmPassword && password !== confirmPassword && 'border-red-300 focus:border-red-500'
+              'h-12 px-4 bg-white/[0.02] border-white/10 focus:border-white/30 focus:ring-white/10',
+              confirmPassword && password !== confirmPassword && 'border-red-500/30 focus:border-red-500/50'
             )}
           />
           {confirmPassword && password !== confirmPassword && (
-            <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1.5">
+            <p className="text-xs text-red-400 flex items-center gap-1.5">
               <X className="h-3.5 w-3.5" />
               Passwords do not match
             </p>
           )}
           {confirmPassword && password === confirmPassword && confirmPassword.length > 0 && (
-            <p className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+            <p className="text-xs text-emerald-400 flex items-center gap-1.5">
               <Check className="h-3.5 w-3.5" />
               Passwords match
             </p>
@@ -201,7 +201,7 @@ export default function RegisterPage() {
 
         <Button
           type="submit"
-          className="w-full h-12 text-base font-medium bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all"
+          className="w-full h-12 text-base font-medium btn-glow"
           disabled={loading}
         >
           {loading ? (
@@ -220,11 +220,11 @@ export default function RegisterPage() {
         {/* Terms */}
         <p className="text-xs text-muted-foreground text-center">
           By creating an account, you agree to our{' '}
-          <Link href="/terms" className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 underline-offset-4 hover:underline">
+          <Link href="/terms" className="text-white/70 hover:text-white underline-offset-4 hover:underline">
             Terms of Service
           </Link>{' '}
           and{' '}
-          <Link href="/privacy" className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 underline-offset-4 hover:underline">
+          <Link href="/privacy" className="text-white/70 hover:text-white underline-offset-4 hover:underline">
             Privacy Policy
           </Link>
         </p>
@@ -233,7 +233,7 @@ export default function RegisterPage() {
       {/* Divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-muted-foreground/10" />
+          <div className="w-full border-t border-white/10" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
@@ -246,7 +246,7 @@ export default function RegisterPage() {
       <div className="text-center">
         <Link
           href="/login"
-          className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors"
         >
           Sign in to your account
           <ArrowRight className="h-3.5 w-3.5" />
@@ -262,14 +262,14 @@ function PasswordCheck({ passed, label }: { passed: boolean; label: string }) {
       className={cn(
         'flex items-center gap-2 text-xs transition-colors',
         passed
-          ? 'text-emerald-600 dark:text-emerald-400'
+          ? 'text-emerald-400'
           : 'text-muted-foreground'
       )}
     >
       {passed ? (
         <Check className="h-3.5 w-3.5" />
       ) : (
-        <div className="h-3.5 w-3.5 rounded-full border border-muted-foreground/30" />
+        <div className="h-3.5 w-3.5 rounded-full border border-white/20" />
       )}
       {label}
     </div>

@@ -45,7 +45,7 @@ export default function LoginPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="space-y-2 text-center lg:text-left">
-        <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
+        <h1 className="font-display text-3xl font-bold tracking-tight">Welcome back</h1>
         <p className="text-muted-foreground">
           Sign in to your account to manage your credentials
         </p>
@@ -54,9 +54,9 @@ export default function LoginPage() {
       {/* Form */}
       <form onSubmit={handleLogin} className="space-y-5">
         {error && (
-          <Alert variant="destructive" className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/30">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+          <Alert className="border-red-500/20 bg-red-500/5">
+            <AlertCircle className="h-4 w-4 text-red-400" />
+            <AlertDescription className="text-red-200">{error}</AlertDescription>
           </Alert>
         )}
 
@@ -72,7 +72,7 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="email"
-            className="h-12 px-4 border-muted-foreground/20 focus:border-indigo-500 focus:ring-indigo-500/20"
+            className="h-12 px-4 bg-white/[0.02] border-white/10 focus:border-white/30 focus:ring-white/10"
           />
         </div>
 
@@ -83,7 +83,7 @@ export default function LoginPage() {
             </Label>
             <Link
               href="/forgot-password"
-              className="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium"
+              className="text-sm text-white/70 hover:text-white font-medium transition-colors"
             >
               Forgot password?
             </Link>
@@ -96,13 +96,13 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
-            className="h-12 px-4 border-muted-foreground/20 focus:border-indigo-500 focus:ring-indigo-500/20"
+            className="h-12 px-4 bg-white/[0.02] border-white/10 focus:border-white/30 focus:ring-white/10"
           />
         </div>
 
         <Button
           type="submit"
-          className="w-full h-12 text-base font-medium bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all"
+          className="w-full h-12 text-base font-medium btn-glow"
           disabled={loading}
         >
           {loading ? (
@@ -122,7 +122,7 @@ export default function LoginPage() {
       {/* Divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-muted-foreground/10" />
+          <div className="w-full border-t border-white/10" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
@@ -135,7 +135,7 @@ export default function LoginPage() {
       <div className="text-center">
         <Link
           href="/register"
-          className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors"
         >
           Create a free account
           <ArrowRight className="h-3.5 w-3.5" />
