@@ -111,8 +111,9 @@ export async function POST(
       return NextResponse.json(
         {
           error: 'Failed to re-sign credential',
+          version: 'v2',
           debug: {
-            signError: signError?.message || String(signError),
+            signError: signError?.message || signError?.name || String(signError) || 'unknown',
             signedData: signed,
             issuerId: (credential.issuers as { id: string }).id,
           }
