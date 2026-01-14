@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Loader2, Check, X } from 'lucide-react';
+import { AlertCircle, Loader2, Check, X, ArrowRight, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function RegisterPage() {
@@ -31,6 +31,20 @@ export default function RegisterPage() {
     const passed = Object.values(checks).filter(Boolean).length;
     return { checks, passed, total: 4 };
   }, [password]);
+
+  const getStrengthColor = (passed: number) => {
+    if (passed <= 1) return 'bg-red-500';
+    if (passed === 2) return 'bg-amber-500';
+    if (passed === 3) return 'bg-indigo-500';
+    return 'bg-emerald-500';
+  };
+
+  const getStrengthLabel = (passed: number) => {
+    if (passed <= 1) return { text: 'Weak', color: 'text-red-600 dark:text-red-400' };
+    if (passed === 2) return { text: 'Fair', color: 'text-amber-600 dark:text-amber-400' };
+    if (passed === 3) return { text: 'Good', color: 'text-indigo-600 dark:text-indigo-400' };
+    return { text: 'Strong', color: 'text-emerald-600 dark:text-emerald-400' };
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,25 +82,31 @@ export default function RegisterPage() {
     router.refresh();
   };
 
+  const strengthLabel = getStrengthLabel(passwordStrength.passed);
+
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Create an account</h1>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="space-y-2 text-center lg:text-left">
+        <h1 className="text-3xl font-bold tracking-tight">Create an account</h1>
         <p className="text-muted-foreground">
-          Start issuing credentials for your AI agents
+          Start issuing verifiable credentials for your AI agents
         </p>
       </div>
 
-      <form onSubmit={handleRegister} className="space-y-4">
+      {/* Form */}
+      <form onSubmit={handleRegister} className="space-y-5">
         {error && (
-          <Alert variant="destructive">
+          <Alert variant="destructive" className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/30">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-sm font-medium">
+            Email address
+          </Label>
           <Input
             id="email"
             type="email"
@@ -95,12 +115,14 @@ export default function RegisterPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="email"
-            className="h-11"
+            className="h-12 px-4 border-muted-foreground/20 focus:border-indigo-500 focus:ring-indigo-500/20"
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+        <div className="space-y-3">
+          <Label htmlFor="password" className="text-sm font-medium">
+            Password
+          </Label>
           <Input
             id="password"
             type="password"
@@ -109,31 +131,37 @@ export default function RegisterPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="new-password"
-            className="h-11"
+            className="h-12 px-4 border-muted-foreground/20 focus:border-indigo-500 focus:ring-indigo-500/20"
           />
           {password && (
-            <div className="space-y-2">
-              <div className="flex gap-1">
-                {[...Array(4)].map((_, i) => (
-                  <div
-                    key={i}
-                    className={cn(
-                      'h-1 flex-1 rounded-full transition-colors',
-                      i < passwordStrength.passed
-                        ? passwordStrength.passed <= 2
-                          ? 'bg-red-500'
-                          : passwordStrength.passed === 3
-                          ? 'bg-yellow-500'
-                          : 'bg-green-500'
-                        : 'bg-muted'
-                    )}
-                  />
-                ))}
+            <div className="space-y-3 p-4 rounded-lg bg-muted/30 border">
+              {/* Strength bar */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Password strength</span>
+                  <span className={cn('font-medium', strengthLabel.color)}>
+                    {strengthLabel.text}
+                  </span>
+                </div>
+                <div className="flex gap-1.5">
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        'h-1.5 flex-1 rounded-full transition-all duration-300',
+                        i < passwordStrength.passed
+                          ? getStrengthColor(passwordStrength.passed)
+                          : 'bg-muted'
+                      )}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+              {/* Requirements */}
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                 <PasswordCheck passed={passwordStrength.checks.length} label="8+ characters" />
-                <PasswordCheck passed={passwordStrength.checks.uppercase} label="Uppercase letter" />
-                <PasswordCheck passed={passwordStrength.checks.lowercase} label="Lowercase letter" />
+                <PasswordCheck passed={passwordStrength.checks.uppercase} label="Uppercase" />
+                <PasswordCheck passed={passwordStrength.checks.lowercase} label="Lowercase" />
                 <PasswordCheck passed={passwordStrength.checks.number} label="Number" />
               </div>
             </div>
@@ -141,7 +169,9 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Label htmlFor="confirmPassword" className="text-sm font-medium">
+            Confirm password
+          </Label>
           <Input
             id="confirmPassword"
             type="password"
@@ -150,43 +180,76 @@ export default function RegisterPage() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
             autoComplete="new-password"
-            className="h-11"
+            className={cn(
+              'h-12 px-4 border-muted-foreground/20 focus:border-indigo-500 focus:ring-indigo-500/20',
+              confirmPassword && password !== confirmPassword && 'border-red-300 focus:border-red-500'
+            )}
           />
           {confirmPassword && password !== confirmPassword && (
-            <p className="text-xs text-destructive flex items-center gap-1">
-              <X className="h-3 w-3" />
+            <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1.5">
+              <X className="h-3.5 w-3.5" />
               Passwords do not match
+            </p>
+          )}
+          {confirmPassword && password === confirmPassword && confirmPassword.length > 0 && (
+            <p className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+              <Check className="h-3.5 w-3.5" />
+              Passwords match
             </p>
           )}
         </div>
 
-        <Button type="submit" className="w-full h-11" disabled={loading}>
+        <Button
+          type="submit"
+          className="w-full h-12 text-base font-medium bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all"
+          disabled={loading}
+        >
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Creating account...
             </>
           ) : (
-            'Create account'
+            <>
+              Create account
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </>
           )}
         </Button>
 
+        {/* Terms */}
         <p className="text-xs text-muted-foreground text-center">
           By creating an account, you agree to our{' '}
-          <Link href="/terms" className="text-primary hover:underline">
+          <Link href="/terms" className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 underline-offset-4 hover:underline">
             Terms of Service
           </Link>{' '}
           and{' '}
-          <Link href="/privacy" className="text-primary hover:underline">
+          <Link href="/privacy" className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 underline-offset-4 hover:underline">
             Privacy Policy
           </Link>
         </p>
       </form>
 
-      <div className="text-center text-sm">
-        <span className="text-muted-foreground">Already have an account? </span>
-        <Link href="/login" className="text-primary hover:underline font-medium">
-          Sign in
+      {/* Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-muted-foreground/10" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            Already have an account?
+          </span>
+        </div>
+      </div>
+
+      {/* Login link */}
+      <div className="text-center">
+        <Link
+          href="/login"
+          className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors"
+        >
+          Sign in to your account
+          <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
     </div>
@@ -195,8 +258,19 @@ export default function RegisterPage() {
 
 function PasswordCheck({ passed, label }: { passed: boolean; label: string }) {
   return (
-    <div className={cn('flex items-center gap-1', passed ? 'text-green-600' : 'text-muted-foreground')}>
-      {passed ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+    <div
+      className={cn(
+        'flex items-center gap-2 text-xs transition-colors',
+        passed
+          ? 'text-emerald-600 dark:text-emerald-400'
+          : 'text-muted-foreground'
+      )}
+    >
+      {passed ? (
+        <Check className="h-3.5 w-3.5" />
+      ) : (
+        <div className="h-3.5 w-3.5 rounded-full border border-muted-foreground/30" />
+      )}
       {label}
     </div>
   );
