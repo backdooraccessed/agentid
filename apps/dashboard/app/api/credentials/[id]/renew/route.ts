@@ -99,7 +99,7 @@ export async function POST(
       {
         body: {
           action: 'sign',
-          user_id: credential.issuers.user_id,
+          issuer_id: credential.issuers.id,
           payload: {
             ...payload,
             signature: undefined, // Remove old signature

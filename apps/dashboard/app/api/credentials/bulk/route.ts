@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
           // Fetch full credential for renewal
           const { data: fullCred } = await supabase
             .from('credentials')
-            .select('*, issuers!inner(user_id)')
+            .select('*, issuers!inner(id, user_id)')
             .eq('id', cred.id)
             .single();
 
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
             {
               body: {
                 action: 'sign',
-                user_id: fullCred.issuers.user_id,
+                issuer_id: fullCred.issuers.id,
                 payload: { ...payload, signature: undefined },
               },
             }
