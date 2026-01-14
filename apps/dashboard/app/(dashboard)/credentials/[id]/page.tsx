@@ -10,6 +10,9 @@ import {
   PERMISSION_ACTION_LABELS,
   PERMISSION_DOMAIN_LABELS,
 } from '@agentid/shared';
+import { toast } from 'sonner';
+import { Copy, Check, ExternalLink } from 'lucide-react';
+import { RevocationDialog } from '@/components/credentials/revocation-dialog';
 import type { CredentialStatus, AgentType, PermissionAction, PermissionDomain } from '@agentid/shared';
 
 interface CredentialDetail {
@@ -55,11 +58,11 @@ export default function CredentialDetailPage({
   const router = useRouter();
   const [data, setData] = useState<CredentialDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [revoking, setRevoking] = useState(false);
   const [renewing, setRenewing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [showRevokeDialog, setShowRevokeDialog] = useState(false);
 
   useEffect(() => {
     async function fetchCredential() {
@@ -83,33 +86,21 @@ export default function CredentialDetailPage({
     fetchCredential();
   }, [id]);
 
-  const handleRevoke = async () => {
-    if (!confirm('Are you sure you want to revoke this credential? This cannot be undone.')) {
-      return;
+  const handleRevoke = async (reason: string) => {
+    const response = await fetch(`/api/credentials/${id}/revoke`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason }),
+    });
+
+    if (!response.ok) {
+      const result = await response.json();
+      throw new Error(result.error || 'Failed to revoke');
     }
 
-    setRevoking(true);
-    setError(null);
-    try {
-      const response = await fetch(`/api/credentials/${id}/revoke`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason: 'Revoked via dashboard' }),
-      });
-
-      if (!response.ok) {
-        const result = await response.json();
-        setError(result.error || 'Failed to revoke');
-        return;
-      }
-
-      router.push('/credentials');
-      router.refresh();
-    } catch {
-      setError('Network error');
-    } finally {
-      setRevoking(false);
-    }
+    toast.success('Credential revoked successfully');
+    router.push('/credentials');
+    router.refresh();
   };
 
   const handleRenew = async (days: number) => {
@@ -317,6 +308,9 @@ export default function CredentialDetailPage({
         </CardContent>
       </Card>
 
+      {/* Embeddable Badge */}
+      <EmbeddableBadge credentialId={id} agentName={credential.agent_name} />
+
       {/* Credential JSON */}
       <Card>
         <CardHeader>
@@ -375,15 +369,23 @@ export default function CredentialDetailPage({
             {status === 'active' && (
               <Button
                 variant="destructive"
-                onClick={handleRevoke}
-                disabled={revoking}
+                onClick={() => setShowRevokeDialog(true)}
               >
-                {revoking ? 'Revoking...' : 'Revoke Credential'}
+                Revoke Credential
               </Button>
             )}
           </div>
         </CardContent>
       </Card>
+
+      {/* Revocation Dialog */}
+      <RevocationDialog
+        open={showRevokeDialog}
+        onOpenChange={setShowRevokeDialog}
+        agentName={credential.agent_name}
+        agentId={credential.agent_id}
+        onConfirm={handleRevoke}
+      />
     </div>
   );
 }
@@ -400,5 +402,145 @@ function StatusBadge({ status }: { status: CredentialStatus }) {
     <span className={`px-3 py-1.5 rounded-full text-sm font-medium ${colors[status]}`}>
       {CREDENTIAL_STATUS_LABELS[status]}
     </span>
+  );
+}
+
+function EmbeddableBadge({ credentialId, agentName }: { credentialId: string; agentName: string }) {
+  const [style, setStyle] = useState<'flat' | 'plastic'>('flat');
+  const [copiedType, setCopiedType] = useState<string | null>(null);
+
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const badgeUrl = `${baseUrl}/api/badge/${credentialId}?style=${style}`;
+  const verifyUrl = `${baseUrl}/verify/${credentialId}`;
+
+  const htmlCode = `<a href="${verifyUrl}" target="_blank" rel="noopener noreferrer">
+  <img src="${badgeUrl}" alt="AgentID Verified: ${agentName}" />
+</a>`;
+
+  const markdownCode = `[![AgentID Verified: ${agentName}](${badgeUrl})](${verifyUrl})`;
+
+  const copyToClipboard = async (text: string, type: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopiedType(type);
+    toast.success(`${type} code copied`);
+    setTimeout(() => setCopiedType(null), 2000);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2">
+          <ExternalLink className="h-5 w-5" />
+          Verified Badge
+        </CardTitle>
+        <CardDescription>
+          Embed this badge on your website or README to show your agent is verified
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Badge Preview */}
+        <div>
+          <div className="text-sm text-muted-foreground mb-2">Preview</div>
+          <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
+            <img
+              src={badgeUrl}
+              alt={`AgentID Verified: ${agentName}`}
+              className="h-5"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => setStyle('flat')}
+                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                  style === 'flat'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted hover:bg-muted/80'
+                }`}
+              >
+                Flat
+              </button>
+              <button
+                onClick={() => setStyle('plastic')}
+                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                  style === 'plastic'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted hover:bg-muted/80'
+                }`}
+              >
+                Plastic
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* HTML Embed */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm text-muted-foreground">HTML</div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => copyToClipboard(htmlCode, 'HTML')}
+              className="h-7 gap-1"
+            >
+              {copiedType === 'HTML' ? (
+                <Check className="h-3.5 w-3.5" />
+              ) : (
+                <Copy className="h-3.5 w-3.5" />
+              )}
+              Copy
+            </Button>
+          </div>
+          <pre className="bg-muted p-3 rounded-lg text-xs overflow-x-auto font-mono">
+            {htmlCode}
+          </pre>
+        </div>
+
+        {/* Markdown Embed */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm text-muted-foreground">Markdown</div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => copyToClipboard(markdownCode, 'Markdown')}
+              className="h-7 gap-1"
+            >
+              {copiedType === 'Markdown' ? (
+                <Check className="h-3.5 w-3.5" />
+              ) : (
+                <Copy className="h-3.5 w-3.5" />
+              )}
+              Copy
+            </Button>
+          </div>
+          <pre className="bg-muted p-3 rounded-lg text-xs overflow-x-auto font-mono">
+            {markdownCode}
+          </pre>
+        </div>
+
+        {/* Direct URL */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm text-muted-foreground">Direct Image URL</div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => copyToClipboard(badgeUrl, 'URL')}
+              className="h-7 gap-1"
+            >
+              {copiedType === 'URL' ? (
+                <Check className="h-3.5 w-3.5" />
+              ) : (
+                <Copy className="h-3.5 w-3.5" />
+              )}
+              Copy
+            </Button>
+          </div>
+          <pre className="bg-muted p-3 rounded-lg text-xs overflow-x-auto font-mono">
+            {badgeUrl}
+          </pre>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

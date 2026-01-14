@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { Download, FileJson, FileSpreadsheet, Calendar } from 'lucide-react';
 
 interface AuditLog {
   id: string;
@@ -57,6 +59,8 @@ export default function AuditLogsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('');
+  const [exporting, setExporting] = useState(false);
+  const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d' | '1y'>('30d');
 
   const fetchLogs = async (offset = 0, action?: string) => {
     setLoading(true);
@@ -100,6 +104,66 @@ export default function AuditLogsPage() {
     }
   };
 
+  const getDateRangeParams = () => {
+    const to = new Date().toISOString();
+    const from = new Date();
+
+    switch (dateRange) {
+      case '7d':
+        from.setDate(from.getDate() - 7);
+        break;
+      case '30d':
+        from.setDate(from.getDate() - 30);
+        break;
+      case '90d':
+        from.setDate(from.getDate() - 90);
+        break;
+      case '1y':
+        from.setFullYear(from.getFullYear() - 1);
+        break;
+    }
+
+    return { from: from.toISOString(), to };
+  };
+
+  const handleExport = async (format: 'json' | 'csv') => {
+    setExporting(true);
+    try {
+      const { from, to } = getDateRangeParams();
+      const params = new URLSearchParams({
+        format,
+        from,
+        to,
+        include: 'credentials,verifications,audit_logs',
+      });
+
+      const response = await fetch(`/api/compliance/export?${params}`);
+
+      if (!response.ok) {
+        const data = await response.json();
+        toast.error(data.error || 'Export failed');
+        return;
+      }
+
+      // Trigger download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `compliance-export-${new Date().toISOString().split('T')[0]}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast.success(`Compliance report exported as ${format.toUpperCase()}`);
+    } catch {
+      toast.error('Export failed');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const formatDetails = (details: Record<string, unknown>): string => {
     const parts: string[] = [];
     if (details.agent_id) parts.push(`Agent: ${details.agent_id}`);
@@ -133,6 +197,74 @@ export default function AuditLogsPage() {
           {error}
         </div>
       )}
+
+      {/* Compliance Export */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                Compliance Export
+              </CardTitle>
+              <CardDescription className="mt-1">
+                Export audit data for compliance and reporting
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Date Range Selector */}
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <div className="flex gap-1">
+                {(['7d', '30d', '90d', '1y'] as const).map((range) => (
+                  <Button
+                    key={range}
+                    variant={dateRange === range ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setDateRange(range)}
+                    className="h-7 text-xs"
+                  >
+                    {range === '7d' && '7 days'}
+                    {range === '30d' && '30 days'}
+                    {range === '90d' && '90 days'}
+                    {range === '1y' && '1 year'}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Export Buttons */}
+            <div className="flex gap-2 ml-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleExport('json')}
+                disabled={exporting}
+                className="gap-2"
+              >
+                <FileJson className="h-4 w-4" />
+                Export JSON
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleExport('csv')}
+                disabled={exporting}
+                className="gap-2"
+              >
+                <FileSpreadsheet className="h-4 w-4" />
+                Export CSV
+              </Button>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-3">
+            Includes credentials, verification events, and audit logs for the selected period.
+          </p>
+        </CardContent>
+      </Card>
 
       {/* Filters */}
       <Card>
