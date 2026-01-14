@@ -11,7 +11,7 @@ import {
   PERMISSION_DOMAIN_LABELS,
 } from '@agentid/shared';
 import { toast } from 'sonner';
-import { Copy, Check, ExternalLink } from 'lucide-react';
+import { Copy, Check, ExternalLink, Bot, Building2, ShieldCheck, Calendar, Clock, ArrowLeft, RefreshCw, XCircle } from 'lucide-react';
 import { RevocationDialog } from '@/components/credentials/revocation-dialog';
 import type { CredentialStatus, AgentType, PermissionAction, PermissionDomain } from '@agentid/shared';
 
@@ -139,6 +139,7 @@ export default function CredentialDetailPage({
     if (data?.credential) {
       navigator.clipboard.writeText(JSON.stringify(data.credential, null, 2));
       setCopied(true);
+      toast.success('Credential JSON copied');
       setTimeout(() => setCopied(false), 2000);
     }
   };
@@ -146,18 +147,20 @@ export default function CredentialDetailPage({
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <Card className="max-w-2xl mx-auto">
-        <CardContent className="py-8 text-center text-destructive">
-          {error || 'Credential not found'}
-        </CardContent>
-      </Card>
+      <div className="max-w-2xl mx-auto">
+        <Card className="border-red-500/20 bg-red-500/5">
+          <CardContent className="py-8 text-center text-red-400">
+            {error || 'Credential not found'}
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
@@ -165,29 +168,35 @@ export default function CredentialDetailPage({
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
+      {/* Header */}
       <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold">{credential.agent_name}</h1>
-          <p className="text-muted-foreground font-mono text-sm">
-            {credential.agent_id}
-          </p>
+        <div className="flex items-start gap-4">
+          <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+            <Bot className="h-7 w-7 text-white/70" />
+          </div>
+          <div>
+            <h1 className="font-display text-3xl font-bold">{credential.agent_name}</h1>
+            <p className="text-muted-foreground font-mono text-sm">
+              {credential.agent_id}
+            </p>
+          </div>
         </div>
         <StatusBadge status={status} />
       </div>
 
       {/* Status Alerts */}
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-800">
+        <div className="p-4 bg-red-500/5 border border-red-500/20 rounded-xl text-red-400">
           {error}
         </div>
       )}
       {success && (
-        <div className="p-4 bg-green-50 border border-green-200 rounded-md text-green-800">
+        <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl text-emerald-400">
           {success}
         </div>
       )}
       {!is_valid && (
-        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md text-yellow-800">
+        <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-xl text-amber-300">
           This credential is not currently valid.{' '}
           {status === 'revoked' && 'It has been revoked.'}
           {status === 'expired' && 'It has expired.'}
@@ -195,7 +204,7 @@ export default function CredentialDetailPage({
             <button
               onClick={() => handleRenew(90)}
               disabled={renewing}
-              className="ml-2 underline hover:no-underline"
+              className="ml-2 underline hover:no-underline text-amber-400"
             >
               {renewing ? 'Renewing...' : 'Renew now'}
             </button>
@@ -204,24 +213,30 @@ export default function CredentialDetailPage({
       )}
 
       {/* Agent Info */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Agent Information</CardTitle>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <Bot className="h-4 w-4 text-white/70" />
+            </div>
+            Agent Information
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="grid grid-cols-2 gap-4">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-2 gap-6">
             <div>
-              <div className="text-sm text-muted-foreground">Agent Type</div>
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Agent Type</div>
               <div className="font-medium">
                 {AGENT_TYPE_LABELS[credential.agent_type]}
               </div>
             </div>
             <div>
-              <div className="text-sm text-muted-foreground">Issuer</div>
-              <div className="font-medium">
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Issuer</div>
+              <div className="font-medium flex items-center gap-2">
                 {credential.issuer.name}
                 {credential.issuer.issuer_verified && (
-                  <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">
+                  <span className="inline-flex items-center gap-1 text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+                    <ShieldCheck className="h-3 w-3" />
                     Verified
                   </span>
                 )}
@@ -232,18 +247,23 @@ export default function CredentialDetailPage({
       </Card>
 
       {/* Permissions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Permissions</CardTitle>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <ShieldCheck className="h-4 w-4 text-white/70" />
+            </div>
+            Permissions
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="p-6 space-y-6">
           <div>
-            <div className="text-sm text-muted-foreground mb-2">Actions</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Actions</div>
             <div className="flex flex-wrap gap-2">
               {credential.permissions.actions.map((action) => (
                 <span
                   key={action}
-                  className="px-2 py-1 bg-muted rounded text-sm"
+                  className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm"
                 >
                   {PERMISSION_ACTION_LABELS[action]}
                 </span>
@@ -251,12 +271,12 @@ export default function CredentialDetailPage({
             </div>
           </div>
           <div>
-            <div className="text-sm text-muted-foreground mb-2">Domains</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Domains</div>
             <div className="flex flex-wrap gap-2">
               {credential.permissions.domains.map((domain) => (
                 <span
                   key={domain}
-                  className="px-2 py-1 bg-muted rounded text-sm"
+                  className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm"
                 >
                   {PERMISSION_DOMAIN_LABELS[domain]}
                 </span>
@@ -265,13 +285,13 @@ export default function CredentialDetailPage({
           </div>
           {credential.permissions.resource_limits.max_transaction_value && (
             <div>
-              <div className="text-sm text-muted-foreground mb-1">Resource Limits</div>
-              <div className="text-sm">
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Resource Limits</div>
+              <div className="text-sm p-3 bg-white/[0.02] border border-white/10 rounded-lg">
                 Max Transaction:{' '}
-                {credential.permissions.resource_limits.max_transaction_value}{' '}
-                {credential.permissions.resource_limits.currency || 'USD'}
+                <span className="font-medium">{credential.permissions.resource_limits.max_transaction_value}{' '}
+                {credential.permissions.resource_limits.currency || 'USD'}</span>
                 {credential.permissions.resource_limits.daily_limit && (
-                  <> | Daily Limit: {credential.permissions.resource_limits.daily_limit}</>
+                  <span className="ml-4">Daily Limit: <span className="font-medium">{credential.permissions.resource_limits.daily_limit}</span></span>
                 )}
               </div>
             </div>
@@ -280,28 +300,42 @@ export default function CredentialDetailPage({
       </Card>
 
       {/* Validity */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Validity</CardTitle>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <Calendar className="h-4 w-4 text-white/70" />
+            </div>
+            Validity
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-3 gap-6">
             <div>
-              <div className="text-sm text-muted-foreground">Valid From</div>
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Valid From</div>
               <div className="font-medium">
-                {new Date(credential.constraints.valid_from).toLocaleString()}
+                {new Date(credential.constraints.valid_from).toLocaleDateString()}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {new Date(credential.constraints.valid_from).toLocaleTimeString()}
               </div>
             </div>
             <div>
-              <div className="text-sm text-muted-foreground">Valid Until</div>
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Valid Until</div>
               <div className="font-medium">
-                {new Date(credential.constraints.valid_until).toLocaleString()}
+                {new Date(credential.constraints.valid_until).toLocaleDateString()}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {new Date(credential.constraints.valid_until).toLocaleTimeString()}
               </div>
             </div>
             <div>
-              <div className="text-sm text-muted-foreground">Issued At</div>
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Issued At</div>
               <div className="font-medium">
-                {new Date(credential.issued_at).toLocaleString()}
+                {new Date(credential.issued_at).toLocaleDateString()}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {new Date(credential.issued_at).toLocaleTimeString()}
               </div>
             </div>
           </div>
@@ -312,33 +346,49 @@ export default function CredentialDetailPage({
       <EmbeddableBadge credentialId={id} agentName={credential.agent_name} />
 
       {/* Credential JSON */}
-      <Card>
-        <CardHeader>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5">
           <div className="flex justify-between items-center">
-            <CardTitle className="text-lg">Credential Payload</CardTitle>
-            <Button variant="outline" size="sm" onClick={copyCredential}>
-              {copied ? 'Copied!' : 'Copy JSON'}
+            <CardTitle className="text-lg flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <Copy className="h-4 w-4 text-white/70" />
+              </div>
+              Credential Payload
+            </CardTitle>
+            <Button variant="outline" size="sm" onClick={copyCredential} className="border-white/10 hover:bg-white/[0.04]">
+              {copied ? (
+                <>
+                  <Check className="h-4 w-4 mr-2 text-emerald-400" />
+                  Copied
+                </>
+              ) : (
+                <>
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copy JSON
+                </>
+              )}
             </Button>
           </div>
           <CardDescription>
             Use this payload to verify the credential programmatically
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <pre className="bg-muted p-4 rounded-md text-xs overflow-x-auto">
+        <CardContent className="p-6">
+          <pre className="bg-black border border-white/10 p-4 rounded-xl text-xs overflow-x-auto font-mono text-white/70">
             {JSON.stringify(credential, null, 2)}
           </pre>
         </CardContent>
       </Card>
 
       {/* Actions */}
-      <Card>
-        <CardHeader>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5">
           <CardTitle className="text-lg">Actions</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="flex flex-wrap gap-3">
-            <Button variant="outline" onClick={() => router.back()}>
+            <Button variant="outline" onClick={() => router.back()} className="border-white/10 hover:bg-white/[0.04]">
+              <ArrowLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
             {(status === 'active' || status === 'expired') && (
@@ -347,22 +397,28 @@ export default function CredentialDetailPage({
                   variant="outline"
                   onClick={() => handleRenew(30)}
                   disabled={renewing}
+                  className="border-white/10 hover:bg-white/[0.04]"
                 >
-                  {renewing ? 'Renewing...' : 'Extend 30 days'}
+                  <RefreshCw className={`h-4 w-4 mr-2 ${renewing ? 'animate-spin' : ''}`} />
+                  Extend 30 days
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => handleRenew(90)}
                   disabled={renewing}
+                  className="border-white/10 hover:bg-white/[0.04]"
                 >
-                  {renewing ? 'Renewing...' : 'Extend 90 days'}
+                  <RefreshCw className={`h-4 w-4 mr-2 ${renewing ? 'animate-spin' : ''}`} />
+                  Extend 90 days
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => handleRenew(365)}
                   disabled={renewing}
+                  className="border-white/10 hover:bg-white/[0.04]"
                 >
-                  {renewing ? 'Renewing...' : 'Extend 1 year'}
+                  <RefreshCw className={`h-4 w-4 mr-2 ${renewing ? 'animate-spin' : ''}`} />
+                  Extend 1 year
                 </Button>
               </>
             )}
@@ -370,7 +426,9 @@ export default function CredentialDetailPage({
               <Button
                 variant="destructive"
                 onClick={() => setShowRevokeDialog(true)}
+                className="bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20"
               >
+                <XCircle className="h-4 w-4 mr-2" />
                 Revoke Credential
               </Button>
             )}
@@ -391,15 +449,15 @@ export default function CredentialDetailPage({
 }
 
 function StatusBadge({ status }: { status: CredentialStatus }) {
-  const colors = {
-    active: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800',
-    revoked: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800',
-    expired: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800',
-    suspended: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border border-orange-200 dark:border-orange-800',
+  const styles = {
+    active: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    revoked: 'bg-red-500/10 text-red-400 border-red-500/20',
+    expired: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    suspended: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
   };
 
   return (
-    <span className={`px-3 py-1.5 rounded-full text-sm font-semibold ${colors[status]}`}>
+    <span className={`px-3 py-1.5 rounded-full text-sm font-semibold border ${styles[status]}`}>
       {CREDENTIAL_STATUS_LABELS[status]}
     </span>
   );
@@ -428,10 +486,10 @@ function EmbeddableBadge({ credentialId, agentName }: { credentialId: string; ag
 
   return (
     <Card className="overflow-hidden">
-      <CardHeader className="bg-muted/30">
+      <CardHeader className="bg-white/[0.02] border-b border-white/5">
         <CardTitle className="text-lg flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-            <ExternalLink className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+          <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+            <ExternalLink className="h-4 w-4 text-white/70" />
           </div>
           Verified Badge
         </CardTitle>
@@ -442,8 +500,8 @@ function EmbeddableBadge({ credentialId, agentName }: { credentialId: string; ag
       <CardContent className="p-6 space-y-6">
         {/* Badge Preview */}
         <div>
-          <div className="text-sm font-medium text-muted-foreground mb-2">Preview</div>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-muted/30 rounded-lg border border-dashed">
+          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Preview</div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-white/[0.02] rounded-xl border border-dashed border-white/10">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={badgeUrl}
@@ -457,8 +515,8 @@ function EmbeddableBadge({ credentialId, agentName }: { credentialId: string; ag
                   onClick={() => setStyle(s)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                     style === s
-                      ? 'bg-indigo-600 text-white dark:bg-indigo-500'
-                      : 'bg-muted hover:bg-muted/80 text-muted-foreground'
+                      ? 'bg-white text-black'
+                      : 'bg-white/5 hover:bg-white/10 text-muted-foreground'
                   }`}
                 >
                   {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -471,22 +529,22 @@ function EmbeddableBadge({ credentialId, agentName }: { credentialId: string; ag
         {/* HTML Embed */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm font-medium text-muted-foreground">HTML</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">HTML</div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => copyToClipboard(htmlCode, 'HTML')}
-              className="h-7 gap-1.5"
+              className="h-7 gap-1.5 hover:bg-white/[0.04]"
             >
               {copiedType === 'HTML' ? (
-                <Check className="h-3.5 w-3.5 text-emerald-600" />
+                <Check className="h-3.5 w-3.5 text-emerald-400" />
               ) : (
                 <Copy className="h-3.5 w-3.5" />
               )}
               Copy
             </Button>
           </div>
-          <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto font-mono">
+          <pre className="bg-black border border-white/10 p-4 rounded-xl text-xs overflow-x-auto font-mono text-white/70">
             {htmlCode}
           </pre>
         </div>
@@ -494,22 +552,22 @@ function EmbeddableBadge({ credentialId, agentName }: { credentialId: string; ag
         {/* Markdown Embed */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm font-medium text-muted-foreground">Markdown</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Markdown</div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => copyToClipboard(markdownCode, 'Markdown')}
-              className="h-7 gap-1.5"
+              className="h-7 gap-1.5 hover:bg-white/[0.04]"
             >
               {copiedType === 'Markdown' ? (
-                <Check className="h-3.5 w-3.5 text-emerald-600" />
+                <Check className="h-3.5 w-3.5 text-emerald-400" />
               ) : (
                 <Copy className="h-3.5 w-3.5" />
               )}
               Copy
             </Button>
           </div>
-          <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto font-mono">
+          <pre className="bg-black border border-white/10 p-4 rounded-xl text-xs overflow-x-auto font-mono text-white/70">
             {markdownCode}
           </pre>
         </div>
@@ -517,30 +575,30 @@ function EmbeddableBadge({ credentialId, agentName }: { credentialId: string; ag
         {/* Direct URL */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm font-medium text-muted-foreground">Direct Image URL</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Direct Image URL</div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => copyToClipboard(badgeUrl, 'URL')}
-              className="h-7 gap-1.5"
+              className="h-7 gap-1.5 hover:bg-white/[0.04]"
             >
               {copiedType === 'URL' ? (
-                <Check className="h-3.5 w-3.5 text-emerald-600" />
+                <Check className="h-3.5 w-3.5 text-emerald-400" />
               ) : (
                 <Copy className="h-3.5 w-3.5" />
               )}
               Copy
             </Button>
           </div>
-          <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto font-mono">
+          <pre className="bg-black border border-white/10 p-4 rounded-xl text-xs overflow-x-auto font-mono text-white/70">
             {badgeUrl}
           </pre>
         </div>
 
         {/* Usage Hints */}
-        <div className="text-xs text-muted-foreground pt-2 border-t space-y-1">
+        <div className="text-xs text-muted-foreground pt-4 border-t border-white/5 space-y-1">
           <p>The badge automatically updates to reflect the credential status.</p>
-          <p>Add <code className="px-1.5 py-0.5 bg-muted rounded">?theme=dark</code> for dark mode support.</p>
+          <p>Add <code className="px-1.5 py-0.5 bg-white/5 rounded font-mono">?theme=dark</code> for dark mode support.</p>
         </div>
       </CardContent>
     </Card>
