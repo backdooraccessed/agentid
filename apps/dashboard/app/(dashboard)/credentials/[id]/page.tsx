@@ -392,26 +392,26 @@ export default function CredentialDetailPage({
 
 function StatusBadge({ status }: { status: CredentialStatus }) {
   const colors = {
-    active: 'bg-green-100 text-green-800',
-    revoked: 'bg-red-100 text-red-800',
-    expired: 'bg-yellow-100 text-yellow-800',
-    suspended: 'bg-orange-100 text-orange-800',
+    active: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800',
+    revoked: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800',
+    expired: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800',
+    suspended: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border border-orange-200 dark:border-orange-800',
   };
 
   return (
-    <span className={`px-3 py-1.5 rounded-full text-sm font-medium ${colors[status]}`}>
+    <span className={`px-3 py-1.5 rounded-full text-sm font-semibold ${colors[status]}`}>
       {CREDENTIAL_STATUS_LABELS[status]}
     </span>
   );
 }
 
 function EmbeddableBadge({ credentialId, agentName }: { credentialId: string; agentName: string }) {
-  const [style, setStyle] = useState<'flat' | 'plastic'>('flat');
+  const [style, setStyle] = useState<'modern' | 'flat' | 'plastic'>('modern');
   const [copiedType, setCopiedType] = useState<string | null>(null);
 
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const badgeUrl = `${baseUrl}/api/badge/${credentialId}?style=${style}`;
-  const verifyUrl = `${baseUrl}/verify/${credentialId}`;
+  const verifyUrl = `${baseUrl}/credentials/${credentialId}`;
 
   const htmlCode = `<a href="${verifyUrl}" target="_blank" rel="noopener noreferrer">
   <img src="${badgeUrl}" alt="AgentID Verified: ${agentName}" />
@@ -427,47 +427,43 @@ function EmbeddableBadge({ credentialId, agentName }: { credentialId: string; ag
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="overflow-hidden">
+      <CardHeader className="bg-muted/30">
         <CardTitle className="text-lg flex items-center gap-2">
-          <ExternalLink className="h-5 w-5" />
+          <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
+            <ExternalLink className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+          </div>
           Verified Badge
         </CardTitle>
         <CardDescription>
           Embed this badge on your website or README to show your agent is verified
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-6 space-y-6">
         {/* Badge Preview */}
         <div>
-          <div className="text-sm text-muted-foreground mb-2">Preview</div>
-          <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
+          <div className="text-sm font-medium text-muted-foreground mb-2">Preview</div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-muted/30 rounded-lg border border-dashed">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={badgeUrl}
               alt={`AgentID Verified: ${agentName}`}
-              className="h-5"
+              className="h-7"
             />
             <div className="flex gap-2">
-              <button
-                onClick={() => setStyle('flat')}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                  style === 'flat'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted hover:bg-muted/80'
-                }`}
-              >
-                Flat
-              </button>
-              <button
-                onClick={() => setStyle('plastic')}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                  style === 'plastic'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted hover:bg-muted/80'
-                }`}
-              >
-                Plastic
-              </button>
+              {(['modern', 'flat', 'plastic'] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setStyle(s)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    style === s
+                      ? 'bg-indigo-600 text-white dark:bg-indigo-500'
+                      : 'bg-muted hover:bg-muted/80 text-muted-foreground'
+                  }`}
+                >
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -475,22 +471,22 @@ function EmbeddableBadge({ credentialId, agentName }: { credentialId: string; ag
         {/* HTML Embed */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-muted-foreground">HTML</div>
+            <div className="text-sm font-medium text-muted-foreground">HTML</div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => copyToClipboard(htmlCode, 'HTML')}
-              className="h-7 gap-1"
+              className="h-7 gap-1.5"
             >
               {copiedType === 'HTML' ? (
-                <Check className="h-3.5 w-3.5" />
+                <Check className="h-3.5 w-3.5 text-emerald-600" />
               ) : (
                 <Copy className="h-3.5 w-3.5" />
               )}
               Copy
             </Button>
           </div>
-          <pre className="bg-muted p-3 rounded-lg text-xs overflow-x-auto font-mono">
+          <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto font-mono">
             {htmlCode}
           </pre>
         </div>
@@ -498,22 +494,22 @@ function EmbeddableBadge({ credentialId, agentName }: { credentialId: string; ag
         {/* Markdown Embed */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-muted-foreground">Markdown</div>
+            <div className="text-sm font-medium text-muted-foreground">Markdown</div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => copyToClipboard(markdownCode, 'Markdown')}
-              className="h-7 gap-1"
+              className="h-7 gap-1.5"
             >
               {copiedType === 'Markdown' ? (
-                <Check className="h-3.5 w-3.5" />
+                <Check className="h-3.5 w-3.5 text-emerald-600" />
               ) : (
                 <Copy className="h-3.5 w-3.5" />
               )}
               Copy
             </Button>
           </div>
-          <pre className="bg-muted p-3 rounded-lg text-xs overflow-x-auto font-mono">
+          <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto font-mono">
             {markdownCode}
           </pre>
         </div>
@@ -521,24 +517,30 @@ function EmbeddableBadge({ credentialId, agentName }: { credentialId: string; ag
         {/* Direct URL */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-muted-foreground">Direct Image URL</div>
+            <div className="text-sm font-medium text-muted-foreground">Direct Image URL</div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => copyToClipboard(badgeUrl, 'URL')}
-              className="h-7 gap-1"
+              className="h-7 gap-1.5"
             >
               {copiedType === 'URL' ? (
-                <Check className="h-3.5 w-3.5" />
+                <Check className="h-3.5 w-3.5 text-emerald-600" />
               ) : (
                 <Copy className="h-3.5 w-3.5" />
               )}
               Copy
             </Button>
           </div>
-          <pre className="bg-muted p-3 rounded-lg text-xs overflow-x-auto font-mono">
+          <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto font-mono">
             {badgeUrl}
           </pre>
+        </div>
+
+        {/* Usage Hints */}
+        <div className="text-xs text-muted-foreground pt-2 border-t space-y-1">
+          <p>The badge automatically updates to reflect the credential status.</p>
+          <p>Add <code className="px-1.5 py-0.5 bg-muted rounded">?theme=dark</code> for dark mode support.</p>
         </div>
       </CardContent>
     </Card>

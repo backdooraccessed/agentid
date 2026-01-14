@@ -17,15 +17,18 @@ import {
   Globe,
   LogOut,
   Activity,
+  ChevronRight,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { LogoFull } from '@/components/brand/logo';
 
 interface NavItem {
   href: string;
   label: string;
   icon: LucideIcon;
   exact?: boolean;
+  badge?: string;
 }
 
 interface NavGroup {
@@ -84,14 +87,11 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-muted/30 border-r flex flex-col">
+    <aside className="w-64 bg-card border-r flex flex-col shadow-sm">
       {/* Logo */}
-      <div className="p-4 border-b">
-        <Link href="/" className="text-xl font-bold flex items-center gap-3">
-          <span className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-sm font-bold shadow-sm">
-            A
-          </span>
-          <span>AgentID</span>
+      <div className="p-4 border-b bg-muted/30">
+        <Link href="/" className="block">
+          <LogoFull />
         </Link>
       </div>
 
@@ -99,7 +99,7 @@ export function Sidebar() {
       <nav className="flex-1 p-3 space-y-6 overflow-y-auto">
         {navItems.map((group) => (
           <div key={group.section}>
-            <div className="text-xs font-semibold text-muted-foreground px-3 py-2 uppercase tracking-wider">
+            <div className="text-[10px] font-semibold text-muted-foreground/60 px-3 py-2 uppercase tracking-widest">
               {group.section}
             </div>
             <div className="space-y-1">
@@ -111,14 +111,42 @@ export function Sidebar() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all',
+                      'group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200',
                       active
-                        ? 'bg-primary text-primary-foreground font-medium shadow-sm'
-                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                        ? 'bg-indigo-50 text-indigo-700 font-medium dark:bg-indigo-950/50 dark:text-indigo-300'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     )}
                   >
-                    <Icon className="h-4 w-4 shrink-0" />
-                    <span>{item.label}</span>
+                    {/* Active indicator */}
+                    <div
+                      className={cn(
+                        'absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full transition-all duration-200',
+                        active
+                          ? 'bg-indigo-600 dark:bg-indigo-400'
+                          : 'bg-transparent group-hover:bg-muted-foreground/20'
+                      )}
+                    />
+                    <Icon
+                      className={cn(
+                        'h-4 w-4 shrink-0 transition-colors',
+                        active
+                          ? 'text-indigo-600 dark:text-indigo-400'
+                          : 'text-muted-foreground group-hover:text-foreground'
+                      )}
+                    />
+                    <span className="flex-1">{item.label}</span>
+                    {item.badge && (
+                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">
+                        {item.badge}
+                      </span>
+                    )}
+                    <ChevronRight
+                      className={cn(
+                        'h-3.5 w-3.5 opacity-0 -translate-x-1 transition-all',
+                        active && 'opacity-100 translate-x-0',
+                        !active && 'group-hover:opacity-50 group-hover:translate-x-0'
+                      )}
+                    />
                   </Link>
                 );
               })}
@@ -128,10 +156,10 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t space-y-1">
+      <div className="p-3 border-t bg-muted/20 space-y-1">
         <Link
           href="/directory"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
         >
           <Globe className="h-4 w-4" />
           <span>Public Directory</span>
@@ -139,7 +167,7 @@ export function Sidebar() {
         <form action="/api/auth/signout" method="post">
           <button
             type="submit"
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30 dark:hover:text-red-400 transition-all"
           >
             <LogOut className="h-4 w-4" />
             <span>Sign out</span>
