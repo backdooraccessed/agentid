@@ -276,9 +276,6 @@ if (result.valid) {
               </Link>
             </div>
 
-            <p className="text-sm text-muted-foreground">
-              Trusted by teams from YC, a]6z, and Fortune 500 companies
-            </p>
           </div>
 
           {/* Animated verification flow */}
@@ -289,30 +286,10 @@ if (result.valid) {
         </div>
       </section>
 
-      {/* Social Proof */}
-      <section className="py-12 border-y border-white/5">
+      {/* Compliance Badges */}
+      <section className="py-8 border-y border-white/5">
         <div className="max-w-6xl mx-auto px-4">
-          <p className="text-center text-sm text-muted-foreground mb-8">Backed by leaders in AI infrastructure</p>
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-60">
-            {/* Placeholder logos - replace with real ones */}
-            <div className="flex items-center gap-2 text-white/80">
-              <div className="w-8 h-8 rounded bg-white/10" />
-              <span className="font-semibold">Y Combinator</span>
-            </div>
-            <div className="flex items-center gap-2 text-white/80">
-              <div className="w-8 h-8 rounded bg-white/10" />
-              <span className="font-semibold">a]6z Crypto</span>
-            </div>
-            <div className="flex items-center gap-2 text-white/80">
-              <div className="w-8 h-8 rounded bg-white/10" />
-              <span className="font-semibold">LangChain</span>
-            </div>
-            <div className="flex items-center gap-2 text-white/80">
-              <div className="w-8 h-8 rounded bg-white/10" />
-              <span className="font-semibold">OpenAI</span>
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-6 mt-8">
+          <div className="flex flex-wrap items-center justify-center gap-6">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <CheckCircle className="w-4 h-4 text-emerald-400" />
               SOC 2 Type II Compliant
