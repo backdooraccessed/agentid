@@ -164,14 +164,14 @@ export async function POST(request: NextRequest) {
           const payload = fullCred.credential_payload;
           payload.constraints.valid_until = newValidUntil.toISOString();
 
-          // Re-sign
+          // Re-sign - remove old signature from payload
+          const { signature: _oldSignature, ...payloadWithoutSignature } = payload;
           const { data: signed, error: signError } = await supabase.functions.invoke(
             'sign-credential',
             {
               body: {
-                action: 'sign',
-                issuer_id: fullCred.issuers.id,
-                payload: { ...payload, signature: undefined },
+                issuer_id: (fullCred.issuers as { id: string }).id,
+                payload: payloadWithoutSignature,
               },
             }
           );

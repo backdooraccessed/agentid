@@ -94,16 +94,14 @@ export async function POST(
     payload.constraints.valid_until = newValidUntil.toISOString();
 
     // Re-sign the credential via Edge Function
+    // Remove the old signature from payload before re-signing
+    const { signature: _oldSignature, ...payloadWithoutSignature } = payload;
     const { data: signed, error: signError } = await supabase.functions.invoke(
       'sign-credential',
       {
         body: {
-          action: 'sign',
-          issuer_id: credential.issuers.id,
-          payload: {
-            ...payload,
-            signature: undefined, // Remove old signature
-          },
+          issuer_id: (credential.issuers as { id: string }).id,
+          payload: payloadWithoutSignature,
         },
       }
     );
