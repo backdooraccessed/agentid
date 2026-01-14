@@ -1,11 +1,10 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { StatCard } from '@/components/shared/stat-card';
 import { VerificationChart } from '@/components/analytics/verification-chart';
 import { StatusChart } from '@/components/analytics/status-chart';
-import { Shield, CheckCircle, XCircle, TrendingUp } from 'lucide-react';
+import { BarChart3, Shield, CheckCircle, XCircle, TrendingUp, Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,16 +26,27 @@ export default async function AnalyticsPage() {
   if (!issuer) {
     return (
       <div className="max-w-2xl mx-auto">
-        <Card>
-          <CardHeader>
-            <CardTitle>Complete Your Setup</CardTitle>
-            <CardDescription>
-              Create your issuer profile to view analytics
-            </CardDescription>
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                <BarChart3 className="h-5 w-5 text-white/70" />
+              </div>
+              <div>
+                <CardTitle>Complete Your Setup</CardTitle>
+                <CardDescription>
+                  Create your issuer profile to view analytics
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
-            <a href="/settings" className="text-primary hover:underline">
+          <CardContent className="pt-6">
+            <a
+              href="/settings"
+              className="inline-flex items-center gap-2 text-white hover:text-white/80 transition-colors"
+            >
               Create Issuer Profile
+              <ArrowUpRight className="h-4 w-4" />
             </a>
           </CardContent>
         </Card>
@@ -98,11 +108,17 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">Analytics</h1>
-        <p className="text-muted-foreground">
-          Usage metrics and statistics for the last 30 days
-        </p>
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+          <BarChart3 className="h-7 w-7 text-white/70" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
+          <p className="text-muted-foreground">
+            Usage metrics and statistics for the last 30 days
+          </p>
+        </div>
       </div>
 
       {/* Summary Stats */}
@@ -122,13 +138,13 @@ export default async function AnalyticsPage() {
         <StatCard
           title="Total Verifications"
           value={totals.verifications_total}
-          icon={TrendingUp}
+          icon={Activity}
           description="Last 30 days"
         />
         <StatCard
           title="Success Rate"
           value={`${successRate}%`}
-          icon={CheckCircle}
+          icon={TrendingUp}
           description="Verification success"
         />
       </div>
@@ -147,21 +163,32 @@ export default async function AnalyticsPage() {
 
       {/* Period Stats */}
       <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Credentials (30 days)</CardTitle>
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <Shield className="h-4 w-4 text-white/70" />
+              </div>
+              <CardTitle className="text-base">Credentials (30 days)</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Issued</span>
-                <Badge variant="success">+{totals.credentials_issued}</Badge>
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-400">
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                  +{totals.credentials_issued}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Revoked</span>
-                <Badge variant="destructive">-{totals.credentials_revoked}</Badge>
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-red-400">
+                  <ArrowDownRight className="h-3.5 w-3.5" />
+                  -{totals.credentials_revoked}
+                </span>
               </div>
-              <div className="flex justify-between items-center pt-2 border-t">
+              <div className="flex justify-between items-center pt-4 border-t border-white/5">
                 <span className="text-muted-foreground">Net Change</span>
                 <span className="font-semibold">
                   {totals.credentials_issued - totals.credentials_revoked >= 0 ? '+' : ''}
@@ -172,21 +199,32 @@ export default async function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Verifications (30 days)</CardTitle>
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <Activity className="h-4 w-4 text-white/70" />
+              </div>
+              <CardTitle className="text-base">Verifications (30 days)</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Successful</span>
-                <Badge variant="success">{totals.verifications_successful}</Badge>
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-400">
+                  <CheckCircle className="h-3.5 w-3.5" />
+                  {totals.verifications_successful}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Failed</span>
-                <Badge variant="destructive">{totals.verifications_failed}</Badge>
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-red-400">
+                  <XCircle className="h-3.5 w-3.5" />
+                  {totals.verifications_failed}
+                </span>
               </div>
-              <div className="flex justify-between items-center pt-2 border-t">
+              <div className="flex justify-between items-center pt-4 border-t border-white/5">
                 <span className="text-muted-foreground">Total</span>
                 <span className="font-semibold">{totals.verifications_total}</span>
               </div>
@@ -196,15 +234,24 @@ export default async function AnalyticsPage() {
       </div>
 
       {/* Recent Verifications */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Verifications</CardTitle>
-          <CardDescription>Last 10 verification requests</CardDescription>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <Activity className="h-4 w-4 text-white/70" />
+            </div>
+            <div>
+              <CardTitle className="text-base">Recent Verifications</CardTitle>
+              <CardDescription>Last 10 verification requests</CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {(!recentVerifications || recentVerifications.length === 0) ? (
             <div className="text-center py-8">
-              <XCircle className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
+                <Activity className="h-6 w-6 text-white/30" />
+              </div>
               <p className="text-muted-foreground">No verifications recorded yet</p>
               <p className="text-sm text-muted-foreground mt-1">
                 Verifications will appear here when your credentials are verified
@@ -215,20 +262,28 @@ export default async function AnalyticsPage() {
               {recentVerifications.map((v) => (
                 <div
                   key={v.id}
-                  className="flex justify-between items-center py-3 px-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                  className="flex justify-between items-center py-3 px-4 rounded-lg bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    {v.success ? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <XCircle className="h-4 w-4 text-red-600" />
-                    )}
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                      v.success ? 'bg-emerald-500/10' : 'bg-red-500/10'
+                    }`}>
+                      {v.success ? (
+                        <CheckCircle className="h-4 w-4 text-emerald-400" />
+                      ) : (
+                        <XCircle className="h-4 w-4 text-red-400" />
+                      )}
+                    </div>
                     <span className="font-mono text-sm">{v.agent_id}</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <Badge variant={v.success ? 'success' : 'destructive'}>
+                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                      v.success
+                        ? 'bg-emerald-500/10 text-emerald-400'
+                        : 'bg-red-500/10 text-red-400'
+                    }`}>
                       {v.success ? 'Valid' : 'Invalid'}
-                    </Badge>
+                    </span>
                     <span className="text-xs text-muted-foreground">
                       {new Date(v.verified_at).toLocaleString()}
                     </span>
