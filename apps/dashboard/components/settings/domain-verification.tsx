@@ -76,7 +76,7 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
       } else {
         toast.error(data.error || 'Failed to generate token');
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to generate token');
     } finally {
       setGenerating(false);
@@ -100,7 +100,7 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
       } else {
         toast.error(data.error || 'Verification failed');
       }
-    } catch (error) {
+    } catch {
       toast.error('Verification failed');
     } finally {
       setVerifying(false);
@@ -117,7 +117,7 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
       <Card>
         <CardContent className="py-8">
           <div className="flex items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
           </div>
         </CardContent>
       </Card>
@@ -126,18 +126,20 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
 
   if (!domain) {
     return (
-      <Card>
-        <CardHeader>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5">
           <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5" />
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <Globe className="h-4 w-4 text-white/70" />
+            </div>
             Domain Verification
           </CardTitle>
           <CardDescription>
             Verify ownership of your domain to increase trust
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Alert>
+        <CardContent className="p-6">
+          <Alert className="border-white/10 bg-white/[0.02]">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               Please add a domain to your profile first, then you can verify it.
@@ -149,37 +151,39 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="overflow-hidden">
+      <CardHeader className="bg-white/[0.02] border-b border-white/5">
         <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Globe className="h-5 w-5" />
-              Domain Verification
-            </CardTitle>
-            <CardDescription>
-              Verify ownership of your domain to increase trust
-            </CardDescription>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <Globe className="h-4 w-4 text-white/70" />
+            </div>
+            <div>
+              <CardTitle className="text-lg">Domain Verification</CardTitle>
+              <CardDescription>
+                Verify ownership of your domain to increase trust
+              </CardDescription>
+            </div>
           </div>
           {status?.verified && (
-            <Badge variant="success" className="flex items-center gap-1">
+            <Badge className="gap-1 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
               <CheckCircle className="h-3 w-3" />
               Verified
             </Badge>
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-6 space-y-6">
         {/* Current Status */}
-        <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
+        <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/10">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-              status?.verified ? 'bg-green-100 dark:bg-green-900/30' : 'bg-yellow-100 dark:bg-yellow-900/30'
+              status?.verified ? 'bg-emerald-500/10' : 'bg-amber-500/10'
             }`}>
               {status?.verified ? (
-                <Shield className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <Shield className="h-5 w-5 text-emerald-400" />
               ) : (
-                <Globe className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                <Globe className="h-5 w-5 text-amber-400" />
               )}
             </div>
             <div>
@@ -201,25 +205,26 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
             {/* Step 1: Generate Token */}
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm">
-                <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                <span className="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center text-xs font-medium">
                   1
                 </span>
                 <span>Generate a verification token</span>
               </div>
 
               {status?.token ? (
-                <div className="ml-8 p-3 rounded-lg bg-muted font-mono text-sm break-all">
+                <div className="ml-8 p-3 rounded-lg bg-white/[0.02] border border-white/10 font-mono text-sm break-all">
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-muted-foreground">Token:</span>
                     <Button
                       variant="ghost"
                       size="sm"
+                      className="hover:bg-white/[0.04]"
                       onClick={() => copyToClipboard(status.token!, 'Token')}
                     >
                       <Copy className="h-4 w-4" />
                     </Button>
                   </div>
-                  <div className="mt-1">{status.token}</div>
+                  <div className="mt-1 text-white/80">{status.token}</div>
                 </div>
               ) : (
                 <div className="ml-8">
@@ -241,14 +246,14 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
             {status?.token && (
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                  <span className="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center text-xs font-medium">
                     2
                   </span>
                   <span>Add a TXT record to your DNS</span>
                 </div>
 
                 <div className="ml-8 space-y-3">
-                  <div className="p-3 rounded-lg bg-muted">
+                  <div className="p-3 rounded-lg bg-white/[0.02] border border-white/10">
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
                         <span className="text-muted-foreground">Type:</span>
@@ -260,7 +265,7 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-6 w-6 p-0 ml-1"
+                          className="h-6 w-6 p-0 ml-1 hover:bg-white/[0.04]"
                           onClick={() => copyToClipboard('_agentid', 'Host')}
                         >
                           <Copy className="h-3 w-3" />
@@ -272,7 +277,7 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-6 w-6 p-0 ml-1"
+                          className="h-6 w-6 p-0 ml-1 hover:bg-white/[0.04]"
                           onClick={() => copyToClipboard(status.token!, 'Value')}
                         >
                           <Copy className="h-3 w-3" />
@@ -281,10 +286,10 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
                     </div>
                   </div>
 
-                  <Alert>
+                  <Alert className="border-white/10 bg-white/[0.02]">
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                      DNS changes can take up to 48 hours to propagate. The full record will be: <code className="text-xs">_agentid.{domain}</code>
+                      DNS changes can take up to 48 hours to propagate. The full record will be: <code className="text-xs font-mono">_agentid.{domain}</code>
                     </AlertDescription>
                   </Alert>
                 </div>
@@ -295,7 +300,7 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
             {status?.token && (
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                  <span className="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center text-xs font-medium">
                     3
                   </span>
                   <span>Click verify once DNS is configured</span>
@@ -315,7 +320,7 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
                       </>
                     )}
                   </Button>
-                  <Button variant="outline" onClick={generateToken} disabled={generating}>
+                  <Button variant="outline" onClick={generateToken} disabled={generating} className="border-white/10 hover:bg-white/[0.04]">
                     Regenerate Token
                   </Button>
                 </div>
@@ -332,15 +337,15 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
               {status.recent_attempts.slice(0, 3).map((attempt) => (
                 <div
                   key={attempt.id}
-                  className="flex items-center justify-between p-2 rounded-lg bg-muted/50 text-sm"
+                  className="flex items-center justify-between p-2 rounded-lg bg-white/[0.02] border border-white/5 text-sm"
                 >
                   <div className="flex items-center gap-2">
                     {attempt.status === 'success' ? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-emerald-400" />
                     ) : attempt.status === 'failed' ? (
-                      <XCircle className="h-4 w-4 text-red-600" />
+                      <XCircle className="h-4 w-4 text-red-400" />
                     ) : (
-                      <Loader2 className="h-4 w-4 text-yellow-600 animate-spin" />
+                      <Loader2 className="h-4 w-4 text-amber-400 animate-spin" />
                     )}
                     <span className="capitalize">{attempt.status}</span>
                     {attempt.failure_reason && (
@@ -360,9 +365,9 @@ export function DomainVerification({ domain }: DomainVerificationProps) {
 
         {/* Verified State */}
         {status?.verified && (
-          <Alert className="border-green-200 bg-green-50 dark:bg-green-950/20">
-            <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-green-800 dark:text-green-200">
+          <Alert className="border-emerald-500/20 bg-emerald-500/5">
+            <CheckCircle className="h-4 w-4 text-emerald-400" />
+            <AlertDescription className="text-emerald-200">
               Your domain is verified! Your credentials now display the verified badge, increasing trust with verifiers.
             </AlertDescription>
           </Alert>
