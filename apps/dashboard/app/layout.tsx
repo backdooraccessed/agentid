@@ -1,13 +1,16 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
-
 export const metadata: Metadata = {
-  title: 'AgentID - Credential Infrastructure for AI Agents',
-  description: 'Issue and verify credentials for AI agents',
+  title: 'AgentID - Trust Infrastructure for AI Agents',
+  description: 'Issue verifiable credentials for your AI agents. Enable any service to verify agent identity, permissions, and trustworthiness.',
+  keywords: ['AI agents', 'credentials', 'verification', 'trust', 'identity', 'authentication'],
+  openGraph: {
+    title: 'AgentID - Trust Infrastructure for AI Agents',
+    description: 'Issue verifiable credentials for your AI agents.',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
@@ -16,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className="dark">
+      <body className="font-sans">
         {children}
         <Toaster richColors position="top-right" />
       </body>
