@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { DomainVerification } from '@/components/settings/domain-verification';
 import { ISSUER_TYPES, ISSUER_TYPE_LABELS } from '@agentid/shared';
 import type { Issuer, IssuerType } from '@agentid/shared';
+import { CheckCircle, Copy } from 'lucide-react';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -197,6 +201,9 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
+      {/* Domain Verification */}
+      {issuer && <DomainVerification domain={issuer.domain || null} />}
+
       {/* Public Key Display */}
       {issuer && (
         <Card>
@@ -210,14 +217,38 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div>
                 <Label className="text-muted-foreground">Key ID</Label>
-                <div className="font-mono text-sm bg-muted p-2 rounded mt-1">
-                  {issuer.key_id}
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="font-mono text-sm bg-muted p-2 rounded flex-1">
+                    {issuer.key_id}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(issuer.key_id);
+                      toast.success('Key ID copied');
+                    }}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
               <div>
                 <Label className="text-muted-foreground">Public Key (Base64)</Label>
-                <div className="font-mono text-xs bg-muted p-2 rounded mt-1 break-all">
-                  {issuer.public_key}
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="font-mono text-xs bg-muted p-2 rounded flex-1 break-all">
+                    {issuer.public_key}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(issuer.public_key);
+                      toast.success('Public key copied');
+                    }}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </div>
@@ -225,17 +256,26 @@ export default function SettingsPage() {
         </Card>
       )}
 
-      {/* Verification Status */}
+      {/* Admin Verification Status */}
       {issuer && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Verification Status</CardTitle>
+            <CardTitle className="text-lg">Admin Verification</CardTitle>
+            <CardDescription>
+              Additional verification by AgentID team
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {issuer.is_verified ? (
-              <div className="flex items-center gap-2 text-green-700">
-                <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                Verified
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-green-50 dark:bg-green-950/20">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                <div>
+                  <div className="font-medium text-green-800 dark:text-green-200">Verified Issuer</div>
+                  <p className="text-sm text-green-700 dark:text-green-300">
+                    Your organization has been verified by AgentID
+                  </p>
+                </div>
+                <Badge variant="success" className="ml-auto">Verified</Badge>
               </div>
             ) : (
               <div className="text-muted-foreground">
@@ -244,8 +284,8 @@ export default function SettingsPage() {
                   Not yet verified
                 </div>
                 <p className="text-sm">
-                  Contact support to verify your issuer identity. Verified issuers
-                  have higher trust scores.
+                  Domain verification is self-service. For additional organization verification,
+                  contact support@agentid.dev. Verified issuers have higher trust scores.
                 </p>
               </div>
             )}

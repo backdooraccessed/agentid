@@ -40,6 +40,9 @@ export default function Home() {
             <Link href="/directory" className="text-muted-foreground hover:text-foreground transition-colors">
               Directory
             </Link>
+            <Link href="/pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+              Pricing
+            </Link>
             <Link href="https://github.com/agentid" className="text-muted-foreground hover:text-foreground transition-colors">
               GitHub
             </Link>

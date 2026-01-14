@@ -16,6 +16,7 @@ import {
   Settings,
   Globe,
   LogOut,
+  Activity,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -49,12 +50,18 @@ const navItems: NavGroup[] = [
     ],
   },
   {
+    section: 'Insights',
+    items: [
+      { href: '/verifications', label: 'Verifications', icon: Activity },
+      { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+      { href: '/audit-logs', label: 'Audit Logs', icon: ScrollText },
+    ],
+  },
+  {
     section: 'Developer',
     items: [
       { href: '/api-keys', label: 'API Keys', icon: Key },
       { href: '/webhooks', label: 'Webhooks', icon: Webhook },
-      { href: '/analytics', label: 'Analytics', icon: BarChart3 },
-      { href: '/audit-logs', label: 'Audit Logs', icon: ScrollText },
     ],
   },
   {
