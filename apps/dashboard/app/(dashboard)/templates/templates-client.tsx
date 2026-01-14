@@ -26,6 +26,8 @@ import {
 } from '@/components/ui/select';
 import { AGENT_TYPE_LABELS } from '@agentid/shared';
 import type { AgentType } from '@agentid/shared';
+import { Plus, FileText, Play, Power, Trash2, Check, AlertCircle, Loader2, Clock, Hash } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Template {
   id: string;
@@ -49,14 +51,14 @@ const AGENT_TYPES = Object.entries(AGENT_TYPE_LABELS).map(([value, label]) => ({
 }));
 
 const COMMON_PERMISSIONS = [
-  'read',
-  'write',
-  'execute',
-  'delete',
-  'admin',
-  'api_access',
-  'data_processing',
-  'user_interaction',
+  { value: 'read', label: 'Read', description: 'View data' },
+  { value: 'write', label: 'Write', description: 'Modify data' },
+  { value: 'execute', label: 'Execute', description: 'Run operations' },
+  { value: 'delete', label: 'Delete', description: 'Remove data' },
+  { value: 'admin', label: 'Admin', description: 'Full control' },
+  { value: 'api_access', label: 'API Access', description: 'External APIs' },
+  { value: 'data_processing', label: 'Data Processing', description: 'Process data' },
+  { value: 'user_interaction', label: 'User Interaction', description: 'Interact with users' },
 ];
 
 export function TemplatesClient({ initialTemplates }: { initialTemplates: Template[] }) {
@@ -161,42 +163,54 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
       {/* Create Template Dialog */}
       <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
         <DialogTrigger asChild>
-          <Button>Create Template</Button>
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            Create Template
+          </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-lg bg-black border-white/10">
           <DialogHeader>
-            <DialogTitle>Create Template</DialogTitle>
-            <DialogDescription>
-              Create a reusable template for issuing credentials
-            </DialogDescription>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                <FileText className="h-5 w-5 text-white/70" />
+              </div>
+              <div>
+                <DialogTitle>Create Template</DialogTitle>
+                <DialogDescription>
+                  Create a reusable template for issuing credentials
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
-          <div className="space-y-4 max-h-96 overflow-y-auto">
-            <div>
-              <Label htmlFor="name">Template Name</Label>
+          <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-sm font-medium">Template Name</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Production Assistant"
+                className="bg-white/[0.02] border-white/10 focus:border-white/30"
               />
             </div>
-            <div>
-              <Label htmlFor="description">Description (optional)</Label>
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-sm font-medium">Description (optional)</Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Template for production AI assistants"
                 rows={2}
+                className="bg-white/[0.02] border-white/10 focus:border-white/30 resize-none"
               />
             </div>
-            <div>
-              <Label>Agent Type</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Agent Type</Label>
               <Select value={agentType} onValueChange={setAgentType}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-white/[0.02] border-white/10">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-black border-white/10">
                   {AGENT_TYPES.map((type) => (
                     <SelectItem key={type.value} value={type.value}>
                       {type.label}
@@ -205,32 +219,49 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label>Permissions</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Permissions</Label>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {COMMON_PERMISSIONS.map((permission) => (
                   <label
-                    key={permission}
-                    className="flex items-center gap-2 text-sm cursor-pointer"
+                    key={permission.value}
+                    className={cn(
+                      'flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-all',
+                      permissions.includes(permission.value)
+                        ? 'bg-white/[0.04] border-white/20'
+                        : 'bg-white/[0.02] border-white/10 hover:border-white/15'
+                    )}
                   >
+                    <div className={cn(
+                      'w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0',
+                      permissions.includes(permission.value)
+                        ? 'bg-white border-white'
+                        : 'border-white/30'
+                    )}>
+                      {permissions.includes(permission.value) && (
+                        <Check className="h-2.5 w-2.5 text-black" />
+                      )}
+                    </div>
                     <input
                       type="checkbox"
-                      checked={permissions.includes(permission)}
-                      onChange={() => togglePermission(permission)}
-                      className="rounded"
+                      checked={permissions.includes(permission.value)}
+                      onChange={() => togglePermission(permission.value)}
+                      className="sr-only"
                     />
-                    {permission}
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium">{permission.label}</div>
+                    </div>
                   </label>
                 ))}
               </div>
             </div>
-            <div>
-              <Label>Default Validity Period</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Default Validity Period</Label>
               <Select value={validityDays} onValueChange={setValidityDays}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-white/[0.02] border-white/10">
                   <SelectValue placeholder="No default (set per credential)" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-black border-white/10">
                   <SelectItem value="">No default</SelectItem>
                   <SelectItem value="30">30 days</SelectItem>
                   <SelectItem value="90">90 days</SelectItem>
@@ -240,15 +271,29 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
               </Select>
             </div>
             {error && (
-              <p className="text-sm text-red-500">{error}</p>
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                <AlertCircle className="h-4 w-4 text-red-400" />
+                <p className="text-sm text-red-400">{error}</p>
+              </div>
             )}
           </div>
           <DialogFooter>
             <Button
               onClick={handleCreate}
               disabled={isCreating || !name || permissions.length === 0}
+              className="w-full gap-2"
             >
-              {isCreating ? 'Creating...' : 'Create Template'}
+              {isCreating ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4" />
+                  Create Template
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -257,62 +302,104 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
       {/* Templates List */}
       <div className="space-y-4 mt-6">
         {templates.length === 0 ? (
-          <Card>
-            <CardContent className="py-8 text-center text-muted-foreground">
-              No templates yet. Create a template to issue credentials faster.
+          <Card className="overflow-hidden">
+            <CardContent className="py-12 text-center">
+              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
+                <FileText className="h-6 w-6 text-white/30" />
+              </div>
+              <p className="text-muted-foreground">No templates yet</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Create a template to issue credentials faster
+              </p>
             </CardContent>
           </Card>
         ) : (
           templates.map((template) => (
-            <Card key={template.id} className={!template.is_active ? 'opacity-60' : ''}>
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      {template.name}
-                      {!template.is_active && (
-                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">
-                          Inactive
-                        </span>
-                      )}
-                    </CardTitle>
-                    <CardDescription>
+            <Card
+              key={template.id}
+              className={cn(
+                'overflow-hidden transition-opacity',
+                !template.is_active && 'opacity-60'
+              )}
+            >
+              <CardHeader className="bg-white/[0.02] border-b border-white/5 pb-4">
+                <div className="flex justify-between items-start gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className={cn(
+                        'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
+                        template.is_active ? 'bg-white/5' : 'bg-amber-500/10'
+                      )}>
+                        {template.is_active ? (
+                          <FileText className="h-4 w-4 text-white/70" />
+                        ) : (
+                          <Power className="h-4 w-4 text-amber-400" />
+                        )}
+                      </div>
+                      <CardTitle className="text-base flex items-center gap-2">
+                        {template.name}
+                        {!template.is_active && (
+                          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400">
+                            Inactive
+                          </span>
+                        )}
+                      </CardTitle>
+                    </div>
+                    <CardDescription className="ml-11">
                       {AGENT_TYPE_LABELS[template.agent_type as AgentType] || template.agent_type}
                     </CardDescription>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-shrink-0">
                     <Link href={`/credentials/new?template=${template.id}`}>
-                      <Button variant="outline" size="sm">
-                        Use Template
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5 border-white/10 hover:bg-white/[0.04]"
+                      >
+                        <Play className="h-3.5 w-3.5" />
+                        Use
                       </Button>
                     </Link>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleToggleActive(template.id, template.is_active)}
+                      className="gap-1.5 border-white/10 hover:bg-white/[0.04]"
                     >
+                      <Power className="h-3.5 w-3.5" />
                       {template.is_active ? 'Deactivate' : 'Activate'}
                     </Button>
                     <Button
-                      variant="destructive"
+                      variant="outline"
                       size="sm"
                       onClick={() => handleDelete(template.id)}
+                      className="gap-1.5 border-red-500/20 text-red-400 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30"
                     >
+                      <Trash2 className="h-3.5 w-3.5" />
                       Delete
                     </Button>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                  <span>Permissions: {template.permissions.join(', ')}</span>
-                  <span>Used: {template.usage_count} times</span>
+              <CardContent className="pt-4">
+                <div className="flex flex-wrap gap-4 text-sm">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Check className="h-3.5 w-3.5" />
+                    <span>Permissions: {template.permissions.join(', ')}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Hash className="h-3.5 w-3.5" />
+                    <span>Used {template.usage_count} times</span>
+                  </div>
                   {template.validity_days && (
-                    <span>Default validity: {template.validity_days} days</span>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Clock className="h-3.5 w-3.5" />
+                      <span>Default: {template.validity_days} days</span>
+                    </div>
                   )}
                 </div>
                 {template.description && (
-                  <p className="text-sm mt-2">{template.description}</p>
+                  <p className="text-sm text-muted-foreground mt-3">{template.description}</p>
                 )}
               </CardContent>
             </Card>
