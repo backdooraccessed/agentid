@@ -109,9 +109,16 @@ export async function POST(
     );
 
     if (signError || !signed?.signature) {
-      console.error('Signing error:', signError);
+      console.error('Signing error:', signError, 'Signed data:', signed);
       return NextResponse.json(
-        { error: 'Failed to re-sign credential' },
+        {
+          error: 'Failed to re-sign credential',
+          debug: {
+            signError: signError?.message || String(signError),
+            signedData: signed,
+            issuerId: (credential.issuers as { id: string }).id,
+          }
+        },
         { status: 500 }
       );
     }
