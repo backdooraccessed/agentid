@@ -13,7 +13,7 @@ export default function Home() {
           agent identity, permissions, and trustworthiness.
         </p>
 
-        <div className="flex gap-4 justify-center">
+        <div className="flex gap-4 justify-center flex-wrap">
           <Link
             href="/login"
             className="inline-flex items-center justify-center rounded-md bg-primary px-8 py-3 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90"
@@ -25,6 +25,15 @@ export default function Home() {
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-8 py-3 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground"
           >
             Get Started
+          </Link>
+        </div>
+
+        <div className="flex gap-6 justify-center text-sm text-muted-foreground">
+          <Link href="/docs" className="hover:text-foreground hover:underline">
+            Documentation
+          </Link>
+          <Link href="/directory" className="hover:text-foreground hover:underline">
+            Issuer Directory
           </Link>
         </div>
 
