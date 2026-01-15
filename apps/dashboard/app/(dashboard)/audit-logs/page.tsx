@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Download, FileJson, FileSpreadsheet, Calendar } from 'lucide-react';
+import { Download, FileJson, FileSpreadsheet, Calendar, ScrollText, Shield, Key, Webhook, FileText, Users, Settings, AlertCircle, Loader2, ChevronDown, Plus, Trash2, RefreshCw } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface AuditLog {
   id: string;
@@ -38,19 +39,32 @@ const ACTION_LABELS: Record<string, string> = {
   'settings.updated': 'Settings Updated',
 };
 
-const ACTION_COLORS: Record<string, string> = {
-  'credential.issued': 'bg-green-100 text-green-800',
-  'credential.revoked': 'bg-red-100 text-red-800',
-  'credential.renewed': 'bg-blue-100 text-blue-800',
-  'api_key.created': 'bg-purple-100 text-purple-800',
-  'api_key.deleted': 'bg-orange-100 text-orange-800',
-  'webhook.created': 'bg-cyan-100 text-cyan-800',
-  'webhook.deleted': 'bg-orange-100 text-orange-800',
-  'template.created': 'bg-indigo-100 text-indigo-800',
-  'template.deleted': 'bg-orange-100 text-orange-800',
-  'team.member_added': 'bg-teal-100 text-teal-800',
-  'team.member_removed': 'bg-orange-100 text-orange-800',
-  'settings.updated': 'bg-gray-100 text-gray-800',
+const ACTION_ICONS: Record<string, React.ReactNode> = {
+  'credential.issued': <Plus className="h-3.5 w-3.5" />,
+  'credential.revoked': <Trash2 className="h-3.5 w-3.5" />,
+  'credential.renewed': <RefreshCw className="h-3.5 w-3.5" />,
+  'api_key.created': <Key className="h-3.5 w-3.5" />,
+  'api_key.deleted': <Key className="h-3.5 w-3.5" />,
+  'webhook.created': <Webhook className="h-3.5 w-3.5" />,
+  'webhook.deleted': <Webhook className="h-3.5 w-3.5" />,
+  'template.created': <FileText className="h-3.5 w-3.5" />,
+  'template.deleted': <FileText className="h-3.5 w-3.5" />,
+  'team.member_added': <Users className="h-3.5 w-3.5" />,
+  'team.member_removed': <Users className="h-3.5 w-3.5" />,
+  'settings.updated': <Settings className="h-3.5 w-3.5" />,
+};
+
+const getActionStyle = (action: string) => {
+  if (action.includes('deleted') || action.includes('revoked') || action.includes('removed')) {
+    return 'bg-red-500/10 text-red-400 border-red-500/20';
+  }
+  if (action.includes('created') || action.includes('issued') || action.includes('added')) {
+    return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+  }
+  if (action.includes('renewed') || action.includes('updated')) {
+    return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+  }
+  return 'bg-white/5 text-white/70 border-white/10';
 };
 
 export default function AuditLogsPage() {
@@ -178,60 +192,73 @@ export default function AuditLogsPage() {
   if (loading && logs.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="flex items-center gap-3 text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          Loading audit logs...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Audit Logs</h1>
-        <p className="text-muted-foreground">
-          Track all actions and changes in your organization
-        </p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+          <ScrollText className="h-7 w-7 text-white/70" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Audit Logs</h1>
+          <p className="text-muted-foreground">
+            Track all actions and changes in your organization
+          </p>
+        </div>
       </div>
 
       {error && (
-        <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
-          {error}
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+          <AlertCircle className="h-4 w-4 text-red-400" />
+          <p className="text-sm text-red-400">{error}</p>
         </div>
       )}
 
       {/* Compliance Export */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <Download className="h-4 w-4 text-white/70" />
+            </div>
             <div>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Download className="h-4 w-4" />
-                Compliance Export
-              </CardTitle>
-              <CardDescription className="mt-1">
+              <CardTitle className="text-base">Compliance Export</CardTitle>
+              <CardDescription>
                 Export audit data for compliance and reporting
               </CardDescription>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="flex flex-wrap items-center gap-4">
             {/* Date Range Selector */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <div className="flex gap-1">
                 {(['7d', '30d', '90d', '1y'] as const).map((range) => (
-                  <Button
+                  <button
                     key={range}
-                    variant={dateRange === range ? 'default' : 'outline'}
-                    size="sm"
                     onClick={() => setDateRange(range)}
-                    className="h-7 text-xs"
+                    className={cn(
+                      'px-3 py-1.5 text-xs font-medium rounded-lg transition-all',
+                      dateRange === range
+                        ? 'bg-white text-black'
+                        : 'bg-white/5 text-white/70 hover:bg-white/10'
+                    )}
                   >
                     {range === '7d' && '7 days'}
                     {range === '30d' && '30 days'}
                     {range === '90d' && '90 days'}
                     {range === '1y' && '1 year'}
-                  </Button>
+                  </button>
                 ))}
               </div>
             </div>
@@ -243,7 +270,7 @@ export default function AuditLogsPage() {
                 size="sm"
                 onClick={() => handleExport('json')}
                 disabled={exporting}
-                className="gap-2"
+                className="gap-2 border-white/10 hover:bg-white/[0.04]"
               >
                 <FileJson className="h-4 w-4" />
                 Export JSON
@@ -253,74 +280,102 @@ export default function AuditLogsPage() {
                 size="sm"
                 onClick={() => handleExport('csv')}
                 disabled={exporting}
-                className="gap-2"
+                className="gap-2 border-white/10 hover:bg-white/[0.04]"
               >
                 <FileSpreadsheet className="h-4 w-4" />
                 Export CSV
               </Button>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground mt-3">
+          <p className="text-xs text-muted-foreground mt-4">
             Includes credentials, verification events, and audit logs for the selected period.
           </p>
         </CardContent>
       </Card>
 
       {/* Filters */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Filter by Action</CardTitle>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <Shield className="h-4 w-4 text-white/70" />
+            </div>
+            <CardTitle className="text-base">Filter by Action</CardTitle>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="flex flex-wrap gap-2">
-            <Button
-              variant={filter === '' ? 'default' : 'outline'}
-              size="sm"
+            <button
               onClick={() => setFilter('')}
+              className={cn(
+                'px-3 py-1.5 text-xs font-medium rounded-lg transition-all',
+                filter === ''
+                  ? 'bg-white text-black'
+                  : 'bg-white/5 text-white/70 hover:bg-white/10'
+              )}
             >
               All
-            </Button>
+            </button>
             {Object.entries(ACTION_LABELS).map(([key, label]) => (
-              <Button
+              <button
                 key={key}
-                variant={filter === key ? 'default' : 'outline'}
-                size="sm"
                 onClick={() => setFilter(key)}
+                className={cn(
+                  'px-3 py-1.5 text-xs font-medium rounded-lg transition-all',
+                  filter === key
+                    ? 'bg-white text-black'
+                    : 'bg-white/5 text-white/70 hover:bg-white/10'
+                )}
               >
                 {label}
-              </Button>
+              </button>
             ))}
           </div>
         </CardContent>
       </Card>
 
       {/* Logs List */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Activity Log</CardTitle>
-          <CardDescription>
-            {pagination?.total || 0} total events
-          </CardDescription>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <ScrollText className="h-4 w-4 text-white/70" />
+            </div>
+            <div>
+              <CardTitle className="text-base">Activity Log</CardTitle>
+              <CardDescription>
+                {pagination?.total || 0} total events
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {logs.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No audit logs recorded yet. Actions will appear here as you use the platform.
+            <div className="text-center py-8">
+              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
+                <ScrollText className="h-6 w-6 text-white/30" />
+              </div>
+              <p className="text-muted-foreground">No audit logs recorded yet</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Actions will appear here as you use the platform
+              </p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {logs.map((log) => (
                 <div
                   key={log.id}
-                  className="flex items-start justify-between py-3 border-b last:border-0"
+                  className="flex items-start justify-between p-3 rounded-lg bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors"
                 >
-                  <div className="space-y-1">
+                  <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-2 py-0.5 rounded text-xs font-medium ${
-                          ACTION_COLORS[log.action] || 'bg-gray-100 text-gray-800'
-                        }`}
+                        className={cn(
+                          'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium border',
+                          getActionStyle(log.action)
+                        )}
                       >
+                        {ACTION_ICONS[log.action] || <Shield className="h-3.5 w-3.5" />}
                         {ACTION_LABELS[log.action] || log.action}
                       </span>
                       <span className="text-xs text-muted-foreground">
@@ -331,12 +386,12 @@ export default function AuditLogsPage() {
                       {formatDetails(log.details)}
                     </div>
                     {log.resource_id && (
-                      <div className="text-xs font-mono text-muted-foreground">
+                      <div className="text-xs font-mono text-white/40">
                         ID: {log.resource_id.slice(0, 8)}...
                       </div>
                     )}
                   </div>
-                  <div className="text-right">
+                  <div className="text-right flex-shrink-0">
                     <div className="text-sm">
                       {new Date(log.created_at).toLocaleDateString()}
                     </div>
@@ -350,13 +405,24 @@ export default function AuditLogsPage() {
           )}
 
           {pagination?.has_more && (
-            <div className="mt-4 text-center">
+            <div className="mt-6 text-center">
               <Button
                 variant="outline"
                 onClick={loadMore}
                 disabled={loading}
+                className="gap-2 border-white/10 hover:bg-white/[0.04]"
               >
-                {loading ? 'Loading...' : 'Load More'}
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-4 w-4" />
+                    Load More
+                  </>
+                )}
               </Button>
             </div>
           )}
