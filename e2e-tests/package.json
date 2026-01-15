@@ -1,0 +1,12 @@
+{
+  "name": "agentid-e2e-tests",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "playwright test",
+    "test:public": "playwright test public-pages public-api",
+    "test:auth": "playwright test core-features credential-wizard sprint7-features sprint8-features"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}
