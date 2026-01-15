@@ -240,12 +240,6 @@ if (result.valid) {
 
         <div className="max-w-6xl mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center stagger">
-            {/* Urgency badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 text-sm font-medium mb-8">
-              <AlertTriangle className="w-4 h-4" />
-              84% of enterprises blocked AI agents in 2024 due to trust concerns
-            </div>
-
             {/* Pain-point headline */}
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.15] mb-6">
               Your AI agents are getting
@@ -282,26 +276,6 @@ if (result.valid) {
           <div className="mt-16 p-8 rounded-3xl border border-white/10 bg-white/[0.02]">
             <p className="text-center text-sm text-muted-foreground mb-8">See how verification works in real-time</p>
             <VerificationFlow />
-          </div>
-        </div>
-      </section>
-
-      {/* Compliance Badges */}
-      <section className="py-8 border-y border-white/5">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="flex flex-wrap items-center justify-center gap-6">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <CheckCircle className="w-4 h-4 text-emerald-400" />
-              SOC 2 Type II Compliant
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <CheckCircle className="w-4 h-4 text-emerald-400" />
-              GDPR Ready
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <CheckCircle className="w-4 h-4 text-emerald-400" />
-              99.99% Uptime SLA
-            </div>
           </div>
         </div>
       </section>

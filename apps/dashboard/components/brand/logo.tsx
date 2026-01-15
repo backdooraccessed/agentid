@@ -26,7 +26,7 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
       <LogoIcon size={size} />
       {showText && (
         <span className={cn('font-bold tracking-tight', textSizeClasses[size])}>
-          Agent<span className="text-indigo-600">ID</span>
+          Agent<span className="text-white">ID</span>
         </span>
       )}
     </div>
@@ -37,7 +37,7 @@ export function LogoIcon({ size = 'md', className }: { size?: 'sm' | 'md' | 'lg'
   return (
     <div
       className={cn(
-        'relative flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 shadow-lg shadow-indigo-500/25',
+        'relative flex items-center justify-center rounded-xl bg-white/10 border border-white/20',
         sizeClasses[size],
         className
       )}
@@ -92,7 +92,7 @@ export function LogoAnimated({ size = 'lg' }: { size?: 'sm' | 'md' | 'lg' | 'xl'
   return (
     <div className="relative">
       {/* Glow effect */}
-      <div className="absolute inset-0 bg-indigo-500 rounded-xl blur-xl opacity-30 animate-pulse-slow" />
+      <div className="absolute inset-0 bg-white/20 rounded-xl blur-xl opacity-30 animate-pulse-slow" />
       <LogoIcon size={size} className="relative animate-float" />
     </div>
   );
@@ -102,7 +102,7 @@ export function LogoAnimated({ size = 'lg' }: { size?: 'sm' | 'md' | 'lg' | 'xl'
 export function LogoWordmark({ className }: { className?: string }) {
   return (
     <span className={cn('font-bold text-xl tracking-tight', className)}>
-      Agent<span className="text-indigo-600">ID</span>
+      Agent<span className="text-white">ID</span>
     </span>
   );
 }
@@ -114,7 +114,7 @@ export function LogoFull({ className }: { className?: string }) {
       <LogoIcon size="md" />
       <div className="flex flex-col">
         <span className="font-bold text-lg tracking-tight leading-none">
-          Agent<span className="text-indigo-600">ID</span>
+          Agent<span className="text-white">ID</span>
         </span>
         <span className="text-[10px] text-muted-foreground tracking-wide uppercase">
           Trust Infrastructure
