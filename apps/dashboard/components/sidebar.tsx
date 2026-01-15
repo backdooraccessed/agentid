@@ -22,6 +22,7 @@ import {
   Bell,
   MessageSquare,
   ShieldCheck,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -45,7 +46,7 @@ const navItems: NavGroup[] = [
     section: 'Overview',
     items: [
       { href: '/', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-      { href: '/guide', label: 'User Guide', icon: BookOpen },
+      { href: '/guide', label: 'Getting Started', icon: BookOpen },
     ],
   },
   {
@@ -54,16 +55,30 @@ const navItems: NavGroup[] = [
       { href: '/credentials', label: 'All Credentials', icon: Shield },
       { href: '/credentials/new', label: 'Issue New', icon: PlusCircle, exact: true },
       { href: '/templates', label: 'Templates', icon: FileStack },
-      { href: '/policies', label: 'Policies', icon: FileKey, badge: 'Live' },
+      { href: '/policies', label: 'Policies', icon: FileKey },
+    ],
+  },
+  {
+    section: 'Agent Connections',
+    items: [
+      { href: '/conversations', label: 'Conversations', icon: MessageSquare },
+      { href: '/authorizations', label: 'Access Requests', icon: ShieldCheck },
     ],
   },
   {
     section: 'Insights',
     items: [
       { href: '/verifications', label: 'Verifications', icon: Activity },
-      { href: '/alerts', label: 'Alerts', icon: Bell },
       { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+      { href: '/alerts', label: 'Alerts', icon: Bell },
       { href: '/audit-logs', label: 'Audit Logs', icon: ScrollText },
+    ],
+  },
+  {
+    section: 'Discover',
+    items: [
+      { href: '/directory', label: 'Agent Directory', icon: Globe },
+      { href: '/directory/featured', label: 'Featured Agents', icon: Sparkles },
     ],
   },
   {
@@ -71,13 +86,6 @@ const navItems: NavGroup[] = [
     items: [
       { href: '/api-keys', label: 'API Keys', icon: Key },
       { href: '/webhooks', label: 'Webhooks', icon: Webhook },
-    ],
-  },
-  {
-    section: 'A2A Protocol',
-    items: [
-      { href: '/conversations', label: 'Conversations', icon: MessageSquare },
-      { href: '/authorizations', label: 'Authorizations', icon: ShieldCheck },
     ],
   },
   {
@@ -169,14 +177,7 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t border-white/5 space-y-1">
-        <Link
-          href="/directory"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-white/[0.04] hover:text-white transition-all"
-        >
-          <Globe className="h-4 w-4" />
-          <span>Public Directory</span>
-        </Link>
+      <div className="p-3 border-t border-white/5">
         <form action="/api/auth/signout" method="post">
           <button
             type="submit"

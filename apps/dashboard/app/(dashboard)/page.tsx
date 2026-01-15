@@ -21,6 +21,7 @@ import {
   Zap,
   Activity,
   ShieldCheck,
+  BookOpen,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -307,6 +308,20 @@ export default async function DashboardPage() {
                   <div className="font-medium text-sm">View Analytics</div>
                   <p className="text-xs text-muted-foreground">
                     Detailed usage metrics and statistics
+                  </p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </div>
+            </Link>
+            <Link href="/guide" className="block group">
+              <div className="p-3 rounded-lg border border-transparent hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                  <BookOpen className="h-5 w-5 text-white/70" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-sm">Getting Started Guide</div>
+                  <p className="text-xs text-muted-foreground">
+                    Learn how to use AgentID
                   </p>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />

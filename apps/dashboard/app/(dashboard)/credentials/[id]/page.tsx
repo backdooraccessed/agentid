@@ -11,7 +11,8 @@ import {
   PERMISSION_DOMAIN_LABELS,
 } from '@agentid/shared';
 import { toast } from 'sonner';
-import { Copy, Check, ExternalLink, Bot, Building2, ShieldCheck, Calendar, Clock, ArrowLeft, RefreshCw, XCircle } from 'lucide-react';
+import { Copy, Check, ExternalLink, Bot, Building2, ShieldCheck, Calendar, Clock, ArrowLeft, RefreshCw, XCircle, FileKey, TrendingUp, Activity, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 import { RevocationDialog } from '@/components/credentials/revocation-dialog';
 import type { CredentialStatus, AgentType, PermissionAction, PermissionDomain } from '@agentid/shared';
 
@@ -296,8 +297,57 @@ export default function CredentialDetailPage({
               </div>
             </div>
           )}
+
+          {/* Quick Link to Policies */}
+          <div className="pt-4 border-t border-white/5">
+            <Link
+              href="/policies"
+              className="flex items-center gap-3 p-3 -mx-3 rounded-lg hover:bg-white/[0.04] transition-colors group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <FileKey className="h-4 w-4 text-white/60 group-hover:text-white transition-colors" />
+              </div>
+              <div className="flex-1">
+                <div className="text-sm font-medium group-hover:text-white transition-colors">Manage Permission Policies</div>
+                <p className="text-xs text-white/40">Create or edit policies to control access</p>
+              </div>
+              <ChevronRight className="h-4 w-4 text-white/20 group-hover:text-white/40 transition-colors" />
+            </Link>
+          </div>
         </CardContent>
       </Card>
+
+      {/* Quick Links */}
+      <div className="grid grid-cols-2 gap-4">
+        <Link href="/verifications" className="group">
+          <Card className="overflow-hidden hover:bg-white/[0.02] transition-colors h-full">
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
+                <Activity className="h-5 w-5 text-white/60 group-hover:text-white transition-colors" />
+              </div>
+              <div className="flex-1">
+                <div className="text-sm font-medium group-hover:text-white transition-colors">Verification History</div>
+                <p className="text-xs text-white/40">View verification logs</p>
+              </div>
+              <ChevronRight className="h-4 w-4 text-white/20 group-hover:text-white/40 transition-colors" />
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/analytics" className="group">
+          <Card className="overflow-hidden hover:bg-white/[0.02] transition-colors h-full">
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-white/60 group-hover:text-white transition-colors" />
+              </div>
+              <div className="flex-1">
+                <div className="text-sm font-medium group-hover:text-white transition-colors">Trust Score Trends</div>
+                <p className="text-xs text-white/40">View analytics & trends</p>
+              </div>
+              <ChevronRight className="h-4 w-4 text-white/20 group-hover:text-white/40 transition-colors" />
+            </CardContent>
+          </Card>
+        </Link>
+      </div>
 
       {/* Validity */}
       <Card className="overflow-hidden">

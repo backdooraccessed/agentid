@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,8 +25,48 @@ import {
   AlertCircle,
   Loader2,
   Sparkles,
+  Webhook,
+  Users,
+  KeyRound,
+  ChevronRight,
+  FileKey,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// Quick links to other settings areas
+const settingsLinks = [
+  {
+    href: '/api-keys',
+    icon: Key,
+    label: 'API Keys',
+    description: 'Manage API keys for programmatic access',
+  },
+  {
+    href: '/webhooks',
+    icon: Webhook,
+    label: 'Webhooks',
+    description: 'Configure event notifications',
+  },
+  {
+    href: '/team',
+    icon: Users,
+    label: 'Team',
+    description: 'Manage team members and roles',
+  },
+  {
+    href: '/settings/sso',
+    icon: KeyRound,
+    label: 'SSO / SAML',
+    description: 'Enterprise single sign-on configuration',
+    badge: 'Enterprise',
+  },
+  {
+    href: '/policies',
+    icon: FileKey,
+    label: 'Permission Policies',
+    description: 'Define access control policies',
+  },
+];
 
 const issuerTypeIcons: Record<IssuerType, typeof User> = {
   individual: User,
@@ -126,6 +167,43 @@ export default function SettingsPage() {
           </p>
         </div>
       </div>
+
+      {/* Quick Settings Links */}
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-white/[0.02] border-b border-white/5 pb-3">
+          <CardTitle className="text-sm font-medium text-white/60">Quick Settings</CardTitle>
+        </CardHeader>
+        <CardContent className="p-2">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-1">
+            {settingsLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/[0.04] transition-colors group"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+                    <Icon className="h-4 w-4 text-white/60 group-hover:text-white transition-colors" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium group-hover:text-white transition-colors">{link.label}</span>
+                      {link.badge && (
+                        <Badge variant="outline" className="text-[10px] py-0 px-1.5 text-amber-400 border-amber-500/30">
+                          {link.badge}
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-white/40 truncate">{link.description}</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-white/20 group-hover:text-white/40 transition-colors" />
+                </Link>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Alerts */}
       {error && (
