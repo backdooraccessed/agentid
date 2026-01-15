@@ -18,7 +18,7 @@ import {
 export async function GET(request: NextRequest) {
   // Rate limiting
   const clientId = getClientIdentifier(request);
-  const rateLimit = checkRateLimit(clientId, RateLimits.leaderboard);
+  const rateLimit = await checkRateLimit(clientId, RateLimits.leaderboard);
   if (!rateLimit.success) {
     return rateLimitExceededResponse(rateLimit);
   }

@@ -1,27 +1,46 @@
 /**
  * Rate limiting utilities for API endpoints
  *
- * Uses in-memory storage for simplicity. For production with multiple
- * serverless instances, use Redis (Upstash) or Vercel KV.
+ * Uses Upstash Redis for distributed rate limiting across serverless instances.
+ * Falls back to in-memory storage if Upstash is not configured (development).
  */
 
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
+// Check if Upstash is configured
+const isUpstashConfigured = !!(
+  process.env.UPSTASH_REDIS_REST_URL &&
+  process.env.UPSTASH_REDIS_REST_TOKEN
+);
+
+// Initialize Redis client (only if configured)
+const redis = isUpstashConfigured
+  ? new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL!,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    })
+  : null;
+
+// In-memory fallback for development
 interface RateLimitEntry {
   count: number;
   resetAt: number;
 }
 
-// In-memory store (works for single instance, use Redis for production)
-const rateLimitStore = new Map<string, RateLimitEntry>();
+const inMemoryStore = new Map<string, RateLimitEntry>();
 
-// Clean up expired entries periodically
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of rateLimitStore.entries()) {
-    if (entry.resetAt < now) {
-      rateLimitStore.delete(key);
+// Clean up expired entries periodically (only for in-memory)
+if (typeof setInterval !== 'undefined') {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of inMemoryStore.entries()) {
+      if (entry.resetAt < now) {
+        inMemoryStore.delete(key);
+      }
     }
-  }
-}, 60000); // Clean every minute
+  }, 60000);
+}
 
 export interface RateLimitConfig {
   /** Maximum requests allowed in the window */
@@ -39,10 +58,32 @@ export interface RateLimitResult {
   resetAt: number;
 }
 
+// Cache for Upstash rate limiters (created per config)
+const rateLimiterCache = new Map<string, Ratelimit>();
+
 /**
- * Check and update rate limit for a given key
+ * Get or create an Upstash rate limiter for a given config
  */
-export function checkRateLimit(
+function getUpstashRateLimiter(config: RateLimitConfig): Ratelimit {
+  const cacheKey = `${config.identifier}:${config.limit}:${config.windowSeconds}`;
+
+  if (!rateLimiterCache.has(cacheKey)) {
+    const limiter = new Ratelimit({
+      redis: redis!,
+      limiter: Ratelimit.slidingWindow(config.limit, `${config.windowSeconds} s`),
+      prefix: `ratelimit:${config.identifier}`,
+      analytics: true,
+    });
+    rateLimiterCache.set(cacheKey, limiter);
+  }
+
+  return rateLimiterCache.get(cacheKey)!;
+}
+
+/**
+ * In-memory rate limit check (fallback for development)
+ */
+function checkRateLimitInMemory(
   key: string,
   config: RateLimitConfig
 ): RateLimitResult {
@@ -50,9 +91,8 @@ export function checkRateLimit(
   const windowMs = config.windowSeconds * 1000;
   const storeKey = `${config.identifier}:${key}`;
 
-  let entry = rateLimitStore.get(storeKey);
+  let entry = inMemoryStore.get(storeKey);
 
-  // Create new entry if none exists or window has expired
   if (!entry || entry.resetAt < now) {
     entry = {
       count: 0,
@@ -60,7 +100,6 @@ export function checkRateLimit(
     };
   }
 
-  // Check if limit exceeded
   if (entry.count >= config.limit) {
     return {
       success: false,
@@ -70,9 +109,8 @@ export function checkRateLimit(
     };
   }
 
-  // Increment count
   entry.count++;
-  rateLimitStore.set(storeKey, entry);
+  inMemoryStore.set(storeKey, entry);
 
   return {
     success: true,
@@ -80,6 +118,54 @@ export function checkRateLimit(
     remaining: config.limit - entry.count,
     resetAt: entry.resetAt,
   };
+}
+
+/**
+ * Check and update rate limit for a given key
+ * Uses Upstash Redis if configured, falls back to in-memory
+ */
+export async function checkRateLimit(
+  key: string,
+  config: RateLimitConfig
+): Promise<RateLimitResult> {
+  // Use in-memory fallback if Upstash is not configured
+  if (!isUpstashConfigured || !redis) {
+    return checkRateLimitInMemory(key, config);
+  }
+
+  try {
+    const limiter = getUpstashRateLimiter(config);
+    const result = await limiter.limit(key);
+
+    return {
+      success: result.success,
+      limit: result.limit,
+      remaining: result.remaining,
+      resetAt: result.reset,
+    };
+  } catch (error) {
+    // Log error but don't block requests if rate limiting fails
+    console.error('Rate limit check failed, allowing request:', error);
+    return {
+      success: true,
+      limit: config.limit,
+      remaining: config.limit - 1,
+      resetAt: Date.now() + config.windowSeconds * 1000,
+    };
+  }
+}
+
+/**
+ * Synchronous version for backwards compatibility
+ * Note: This will use in-memory if Upstash is configured but called synchronously
+ * Prefer using the async version when possible
+ */
+export function checkRateLimitSync(
+  key: string,
+  config: RateLimitConfig
+): RateLimitResult {
+  // Always use in-memory for sync version
+  return checkRateLimitInMemory(key, config);
 }
 
 /**
@@ -151,6 +237,13 @@ export const RateLimits = {
     limit: 10,
     windowSeconds: 60,
     identifier: 'webhook',
+  } as RateLimitConfig,
+
+  // Directory listing
+  directory: {
+    limit: 60,
+    windowSeconds: 60,
+    identifier: 'directory',
   } as RateLimitConfig,
 } as const;
 

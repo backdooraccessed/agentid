@@ -297,7 +297,7 @@ export async function POST(request: NextRequest) {
 
   // Rate limiting (stricter for batch)
   const clientId = getClientIdentifier(request);
-  const rateLimit = checkRateLimit(clientId, RateLimits.batchVerify);
+  const rateLimit = await checkRateLimit(clientId, RateLimits.batchVerify);
   if (!rateLimit.success) {
     return rateLimitExceededResponse(rateLimit);
   }
