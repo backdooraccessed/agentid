@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { AGENT_PROFILES } from './agent-profiles';
 
 // =============================================================================
 // ENUMS
@@ -6,11 +7,21 @@ import { z } from 'zod';
 
 export const agentTypeSchema = z.enum(['autonomous', 'supervised', 'hybrid']);
 
+export const agentProfileSchema = z.enum(AGENT_PROFILES as unknown as [string, ...string[]]);
+
 export const issuerTypeSchema = z.enum(['individual', 'organization', 'platform']);
 
 export const credentialStatusSchema = z.enum(['active', 'revoked', 'expired', 'suspended']);
 
-export const permissionActionSchema = z.enum(['read', 'write', 'transact', 'communicate']);
+export const permissionActionSchema = z.enum([
+  'read',
+  'write',
+  'transact',
+  'communicate',
+  'execute',
+  'delete',
+  'admin',
+]);
 
 export const permissionDomainSchema = z.enum([
   'finance',
@@ -18,6 +29,12 @@ export const permissionDomainSchema = z.enum([
   'data_access',
   'identity',
   'contracts',
+  'internal',
+  'external_api',
+  'code',
+  'user_data',
+  'financial',
+  'infrastructure',
 ]);
 
 // =============================================================================
@@ -52,6 +69,7 @@ export const issueCredentialRequestSchema = z.object({
     .min(1, 'agent_name is required')
     .max(255, 'agent_name too long'),
   agent_type: agentTypeSchema,
+  agent_profile: agentProfileSchema.optional(),
   permissions: permissionsSchema,
   valid_from: z.string().datetime().optional(),
   valid_until: z.string().datetime(),

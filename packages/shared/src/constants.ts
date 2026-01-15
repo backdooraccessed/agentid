@@ -45,13 +45,24 @@ export const CREDENTIAL_STATUS_LABELS: Record<(typeof CREDENTIAL_STATUSES)[numbe
 // PERMISSIONS
 // =============================================================================
 
-export const PERMISSION_ACTIONS = ['read', 'write', 'transact', 'communicate'] as const;
+export const PERMISSION_ACTIONS = [
+  'read',
+  'write',
+  'transact',
+  'communicate',
+  'execute',
+  'delete',
+  'admin',
+] as const;
 
 export const PERMISSION_ACTION_LABELS: Record<(typeof PERMISSION_ACTIONS)[number], string> = {
   read: 'Read',
   write: 'Write',
   transact: 'Transact',
   communicate: 'Communicate',
+  execute: 'Execute',
+  delete: 'Delete',
+  admin: 'Admin',
 };
 
 export const PERMISSION_ACTION_DESCRIPTIONS: Record<(typeof PERMISSION_ACTIONS)[number], string> = {
@@ -59,6 +70,9 @@ export const PERMISSION_ACTION_DESCRIPTIONS: Record<(typeof PERMISSION_ACTIONS)[
   write: 'Write or modify data',
   transact: 'Execute financial transactions',
   communicate: 'Send messages or notifications',
+  execute: 'Execute code or run processes',
+  delete: 'Delete or remove data',
+  admin: 'Administrative operations',
 };
 
 export const PERMISSION_DOMAINS = [
@@ -67,6 +81,12 @@ export const PERMISSION_DOMAINS = [
   'data_access',
   'identity',
   'contracts',
+  'internal',
+  'external_api',
+  'code',
+  'user_data',
+  'financial',
+  'infrastructure',
 ] as const;
 
 export const PERMISSION_DOMAIN_LABELS: Record<(typeof PERMISSION_DOMAINS)[number], string> = {
@@ -75,6 +95,12 @@ export const PERMISSION_DOMAIN_LABELS: Record<(typeof PERMISSION_DOMAINS)[number
   data_access: 'Data Access',
   identity: 'Identity',
   contracts: 'Contracts',
+  internal: 'Internal Systems',
+  external_api: 'External APIs',
+  code: 'Code Execution',
+  user_data: 'User Data',
+  financial: 'Financial',
+  infrastructure: 'Infrastructure',
 };
 
 export const PERMISSION_DOMAIN_DESCRIPTIONS: Record<(typeof PERMISSION_DOMAINS)[number], string> = {
@@ -83,6 +109,12 @@ export const PERMISSION_DOMAIN_DESCRIPTIONS: Record<(typeof PERMISSION_DOMAINS)[
   data_access: 'Database and file access',
   identity: 'Identity verification and management',
   contracts: 'Smart contracts and agreements',
+  internal: 'Internal system access and operations',
+  external_api: 'Third-party API access',
+  code: 'Code execution and development tools',
+  user_data: 'Customer and user data access',
+  financial: 'Financial services and markets',
+  infrastructure: 'Cloud and infrastructure resources',
 };
 
 // =============================================================================

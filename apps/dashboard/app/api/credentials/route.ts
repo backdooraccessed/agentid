@@ -32,13 +32,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Get issuer profile using service client (for API key auth)
-    const supabase = auth.apiKeyInfo
-      ? createServiceClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.SUPABASE_SERVICE_ROLE_KEY!
-        )
-      : await createClient();
+    // 2. Use service client for credential operations to bypass RLS
+    // This is safe because we've already verified authentication and issuer ownership
+    // The service client is needed because credential insert triggers update analytics,
+    // which would fail with user-scoped RLS
+    const supabase = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     const { data: issuer, error: issuerError } = await supabase
       .from('issuers')
@@ -175,7 +176,7 @@ export async function POST(request: NextRequest) {
     if (signError || !signResult?.signature) {
       console.error('Signing error:', signError);
       return NextResponse.json(
-        { error: 'Failed to sign credential' },
+        { error: 'Failed to sign credential', details: signError?.message || 'No signature returned' },
         { status: 500 }
       );
     }
@@ -187,32 +188,39 @@ export async function POST(request: NextRequest) {
     };
 
     // 7. Store credential in database
+    // Note: agent_profile column requires migration 020_agent_profile.sql
+    const insertData: Record<string, unknown> = {
+      id: credentialId,
+      issuer_id: issuer.id,
+      agent_id: parsed.data.agent_id,
+      agent_name: parsed.data.agent_name,
+      agent_type: parsed.data.agent_type,
+      permissions: parsed.data.permissions,
+      valid_from: validFrom,
+      valid_until: parsed.data.valid_until,
+      geographic_restrictions: parsed.data.geographic_restrictions || [],
+      allowed_services: parsed.data.allowed_services || [],
+      signature: signResult.signature,
+      key_id: issuer.key_id,
+      credential_payload: signedPayload,
+      metadata: {
+        ...(parsed.data.metadata || {}),
+        // Store agent_profile in metadata until migration is applied
+        agent_profile: parsed.data.agent_profile || undefined,
+      },
+      template_id: templateId,
+    };
+
     const { data: credential, error: insertError } = await supabase
       .from('credentials')
-      .insert({
-        id: credentialId,
-        issuer_id: issuer.id,
-        agent_id: parsed.data.agent_id,
-        agent_name: parsed.data.agent_name,
-        agent_type: parsed.data.agent_type,
-        permissions: parsed.data.permissions,
-        valid_from: validFrom,
-        valid_until: parsed.data.valid_until,
-        geographic_restrictions: parsed.data.geographic_restrictions || [],
-        allowed_services: parsed.data.allowed_services || [],
-        signature: signResult.signature,
-        key_id: issuer.key_id,
-        credential_payload: signedPayload,
-        metadata: parsed.data.metadata || {},
-        template_id: templateId,
-      })
+      .insert(insertData)
       .select()
       .single();
 
     if (insertError) {
       console.error('Insert error:', insertError);
       return NextResponse.json(
-        { error: 'Failed to store credential' },
+        { error: 'Failed to store credential', details: insertError.message },
         { status: 500 }
       );
     }
