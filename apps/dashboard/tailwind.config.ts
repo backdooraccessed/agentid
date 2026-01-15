@@ -53,6 +53,8 @@ const config: Config = {
         display: ['Clash Display', 'system-ui', 'sans-serif'],
         sans: ['Satoshi', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Menlo', 'monospace'],
+        retro: ['Space Mono', 'monospace'],
+        pixel: ['VT323', 'monospace'],
       },
       animation: {
         'fade-up': 'fade-up 0.6s ease-out forwards',

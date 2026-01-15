@@ -1,6 +1,6 @@
-/* Fonts: Clash Display + Satoshi from Fontshare, JetBrains Mono from Google */
+/* Fonts: Retro + Modern */
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=VT323&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@400,500,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,7 +8,7 @@
 
 @layer base {
   :root {
-    /* Monochrome Dark Theme */
+    /* Dark Theme (Dashboard) */
     --background: 0 0% 0%;
     --background-secondary: 0 0% 7%;
     --background-tertiary: 0 0% 11%;
@@ -19,7 +19,6 @@
     --popover: 0 0% 7%;
     --popover-foreground: 0 0% 98%;
 
-    /* White accent */
     --primary: 0 0% 98%;
     --primary-foreground: 0 0% 0%;
     --accent: 0 0% 98%;
@@ -39,7 +38,6 @@
     --ring: 0 0% 98%;
     --radius: 0.75rem;
 
-    /* Semantic colors - subtle */
     --verified: 142 70% 45%;
     --verified-foreground: 0 0% 98%;
     --pending: 45 90% 50%;
@@ -72,8 +70,8 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 90%;
-    --border-highlight: 0 0% 80%;
+    --border: 0 0% 85%;
+    --border-highlight: 0 0% 70%;
     --input: 0 0% 90%;
     --ring: 0 0% 9%;
   }
@@ -86,26 +84,15 @@
 
   html {
     @apply scroll-smooth;
+  }
+
+  html.dark {
     color-scheme: dark;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Satoshi', system-ui, sans-serif;
-  }
-
-  /* Subtle noise texture */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.02;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   }
 }
 
@@ -122,6 +109,260 @@
   font-family: 'JetBrains Mono', monospace;
 }
 
+/* Retro fonts for landing page */
+.font-retro {
+  font-family: 'Space Mono', monospace;
+}
+
+.font-pixel {
+  font-family: 'VT323', monospace;
+}
+
+/* Block/Pixel Animation Keyframes */
+@keyframes block-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-12px) rotate(-2deg);
+  }
+}
+
+@keyframes block-stack {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px) rotate(-10deg);
+  }
+  60% {
+    transform: translateY(5px) rotate(2deg);
+  }
+  80% {
+    transform: translateY(-2px) rotate(-1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes block-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes block-wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(3deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+}
+
+@keyframes block-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes pixel-blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes cursor-blink {
+  0%, 50% {
+    border-color: black;
+  }
+  51%, 100% {
+    border-color: transparent;
+  }
+}
+
+@keyframes slide-up-stagger {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animation utility classes */
+.animate-block-float {
+  animation: block-float 4s ease-in-out infinite;
+}
+
+.animate-block-stack {
+  animation: block-stack 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-block-pulse {
+  animation: block-pulse 2s ease-in-out infinite;
+}
+
+.animate-block-wiggle {
+  animation: block-wiggle 0.5s ease-in-out;
+}
+
+.animate-block-bounce {
+  animation: block-bounce 1s ease-in-out infinite;
+}
+
+.animate-pixel-blink {
+  animation: pixel-blink 1s step-end infinite;
+}
+
+.animate-typing {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 2s steps(30) forwards;
+}
+
+.animate-cursor {
+  border-right: 3px solid black;
+  animation: cursor-blink 0.8s step-end infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up-stagger 0.5s ease-out forwards;
+}
+
+.animate-pop-in {
+  animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Stagger delays */
+.delay-0 { animation-delay: 0ms; }
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+.delay-1000 { animation-delay: 1000ms; }
+
+/* Retro paper texture */
+.paper-texture {
+  background-color: #fefefe;
+  background-image:
+    linear-gradient(90deg, transparent 79px, #e0e0e0 79px, #e0e0e0 81px, transparent 81px),
+    linear-gradient(#e8e8e8 1px, transparent 1px);
+  background-size: 100% 24px;
+}
+
+/* Retro grid pattern */
+.retro-grid {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Dotted pattern */
+.dot-pattern {
+  background-image: radial-gradient(circle, #000 1px, transparent 1px);
+  background-size: 16px 16px;
+  opacity: 0.1;
+}
+
+/* Block shadows for that 3D look */
+.block-shadow {
+  box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 1);
+}
+
+.block-shadow-sm {
+  box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 1);
+}
+
+.block-shadow-lg {
+  box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 1);
+}
+
+/* Hover lift for blocks */
+.block-hover {
+  transition: all 0.2s ease;
+}
+
+.block-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 1);
+}
+
+/* Retro button style */
+.btn-retro {
+  @apply font-bold uppercase tracking-wider;
+  box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 1);
+  transition: all 0.1s ease;
+}
+
+.btn-retro:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 1);
+}
+
+.btn-retro:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 1);
+}
+
+/* Selection color for light theme */
+.light ::selection {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Focus styles for light theme */
+.light :focus-visible {
+  @apply outline-none ring-2 ring-black/50 ring-offset-2 ring-offset-white;
+}
+
 @layer components {
   /* Card with subtle glow on hover */
   .card-hover {
@@ -130,59 +371,19 @@
 
   .card-hover:hover {
     border-color: hsl(var(--border-highlight));
-    box-shadow: 0 8px 32px rgba(255, 255, 255, 0.03);
   }
-
-  /* Subtle grid pattern */
-  .bg-grid {
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 48px 48px;
-  }
-
-  /* Radial glow */
-  .bg-glow {
-    background: radial-gradient(
-      ellipse 60% 40% at 50% 0%,
-      rgba(255, 255, 255, 0.06) 0%,
-      transparent 70%
-    );
-  }
-
-  /* Button glow effect */
-  .btn-glow {
-    @apply relative overflow-hidden transition-all duration-300;
-  }
-
-  .btn-glow:hover {
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
-  }
-
-  /* Stagger animations */
-  .stagger > * {
-    opacity: 0;
-    animation: fade-up 0.6s ease-out forwards;
-  }
-
-  .stagger > *:nth-child(1) { animation-delay: 0ms; }
-  .stagger > *:nth-child(2) { animation-delay: 100ms; }
-  .stagger > *:nth-child(3) { animation-delay: 200ms; }
-  .stagger > *:nth-child(4) { animation-delay: 300ms; }
-  .stagger > *:nth-child(5) { animation-delay: 400ms; }
-  .stagger > *:nth-child(6) { animation-delay: 500ms; }
 
   /* Status colors */
   .status-active {
-    @apply bg-emerald-500/10 text-emerald-400 border-emerald-500/20;
+    @apply bg-emerald-500/10 text-emerald-600 border-emerald-500/20;
   }
 
   .status-pending {
-    @apply bg-yellow-500/10 text-yellow-400 border-yellow-500/20;
+    @apply bg-yellow-500/10 text-yellow-600 border-yellow-500/20;
   }
 
   .status-revoked {
-    @apply bg-red-500/10 text-red-400 border-red-500/20;
+    @apply bg-red-500/10 text-red-600 border-red-500/20;
   }
 }
 
@@ -201,7 +402,7 @@
   }
 }
 
-/* Keyframe animations */
+/* Keyframe animations (existing) */
 @keyframes fade-up {
   0% {
     opacity: 0;
@@ -214,12 +415,8 @@
 }
 
 @keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 @keyframes fade-in-up {
@@ -233,25 +430,6 @@
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-@keyframes pulse-subtle {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-/* Animation utility classes */
 .animate-fade-in {
   animation: fade-in 0.6s ease-out forwards;
 }
@@ -260,292 +438,7 @@
   animation: fade-in-up 0.6s ease-out forwards;
 }
 
-.delay-100 {
-  animation-delay: 100ms;
-}
-
-.delay-200 {
-  animation-delay: 200ms;
-}
-
-.delay-300 {
-  animation-delay: 300ms;
-}
-
-.delay-400 {
-  animation-delay: 400ms;
-}
-
-.delay-500 {
-  animation-delay: 500ms;
-}
-
-.delay-1000 {
-  animation-delay: 1000ms;
-}
-
-/* Selection color */
-::selection {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* Focus styles */
-:focus-visible {
-  @apply outline-none ring-2 ring-white/50 ring-offset-2 ring-offset-background;
-}
-
 /* Smooth transitions */
 button, a, input, textarea {
   @apply transition-all duration-200;
-}
-
-/* Page transition wrapper */
-.page-transition {
-  animation: page-enter 0.4s ease-out forwards;
-}
-
-@keyframes page-enter {
-  0% {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Card lift effect on hover */
-.card-lift {
-  @apply transition-all duration-300;
-}
-
-.card-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-/* Scale on press */
-.press-scale {
-  @apply transition-transform duration-150;
-}
-
-.press-scale:active {
-  transform: scale(0.97);
-}
-
-/* Slide in animations */
-@keyframes slide-in-right {
-  0% {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-in-left {
-  0% {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-in-up {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slide-in-down {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-slide-in-right {
-  animation: slide-in-right 0.4s ease-out forwards;
-}
-
-.animate-slide-in-left {
-  animation: slide-in-left 0.4s ease-out forwards;
-}
-
-.animate-slide-in-up {
-  animation: slide-in-up 0.4s ease-out forwards;
-}
-
-.animate-slide-in-down {
-  animation: slide-in-down 0.4s ease-out forwards;
-}
-
-/* Scale in animation */
-@keyframes scale-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-scale-in {
-  animation: scale-in 0.3s ease-out forwards;
-}
-
-/* Bounce animation for icons/badges */
-@keyframes bounce-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  70% {
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-bounce-in {
-  animation: bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-}
-
-/* Shimmer effect for loading states */
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.animate-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
-
-/* Glow pulse for important elements */
-@keyframes glow-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 20px 4px rgba(255, 255, 255, 0.1);
-  }
-}
-
-.animate-glow-pulse {
-  animation: glow-pulse 2s ease-in-out infinite;
-}
-
-/* Success checkmark animation */
-@keyframes check-draw {
-  0% {
-    stroke-dashoffset: 48;
-  }
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-.animate-check {
-  stroke-dasharray: 48;
-  stroke-dashoffset: 48;
-  animation: check-draw 0.4s ease-out 0.2s forwards;
-}
-
-/* Spinner rotation */
-@keyframes spin-slow {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spin-slow 3s linear infinite;
-}
-
-/* Number counter animation */
-@keyframes count-up {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-count-up {
-  animation: count-up 0.6s ease-out forwards;
-}
-
-/* Underline expand animation for links */
-.link-underline {
-  position: relative;
-}
-
-.link-underline::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: currentColor;
-  transition: width 0.3s ease;
-}
-
-.link-underline:hover::after {
-  width: 100%;
-}
-
-/* Tooltip fade in */
-@keyframes tooltip-in {
-  0% {
-    opacity: 0;
-    transform: translateY(4px) scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.animate-tooltip-in {
-  animation: tooltip-in 0.15s ease-out forwards;
 }
