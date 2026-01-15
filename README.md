@@ -1,5 +1,6 @@
 # AgentID
 
+[![CI](https://github.com/backdooraccessed/agentid/actions/workflows/ci.yml/badge.svg)](https://github.com/backdooraccessed/agentid/actions/workflows/ci.yml)
 [![E2E Tests](https://github.com/backdooraccessed/agentid/actions/workflows/e2e-tests.yml/badge.svg)](https://github.com/backdooraccessed/agentid/actions/workflows/e2e-tests.yml)
 
 Credential and Reputation Infrastructure for AI Agents.
