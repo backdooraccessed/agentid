@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus, Bot, Shield, Wallet, Clock, AlertCircle, Loader2, ArrowLeft, Check } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import {
   AGENT_TYPES,
   AGENT_TYPE_LABELS,
@@ -122,29 +124,43 @@ export default function NewCredentialPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Issue New Credential</h1>
-        <p className="text-muted-foreground">
-          Create a verifiable credential for your AI agent
-        </p>
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-8">
+        <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+          <Plus className="h-7 w-7 text-white/70" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Issue New Credential</h1>
+          <p className="text-muted-foreground">
+            Create a verifiable credential for your AI agent
+          </p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
-            {error}
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+            <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" />
+            <p className="text-sm text-red-400">{error}</p>
           </div>
         )}
 
         {/* Agent Identity */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Agent Identity</CardTitle>
-            <CardDescription>Basic information about your agent</CardDescription>
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <Bot className="h-4 w-4 text-white/70" />
+              </div>
+              <div>
+                <CardTitle className="text-base">Agent Identity</CardTitle>
+                <CardDescription>Basic information about your agent</CardDescription>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="pt-6 space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="agent_id">Agent ID</Label>
+              <Label htmlFor="agent_id" className="text-sm font-medium">Agent ID</Label>
               <Input
                 id="agent_id"
                 placeholder="my-trading-agent-v1"
@@ -155,6 +171,7 @@ export default function NewCredentialPage() {
                 required
                 pattern="^[a-zA-Z0-9_-]+$"
                 title="Only letters, numbers, underscores, and hyphens"
+                className="bg-white/[0.02] border-white/10 focus:border-white/30"
               />
               <p className="text-xs text-muted-foreground">
                 Unique identifier (alphanumeric, underscores, hyphens)
@@ -162,7 +179,7 @@ export default function NewCredentialPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="agent_name">Agent Name</Label>
+              <Label htmlFor="agent_name" className="text-sm font-medium">Agent Name</Label>
               <Input
                 id="agent_name"
                 placeholder="Trading Agent v1"
@@ -171,6 +188,7 @@ export default function NewCredentialPage() {
                   setFormData((prev) => ({ ...prev, agent_name: e.target.value }))
                 }
                 required
+                className="bg-white/[0.02] border-white/10 focus:border-white/30"
               />
               <p className="text-xs text-muted-foreground">
                 Human-readable name for display
@@ -178,18 +196,19 @@ export default function NewCredentialPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Agent Type</Label>
+              <Label className="text-sm font-medium">Agent Type</Label>
               <div className="grid grid-cols-3 gap-2">
                 {AGENT_TYPES.map((type) => (
                   <button
                     key={type}
                     type="button"
                     onClick={() => setFormData((prev) => ({ ...prev, agent_type: type }))}
-                    className={`p-3 rounded-md border text-left transition-colors ${
+                    className={cn(
+                      'p-3 rounded-lg border text-left transition-all',
                       formData.agent_type === type
-                        ? 'border-primary bg-primary/5'
-                        : 'border-input hover:bg-accent'
-                    }`}
+                        ? 'border-white/30 bg-white/[0.04]'
+                        : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+                    )}
                   >
                     <div className="font-medium text-sm">{AGENT_TYPE_LABELS[type]}</div>
                     <div className="text-xs text-muted-foreground">
@@ -203,26 +222,37 @@ export default function NewCredentialPage() {
         </Card>
 
         {/* Permissions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Permissions</CardTitle>
-            <CardDescription>What actions can this agent perform?</CardDescription>
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <Shield className="h-4 w-4 text-white/70" />
+              </div>
+              <div>
+                <CardTitle className="text-base">Permissions</CardTitle>
+                <CardDescription>What actions can this agent perform?</CardDescription>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="pt-6 space-y-4">
             <div className="space-y-2">
-              <Label>Allowed Actions</Label>
+              <Label className="text-sm font-medium">Allowed Actions</Label>
               <div className="flex flex-wrap gap-2">
                 {PERMISSION_ACTIONS.map((action) => (
                   <button
                     key={action}
                     type="button"
                     onClick={() => toggleAction(action)}
-                    className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                    className={cn(
+                      'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
                       formData.actions.includes(action)
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted hover:bg-muted/80'
-                    }`}
+                        ? 'bg-white text-black'
+                        : 'bg-white/5 text-white/70 hover:bg-white/10'
+                    )}
                   >
+                    {formData.actions.includes(action) && (
+                      <Check className="h-3.5 w-3.5" />
+                    )}
                     {PERMISSION_ACTION_LABELS[action]}
                   </button>
                 ))}
@@ -230,19 +260,23 @@ export default function NewCredentialPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Allowed Domains</Label>
+              <Label className="text-sm font-medium">Allowed Domains</Label>
               <div className="flex flex-wrap gap-2">
                 {PERMISSION_DOMAINS.map((domain) => (
                   <button
                     key={domain}
                     type="button"
                     onClick={() => toggleDomain(domain)}
-                    className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                    className={cn(
+                      'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
                       formData.domains.includes(domain)
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted hover:bg-muted/80'
-                    }`}
+                        ? 'bg-white text-black'
+                        : 'bg-white/5 text-white/70 hover:bg-white/10'
+                    )}
                   >
+                    {formData.domains.includes(domain) && (
+                      <Check className="h-3.5 w-3.5" />
+                    )}
                     {PERMISSION_DOMAIN_LABELS[domain]}
                   </button>
                 ))}
@@ -252,15 +286,22 @@ export default function NewCredentialPage() {
         </Card>
 
         {/* Resource Limits */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Resource Limits</CardTitle>
-            <CardDescription>Optional limits on agent transactions</CardDescription>
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <Wallet className="h-4 w-4 text-white/70" />
+              </div>
+              <div>
+                <CardTitle className="text-base">Resource Limits</CardTitle>
+                <CardDescription>Optional limits on agent transactions</CardDescription>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="pt-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="max_transaction_value">Max Transaction Value</Label>
+                <Label htmlFor="max_transaction_value" className="text-sm font-medium">Max Transaction Value</Label>
                 <Input
                   id="max_transaction_value"
                   type="number"
@@ -272,10 +313,11 @@ export default function NewCredentialPage() {
                       max_transaction_value: e.target.value,
                     }))
                   }
+                  className="bg-white/[0.02] border-white/10 focus:border-white/30"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="currency">Currency</Label>
+                <Label htmlFor="currency" className="text-sm font-medium">Currency</Label>
                 <Input
                   id="currency"
                   placeholder="USD"
@@ -284,11 +326,12 @@ export default function NewCredentialPage() {
                     setFormData((prev) => ({ ...prev, currency: e.target.value }))
                   }
                   maxLength={3}
+                  className="bg-white/[0.02] border-white/10 focus:border-white/30"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="daily_limit">Daily Limit</Label>
+              <Label htmlFor="daily_limit" className="text-sm font-medium">Daily Limit</Label>
               <Input
                 id="daily_limit"
                 type="number"
@@ -297,20 +340,28 @@ export default function NewCredentialPage() {
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, daily_limit: e.target.value }))
                 }
+                className="bg-white/[0.02] border-white/10 focus:border-white/30"
               />
             </div>
           </CardContent>
         </Card>
 
         {/* Validity */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Validity Period</CardTitle>
-            <CardDescription>How long should this credential be valid?</CardDescription>
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <Clock className="h-4 w-4 text-white/70" />
+              </div>
+              <div>
+                <CardTitle className="text-base">Validity Period</CardTitle>
+                <CardDescription>How long should this credential be valid?</CardDescription>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <div className="space-y-2">
-              <Label htmlFor="valid_days">Valid for (days)</Label>
+              <Label htmlFor="valid_days" className="text-sm font-medium">Valid for (days)</Label>
               <Input
                 id="valid_days"
                 type="number"
@@ -321,6 +372,7 @@ export default function NewCredentialPage() {
                   setFormData((prev) => ({ ...prev, valid_days: e.target.value }))
                 }
                 required
+                className="bg-white/[0.02] border-white/10 focus:border-white/30"
               />
               <p className="text-xs text-muted-foreground">
                 Maximum 365 days. Credential expires on{' '}
@@ -333,14 +385,26 @@ export default function NewCredentialPage() {
         </Card>
 
         <div className="flex gap-4">
-          <Button type="submit" disabled={loading}>
-            {loading ? 'Issuing...' : 'Issue Credential'}
+          <Button type="submit" disabled={loading} className="gap-2">
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Issuing...
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" />
+                Issue Credential
+              </>
+            )}
           </Button>
           <Button
             type="button"
             variant="outline"
             onClick={() => router.back()}
+            className="gap-2 border-white/10 hover:bg-white/[0.04]"
           >
+            <ArrowLeft className="h-4 w-4" />
             Cancel
           </Button>
         </div>
