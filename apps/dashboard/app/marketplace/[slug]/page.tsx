@@ -13,9 +13,10 @@ import {
   Shield,
   CheckCircle,
   Play,
+  Bot,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { AgentIconSmall } from '@/components/illustrations/agent-verification';
 
 interface AppDetails {
   id: string;
@@ -73,13 +74,13 @@ export default function AppDetailPage() {
     return (
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="animate-pulse">
-          <div className="h-8 bg-white/10 rounded w-24 mb-8" />
+          <div className="h-8 bg-white/10 w-24 mb-8" />
           <div className="flex gap-8">
-            <div className="w-24 h-24 bg-white/10 rounded-2xl" />
+            <div className="w-24 h-24 bg-white/10" />
             <div className="flex-1">
-              <div className="h-8 bg-white/10 rounded w-64 mb-4" />
-              <div className="h-4 bg-white/10 rounded w-full mb-2" />
-              <div className="h-4 bg-white/10 rounded w-3/4" />
+              <div className="h-8 bg-white/10 w-64 mb-4" />
+              <div className="h-4 bg-white/10 w-full mb-2" />
+              <div className="h-4 bg-white/10 w-3/4" />
             </div>
           </div>
         </div>
@@ -90,11 +91,15 @@ export default function AppDetailPage() {
   if (!app) {
     return (
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-        <h1 className="text-2xl font-bold text-white mb-4">App Not Found</h1>
-        <p className="text-white/60 mb-6">The app you're looking for doesn't exist.</p>
-        <Link href="/marketplace">
-          <Button className="bg-white text-black hover:bg-white/90">Back to Marketplace</Button>
-        </Link>
+        <div className="border-4 border-white/10 bg-white/5 p-12">
+          <h1 className="font-mono text-2xl font-bold text-white mb-4 uppercase">App Not Found</h1>
+          <p className="text-white/60 font-mono mb-6">The app you're looking for doesn't exist.</p>
+          <Link href="/marketplace">
+            <button className="px-6 py-3 bg-white text-black font-mono font-bold uppercase text-sm hover:bg-white/90 transition-colors">
+              Back to Marketplace
+            </button>
+          </Link>
+        </div>
       </div>
     );
   }
@@ -104,92 +109,92 @@ export default function AppDetailPage() {
       {/* Back link */}
       <Link
         href="/marketplace"
-        className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-8 transition-colors"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-8 transition-colors font-mono uppercase text-sm"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Marketplace
       </Link>
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row gap-6 md:gap-8 mb-8">
-        <div className="w-24 h-24 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-          {app.icon_url ? (
-            <img
-              src={app.icon_url}
-              alt={app.name}
-              className="w-20 h-20 rounded-xl object-cover"
-            />
-          ) : (
-            <span className="text-4xl font-bold text-white/40">
-              {app.name.charAt(0)}
-            </span>
-          )}
-        </div>
-
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold text-white">{app.name}</h1>
-            {app.verified && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 bg-white/10 text-white/80 text-sm rounded-full">
-                <CheckCircle className="h-4 w-4" />
-                Verified
-              </span>
+      <div className="border-4 border-white/10 bg-white/[0.02] p-6 md:p-8 mb-8">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8">
+          <div className="w-24 h-24 bg-white/5 border-4 border-white/10 flex items-center justify-center flex-shrink-0">
+            {app.icon_url ? (
+              <img
+                src={app.icon_url}
+                alt={app.name}
+                className="w-20 h-20 object-cover"
+              />
+            ) : (
+              <AgentIconSmall verified={app.verified} className="w-16 h-20" />
             )}
           </div>
 
-          <p className="text-lg text-white/70 mb-4">{app.tagline}</p>
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="font-mono text-3xl font-bold text-white uppercase">{app.name}</h1>
+              {app.verified && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 border-2 border-white/20 text-white/80 text-sm font-mono uppercase">
+                  <CheckCircle className="h-4 w-4" />
+                  Verified
+                </span>
+              )}
+            </div>
 
-          <div className="flex flex-wrap items-center gap-4 text-sm text-white/60">
-            {app.issuer && (
+            <p className="text-lg text-white/70 mb-4 font-mono">{app.tagline}</p>
+
+            <div className="flex flex-wrap items-center gap-4 text-sm text-white/60 font-mono">
+              {app.issuer && (
+                <span className="flex items-center gap-1">
+                  by <span className="text-white">{app.issuer.name}</span>
+                  {app.issuer.is_verified && (
+                    <Shield className="h-4 w-4 text-white/60" />
+                  )}
+                </span>
+              )}
               <span className="flex items-center gap-1">
-                by <span className="text-white">{app.issuer.name}</span>
-                {app.issuer.is_verified && (
-                  <Shield className="h-4 w-4 text-white/60" />
-                )}
+                <Eye className="h-4 w-4" />
+                {app.view_count.toLocaleString()} views
               </span>
-            )}
-            <span className="flex items-center gap-1">
-              <Eye className="h-4 w-4" />
-              {app.view_count.toLocaleString()} views
-            </span>
-            {app.average_rating && (
-              <span className="flex items-center gap-1 text-white/70">
-                <Star className="h-4 w-4 fill-current" />
-                {app.average_rating.toFixed(1)}
-              </span>
-            )}
-            {app.credential?.trust_score && (
-              <span className="flex items-center gap-1 text-white/70">
-                <Shield className="h-4 w-4" />
-                Trust Score: {app.credential.trust_score}
-              </span>
-            )}
+              {app.average_rating && (
+                <span className="flex items-center gap-1 text-white/70">
+                  <Star className="h-4 w-4 fill-current" />
+                  {app.average_rating.toFixed(1)}
+                </span>
+              )}
+              {app.credential?.trust_score && (
+                <span className="flex items-center gap-1 text-white/70">
+                  <Shield className="h-4 w-4" />
+                  Trust: {app.credential.trust_score}
+                </span>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col gap-3">
-          <a href={app.app_url} target="_blank" rel="noopener noreferrer">
-            <Button className="w-full bg-white text-black hover:bg-white/90 gap-2">
-              <ExternalLink className="h-4 w-4" />
-              Visit App
-            </Button>
-          </a>
-          {app.demo_url && (
-            <a href={app.demo_url} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="w-full border-white/20 text-white hover:bg-white/10 gap-2">
-                <Play className="h-4 w-4" />
-                Try Demo
-              </Button>
+          {/* CTA Buttons */}
+          <div className="flex flex-col gap-3">
+            <a href={app.app_url} target="_blank" rel="noopener noreferrer">
+              <button className="w-full px-6 py-3 bg-white text-black font-mono font-bold uppercase text-sm hover:bg-white/90 transition-colors flex items-center justify-center gap-2">
+                <ExternalLink className="h-4 w-4" />
+                Visit App
+              </button>
             </a>
-          )}
-          <span className="text-center text-sm px-3 py-1.5 rounded-lg bg-white/10 text-white/70">
-            {app.pricing_type === 'free' ? 'Free' :
-             app.pricing_type === 'freemium' ? 'Freemium' :
-             app.pricing_type === 'paid'
-               ? `$${app.pricing_amount}/${app.pricing_currency === 'USD' ? 'mo' : app.pricing_currency}`
-               : 'Contact for Pricing'}
-          </span>
+            {app.demo_url && (
+              <a href={app.demo_url} target="_blank" rel="noopener noreferrer">
+                <button className="w-full px-6 py-3 border-2 border-white/30 text-white font-mono font-bold uppercase text-sm hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
+                  <Play className="h-4 w-4" />
+                  Try Demo
+                </button>
+              </a>
+            )}
+            <span className="text-center text-sm px-3 py-1.5 border border-white/20 text-white/70 font-mono uppercase">
+              {app.pricing_type === 'free' ? 'Free' :
+               app.pricing_type === 'freemium' ? 'Freemium' :
+               app.pricing_type === 'paid'
+                 ? `$${app.pricing_amount}/${app.pricing_currency === 'USD' ? 'mo' : app.pricing_currency}`
+                 : 'Contact'}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -199,7 +204,7 @@ export default function AppDetailPage() {
           <Link
             key={cat.id}
             href={`/marketplace?category=${cat.slug}`}
-            className="px-3 py-1 bg-white/5 hover:bg-white/10 text-white/70 rounded-full text-sm transition-colors"
+            className="px-3 py-1 border-2 border-white/20 hover:border-white/40 text-white/70 font-mono text-sm uppercase transition-colors"
           >
             {cat.name}
           </Link>
@@ -207,7 +212,7 @@ export default function AppDetailPage() {
         {app.tags?.map((tag) => (
           <span
             key={tag}
-            className="px-3 py-1 bg-white/5 text-white/50 rounded-full text-sm"
+            className="px-3 py-1 bg-white/5 text-white/50 font-mono text-sm"
           >
             #{tag}
           </span>
@@ -217,13 +222,13 @@ export default function AppDetailPage() {
       {/* Screenshots */}
       {app.screenshots.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-white mb-4">Screenshots</h2>
+          <h2 className="font-mono text-lg font-bold text-white mb-4 uppercase border-b-2 border-white/10 pb-2">Screenshots</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {app.screenshots.map((screenshot) => (
               <button
                 key={screenshot.id}
                 onClick={() => setSelectedScreenshot(screenshot.image_url)}
-                className="aspect-video bg-white/5 rounded-lg overflow-hidden hover:ring-2 hover:ring-white/30 transition-all"
+                className="aspect-video bg-white/5 border-2 border-white/10 overflow-hidden hover:border-white/30 transition-all"
               >
                 <img
                   src={screenshot.image_url}
@@ -238,9 +243,9 @@ export default function AppDetailPage() {
 
       {/* Description */}
       <div className="mb-8">
-        <h2 className="text-lg font-semibold text-white mb-4">About</h2>
-        <div className="prose prose-invert max-w-none">
-          <p className="text-white/70 whitespace-pre-wrap">{app.description}</p>
+        <h2 className="font-mono text-lg font-bold text-white mb-4 uppercase border-b-2 border-white/10 pb-2">About</h2>
+        <div className="border-4 border-white/10 bg-white/[0.02] p-6">
+          <p className="text-white/70 whitespace-pre-wrap font-mono">{app.description}</p>
         </div>
       </div>
 
@@ -251,7 +256,7 @@ export default function AppDetailPage() {
             href={app.github_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-white/70 rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 border-2 border-white/20 hover:border-white/40 text-white/70 font-mono text-sm uppercase transition-colors"
           >
             <Github className="h-4 w-4" />
             View Source
@@ -262,7 +267,7 @@ export default function AppDetailPage() {
             href={app.docs_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-white/70 rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 border-2 border-white/20 hover:border-white/40 text-white/70 font-mono text-sm uppercase transition-colors"
           >
             <BookOpen className="h-4 w-4" />
             Documentation
@@ -273,14 +278,16 @@ export default function AppDetailPage() {
       {/* Screenshot Modal */}
       {selectedScreenshot && (
         <div
-          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
           onClick={() => setSelectedScreenshot(null)}
         >
-          <img
-            src={selectedScreenshot}
-            alt="Screenshot"
-            className="max-w-full max-h-full rounded-lg"
-          />
+          <div className="border-4 border-white/20 p-2 bg-black">
+            <img
+              src={selectedScreenshot}
+              alt="Screenshot"
+              className="max-w-full max-h-[80vh]"
+            />
+          </div>
         </div>
       )}
     </div>

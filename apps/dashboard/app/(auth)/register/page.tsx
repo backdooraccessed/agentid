@@ -5,10 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Loader2, Check, X, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -32,18 +28,11 @@ export default function RegisterPage() {
     return { checks, passed, total: 4 };
   }, [password]);
 
-  const getStrengthColor = (passed: number) => {
-    if (passed <= 1) return 'bg-red-500';
-    if (passed === 2) return 'bg-amber-500';
-    if (passed === 3) return 'bg-white/50';
-    return 'bg-emerald-500';
-  };
-
   const getStrengthLabel = (passed: number) => {
-    if (passed <= 1) return { text: 'Weak', color: 'text-red-400' };
-    if (passed === 2) return { text: 'Fair', color: 'text-amber-400' };
-    if (passed === 3) return { text: 'Good', color: 'text-white/70' };
-    return { text: 'Strong', color: 'text-emerald-400' };
+    if (passed <= 1) return { text: 'WEAK', color: 'text-red-400' };
+    if (passed === 2) return { text: 'FAIR', color: 'text-amber-400' };
+    if (passed === 3) return { text: 'GOOD', color: 'text-white/70' };
+    return { text: 'STRONG', color: 'text-emerald-400' };
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -88,8 +77,8 @@ export default function RegisterPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="space-y-2 text-center lg:text-left">
-        <h1 className="font-display text-3xl font-bold tracking-tight">Create an account</h1>
-        <p className="text-muted-foreground">
+        <h1 className="font-mono text-3xl font-bold tracking-tight uppercase">Create Account</h1>
+        <p className="text-muted-foreground font-mono text-sm">
           Start issuing verifiable credentials for your AI agents
         </p>
       </div>
@@ -97,17 +86,17 @@ export default function RegisterPage() {
       {/* Form */}
       <form onSubmit={handleRegister} className="space-y-5">
         {error && (
-          <Alert className="border-red-500/20 bg-red-500/5">
-            <AlertCircle className="h-4 w-4 text-red-400" />
-            <AlertDescription className="text-red-200">{error}</AlertDescription>
-          </Alert>
+          <div className="border-2 border-red-500/30 bg-red-500/5 p-4 flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <p className="text-red-200 font-mono text-sm">{error}</p>
+          </div>
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-medium">
+          <label htmlFor="email" className="font-mono text-sm font-bold uppercase block">
             Email address
-          </Label>
-          <Input
+          </label>
+          <input
             id="email"
             type="email"
             placeholder="you@example.com"
@@ -115,15 +104,15 @@ export default function RegisterPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="email"
-            className="h-12 px-4 bg-white/[0.02] border-white/10 focus:border-white/30 focus:ring-white/10"
+            className="w-full h-12 px-4 bg-white/[0.02] border-2 border-white/10 font-mono focus:border-white/30 focus:outline-none transition-colors"
           />
         </div>
 
         <div className="space-y-3">
-          <Label htmlFor="password" className="text-sm font-medium">
+          <label htmlFor="password" className="font-mono text-sm font-bold uppercase block">
             Password
-          </Label>
-          <Input
+          </label>
+          <input
             id="password"
             type="password"
             placeholder="Create a strong password"
@@ -131,26 +120,28 @@ export default function RegisterPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="new-password"
-            className="h-12 px-4 bg-white/[0.02] border-white/10 focus:border-white/30 focus:ring-white/10"
+            className="w-full h-12 px-4 bg-white/[0.02] border-2 border-white/10 font-mono focus:border-white/30 focus:outline-none transition-colors"
           />
           {password && (
-            <div className="space-y-3 p-4 rounded-lg bg-white/[0.02] border border-white/10">
+            <div className="space-y-3 p-4 border-2 border-white/10 bg-white/[0.02]">
               {/* Strength bar */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Password strength</span>
-                  <span className={cn('font-medium', strengthLabel.color)}>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs text-muted-foreground uppercase">Password strength</span>
+                  <span className={cn('font-mono text-xs font-bold', strengthLabel.color)}>
                     {strengthLabel.text}
                   </span>
                 </div>
-                <div className="flex gap-1.5">
+                <div className="flex gap-1">
                   {[...Array(4)].map((_, i) => (
                     <div
                       key={i}
                       className={cn(
-                        'h-1.5 flex-1 rounded-full transition-all duration-300',
+                        'h-2 flex-1 transition-all duration-300',
                         i < passwordStrength.passed
-                          ? getStrengthColor(passwordStrength.passed)
+                          ? passwordStrength.passed <= 1 ? 'bg-red-500' :
+                            passwordStrength.passed === 2 ? 'bg-amber-500' :
+                            passwordStrength.passed === 3 ? 'bg-white/50' : 'bg-emerald-500'
                           : 'bg-white/10'
                       )}
                     />
@@ -159,20 +150,20 @@ export default function RegisterPage() {
               </div>
               {/* Requirements */}
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                <PasswordCheck passed={passwordStrength.checks.length} label="8+ characters" />
-                <PasswordCheck passed={passwordStrength.checks.uppercase} label="Uppercase" />
-                <PasswordCheck passed={passwordStrength.checks.lowercase} label="Lowercase" />
-                <PasswordCheck passed={passwordStrength.checks.number} label="Number" />
+                <PasswordCheck passed={passwordStrength.checks.length} label="8+ CHARS" />
+                <PasswordCheck passed={passwordStrength.checks.uppercase} label="UPPERCASE" />
+                <PasswordCheck passed={passwordStrength.checks.lowercase} label="LOWERCASE" />
+                <PasswordCheck passed={passwordStrength.checks.number} label="NUMBER" />
               </div>
             </div>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword" className="text-sm font-medium">
+          <label htmlFor="confirmPassword" className="font-mono text-sm font-bold uppercase block">
             Confirm password
-          </Label>
-          <Input
+          </label>
+          <input
             id="confirmPassword"
             type="password"
             placeholder="Confirm your password"
@@ -181,47 +172,47 @@ export default function RegisterPage() {
             required
             autoComplete="new-password"
             className={cn(
-              'h-12 px-4 bg-white/[0.02] border-white/10 focus:border-white/30 focus:ring-white/10',
+              'w-full h-12 px-4 bg-white/[0.02] border-2 border-white/10 font-mono focus:border-white/30 focus:outline-none transition-colors',
               confirmPassword && password !== confirmPassword && 'border-red-500/30 focus:border-red-500/50'
             )}
           />
           {confirmPassword && password !== confirmPassword && (
-            <p className="text-xs text-red-400 flex items-center gap-1.5">
+            <p className="font-mono text-xs text-red-400 flex items-center gap-1.5 uppercase">
               <X className="h-3.5 w-3.5" />
               Passwords do not match
             </p>
           )}
           {confirmPassword && password === confirmPassword && confirmPassword.length > 0 && (
-            <p className="text-xs text-emerald-400 flex items-center gap-1.5">
+            <p className="font-mono text-xs text-emerald-400 flex items-center gap-1.5 uppercase">
               <Check className="h-3.5 w-3.5" />
               Passwords match
             </p>
           )}
         </div>
 
-        <Button
+        <button
           type="submit"
-          className="w-full h-12 text-base font-medium btn-glow"
+          className="w-full h-12 bg-white text-black font-mono font-bold uppercase text-sm hover:bg-white/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={loading}
         >
           {loading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
               Creating account...
             </>
           ) : (
             <>
               Create account
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="h-4 w-4" />
             </>
           )}
-        </Button>
+        </button>
 
         {/* Terms */}
-        <p className="text-xs text-muted-foreground text-center">
+        <p className="font-mono text-xs text-muted-foreground text-center">
           By creating an account, you agree to our{' '}
           <Link href="/terms" className="text-white/70 hover:text-white underline-offset-4 hover:underline">
-            Terms of Service
+            Terms
           </Link>{' '}
           and{' '}
           <Link href="/privacy" className="text-white/70 hover:text-white underline-offset-4 hover:underline">
@@ -233,10 +224,10 @@ export default function RegisterPage() {
       {/* Divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-white/10" />
+          <div className="w-full border-t-2 border-white/10" />
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
+        <div className="relative flex justify-center">
+          <span className="bg-background px-4 font-mono text-xs uppercase text-muted-foreground">
             Already have an account?
           </span>
         </div>
@@ -246,7 +237,7 @@ export default function RegisterPage() {
       <div className="text-center">
         <Link
           href="/login"
-          className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 font-mono text-sm font-medium text-white/70 hover:text-white transition-colors uppercase"
         >
           Sign in to your account
           <ArrowRight className="h-3.5 w-3.5" />
@@ -260,16 +251,14 @@ function PasswordCheck({ passed, label }: { passed: boolean; label: string }) {
   return (
     <div
       className={cn(
-        'flex items-center gap-2 text-xs transition-colors',
-        passed
-          ? 'text-emerald-400'
-          : 'text-muted-foreground'
+        'flex items-center gap-2 font-mono text-xs transition-colors',
+        passed ? 'text-emerald-400' : 'text-muted-foreground'
       )}
     >
       {passed ? (
         <Check className="h-3.5 w-3.5" />
       ) : (
-        <div className="h-3.5 w-3.5 rounded-full border border-white/20" />
+        <div className="h-3.5 w-3.5 border border-white/20" />
       )}
       {label}
     </div>

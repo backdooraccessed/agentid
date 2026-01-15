@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Search, Star, Code, PenTool, Zap, BarChart2, Headphones, Palette, CheckSquare, Terminal, Grid, Filter, Shield } from 'lucide-react';
+import { Search, Star, Code, PenTool, Zap, BarChart2, Headphones, Palette, CheckSquare, Terminal, Grid, Filter, Shield, Bot, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { AgentIconSmall } from '@/components/illustrations/agent-verification';
 
 interface Category {
   id: string;
@@ -94,46 +95,50 @@ export default function MarketplacePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Hero */}
+      {/* Hero - Retro Style */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-          Discover AI Apps
+        <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-white/20 bg-white/5 mb-6">
+          <Bot className="w-4 h-4 text-white/70" />
+          <span className="font-mono text-sm uppercase tracking-wider text-white/70">AI Marketplace</span>
+        </div>
+        <h1 className="font-mono text-4xl md:text-5xl font-bold text-white mb-4 uppercase tracking-tight">
+          Discover Verified<br />AI Agents
         </h1>
-        <p className="text-xl text-white/60 max-w-2xl mx-auto">
+        <p className="font-mono text-lg text-white/60 max-w-2xl mx-auto">
           Find verified AI applications built by developers worldwide.
           Every app is backed by AgentID credentials.
         </p>
       </div>
 
-      {/* Search */}
+      {/* Search - Retro Style */}
       <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-12">
-        <div className="relative">
+        <div className="relative border-4 border-white/20 bg-white/5">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
-          <Input
+          <input
             type="text"
             placeholder="Search apps..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-12 h-14 bg-white/5 border-white/10 text-white placeholder:text-white/40 text-lg"
+            className="w-full pl-12 pr-28 h-14 bg-transparent text-white placeholder:text-white/40 font-mono text-lg focus:outline-none"
           />
-          <Button
+          <button
             type="submit"
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white text-black hover:bg-white/90"
+            className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2 bg-white text-black font-mono font-bold uppercase text-sm hover:bg-white/90 transition-colors"
           >
             Search
-          </Button>
+          </button>
         </div>
       </form>
 
-      {/* Categories */}
+      {/* Categories - Retro Pills */}
       <div className="flex flex-wrap gap-2 justify-center mb-8">
         <button
           onClick={() => setSelectedCategory(null)}
           className={cn(
-            'px-4 py-2 rounded-full text-sm font-medium transition-colors',
+            'px-4 py-2 font-mono text-sm font-bold uppercase transition-all border-2',
             !selectedCategory
-              ? 'bg-white text-black'
-              : 'bg-white/5 text-white/70 hover:bg-white/10'
+              ? 'bg-white text-black border-white'
+              : 'bg-transparent text-white/70 border-white/20 hover:border-white/40'
           )}
         >
           All
@@ -143,10 +148,10 @@ export default function MarketplacePage() {
             key={cat.id}
             onClick={() => setSelectedCategory(cat.slug)}
             className={cn(
-              'px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2',
+              'px-4 py-2 font-mono text-sm font-bold uppercase transition-all border-2 flex items-center gap-2',
               selectedCategory === cat.slug
-                ? 'bg-white text-black'
-                : 'bg-white/5 text-white/70 hover:bg-white/10'
+                ? 'bg-white text-black border-white'
+                : 'bg-transparent text-white/70 border-white/20 hover:border-white/40'
             )}
           >
             {ICON_MAP[cat.icon] || <Grid className="h-4 w-4" />}
@@ -157,8 +162,8 @@ export default function MarketplacePage() {
       </div>
 
       {/* Sort */}
-      <div className="flex items-center justify-between mb-6">
-        <p className="text-white/60">
+      <div className="flex items-center justify-between mb-6 border-b-2 border-white/10 pb-4">
+        <p className="text-white/60 font-mono">
           {apps.length} app{apps.length !== 1 ? 's' : ''} found
         </p>
         <div className="flex items-center gap-2">
@@ -166,7 +171,7 @@ export default function MarketplacePage() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white"
+            className="bg-white/5 border-2 border-white/20 px-3 py-1.5 text-sm text-white font-mono uppercase focus:outline-none focus:border-white/40"
           >
             <option value="newest">Newest</option>
             <option value="popular">Most Popular</option>
@@ -175,32 +180,34 @@ export default function MarketplacePage() {
         </div>
       </div>
 
-      {/* Apps Grid */}
+      {/* Apps Grid - Retro Cards */}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-6 animate-pulse">
+            <div key={i} className="border-4 border-white/10 bg-white/5 p-6 animate-pulse">
               <div className="flex items-start gap-4">
-                <div className="w-16 h-16 bg-white/10 rounded-xl" />
+                <div className="w-16 h-16 bg-white/10" />
                 <div className="flex-1">
-                  <div className="h-5 bg-white/10 rounded w-32 mb-2" />
-                  <div className="h-4 bg-white/10 rounded w-full" />
+                  <div className="h-5 bg-white/10 w-32 mb-2" />
+                  <div className="h-4 bg-white/10 w-full" />
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : apps.length === 0 ? (
-        <div className="text-center py-16">
-          <Grid className="h-12 w-12 text-white/20 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">No apps found</h3>
-          <p className="text-white/60">
+        <div className="text-center py-16 border-4 border-white/10 bg-white/5">
+          <div className="w-16 h-16 bg-white/10 mx-auto mb-4 flex items-center justify-center">
+            <Grid className="h-8 w-8 text-white/40" />
+          </div>
+          <h3 className="font-mono text-xl font-bold text-white mb-2 uppercase">No Apps Found</h3>
+          <p className="text-white/60 font-mono">
             {search ? 'Try a different search term' : 'Be the first to submit an app!'}
           </p>
           <Link href="/apps/new">
-            <Button className="mt-4 bg-white text-black hover:bg-white/90">
+            <button className="mt-6 px-6 py-3 bg-white text-black font-mono font-bold uppercase text-sm hover:bg-white/90 transition-colors">
               Submit Your App
-            </Button>
+            </button>
           </Link>
         </div>
       ) : (
@@ -209,57 +216,50 @@ export default function MarketplacePage() {
             <Link
               key={app.id}
               href={`/marketplace/${app.slug}`}
-              className="group bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 hover:border-white/20 rounded-xl p-6 transition-all"
+              className="group border-4 border-white/10 hover:border-white/30 bg-white/[0.02] hover:bg-white/[0.05] p-6 transition-all"
             >
               <div className="flex items-start gap-4">
-                <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/10 transition-colors">
+                <div className="w-16 h-16 bg-white/5 border-2 border-white/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/10 transition-colors">
                   {app.icon_url ? (
                     <img
                       src={app.icon_url}
                       alt={app.name}
-                      className="w-12 h-12 rounded-lg object-cover"
+                      className="w-12 h-12 object-cover"
                     />
                   ) : (
-                    <span className="text-2xl font-bold text-white/40">
-                      {app.name.charAt(0)}
-                    </span>
+                    <AgentIconSmall verified={app.verified} className="w-10 h-12" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-white truncate group-hover:text-white/90 transition-colors">
+                    <h3 className="font-mono font-bold text-white truncate group-hover:text-white/90 transition-colors uppercase">
                       {app.name}
                     </h3>
                     {app.verified && (
-                      <Shield className="h-4 w-4 text-white/60" />
+                      <div className="w-5 h-5 bg-white/20 flex items-center justify-center">
+                        <Shield className="h-3 w-3 text-white" />
+                      </div>
                     )}
                   </div>
-                  <p className="text-sm text-white/50 line-clamp-2 mt-1">
+                  <p className="text-sm text-white/50 line-clamp-2 mt-1 font-mono">
                     {app.tagline}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between">
+              <div className="mt-4 pt-4 border-t-2 border-white/10 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {app.average_rating && (
                     <div className="flex items-center gap-1 text-white/60">
                       <Star className="h-4 w-4 fill-current" />
-                      <span className="text-sm">{app.average_rating.toFixed(1)}</span>
+                      <span className="text-sm font-mono">{app.average_rating.toFixed(1)}</span>
                     </div>
                   )}
-                  <span className="text-xs text-white/40">
+                  <span className="text-xs text-white/40 font-mono">
                     {app.view_count.toLocaleString()} views
                   </span>
                 </div>
-                <span className={cn(
-                  'text-xs px-2 py-1 rounded-full',
-                  app.pricing_type === 'free'
-                    ? 'bg-white/10 text-white/70'
-                    : app.pricing_type === 'freemium'
-                    ? 'bg-white/10 text-white/70'
-                    : 'bg-white/10 text-white/70'
-                )}>
+                <span className="text-xs px-2 py-1 border border-white/20 text-white/70 font-mono uppercase">
                   {app.pricing_type === 'free' ? 'Free' :
                    app.pricing_type === 'freemium' ? 'Freemium' :
                    app.pricing_type === 'paid' ? 'Paid' : 'Contact'}
@@ -271,13 +271,18 @@ export default function MarketplacePage() {
                   {app.categories.slice(0, 2).map((cat) => (
                     <span
                       key={cat.slug}
-                      className="text-xs px-2 py-0.5 bg-white/5 text-white/50 rounded"
+                      className="text-xs px-2 py-0.5 bg-white/5 text-white/50 font-mono uppercase"
                     >
                       {cat.name}
                     </span>
                   ))}
                 </div>
               )}
+
+              <div className="mt-4 flex items-center gap-2 text-white/50 group-hover:text-white/70 transition-colors">
+                <span className="text-xs font-mono uppercase">View Details</span>
+                <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+              </div>
             </Link>
           ))}
         </div>

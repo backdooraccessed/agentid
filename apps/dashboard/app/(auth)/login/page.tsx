@@ -5,10 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Loader2, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
@@ -45,8 +41,8 @@ export default function LoginPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="space-y-2 text-center lg:text-left">
-        <h1 className="font-display text-3xl font-bold tracking-tight">Welcome back</h1>
-        <p className="text-muted-foreground">
+        <h1 className="font-mono text-3xl font-bold tracking-tight uppercase">Welcome Back</h1>
+        <p className="text-muted-foreground font-mono text-sm">
           Sign in to your account to manage your credentials
         </p>
       </div>
@@ -54,17 +50,17 @@ export default function LoginPage() {
       {/* Form */}
       <form onSubmit={handleLogin} className="space-y-5">
         {error && (
-          <Alert className="border-red-500/20 bg-red-500/5">
-            <AlertCircle className="h-4 w-4 text-red-400" />
-            <AlertDescription className="text-red-200">{error}</AlertDescription>
-          </Alert>
+          <div className="border-2 border-red-500/30 bg-red-500/5 p-4 flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <p className="text-red-200 font-mono text-sm">{error}</p>
+          </div>
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-medium">
+          <label htmlFor="email" className="font-mono text-sm font-bold uppercase block">
             Email address
-          </Label>
-          <Input
+          </label>
+          <input
             id="email"
             type="email"
             placeholder="you@example.com"
@@ -72,23 +68,23 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="email"
-            className="h-12 px-4 bg-white/[0.02] border-white/10 focus:border-white/30 focus:ring-white/10"
+            className="w-full h-12 px-4 bg-white/[0.02] border-2 border-white/10 font-mono focus:border-white/30 focus:outline-none transition-colors"
           />
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password" className="text-sm font-medium">
+            <label htmlFor="password" className="font-mono text-sm font-bold uppercase block">
               Password
-            </Label>
+            </label>
             <Link
               href="/forgot-password"
-              className="text-sm text-white/70 hover:text-white font-medium transition-colors"
+              className="font-mono text-xs text-white/70 hover:text-white transition-colors uppercase"
             >
               Forgot password?
             </Link>
           </div>
-          <Input
+          <input
             id="password"
             type="password"
             placeholder="Enter your password"
@@ -96,36 +92,36 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
-            className="h-12 px-4 bg-white/[0.02] border-white/10 focus:border-white/30 focus:ring-white/10"
+            className="w-full h-12 px-4 bg-white/[0.02] border-2 border-white/10 font-mono focus:border-white/30 focus:outline-none transition-colors"
           />
         </div>
 
-        <Button
+        <button
           type="submit"
-          className="w-full h-12 text-base font-medium btn-glow"
+          className="w-full h-12 bg-white text-black font-mono font-bold uppercase text-sm hover:bg-white/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={loading}
         >
           {loading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
               Signing in...
             </>
           ) : (
             <>
               Sign in
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="h-4 w-4" />
             </>
           )}
-        </Button>
+        </button>
       </form>
 
       {/* Divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-white/10" />
+          <div className="w-full border-t-2 border-white/10" />
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
+        <div className="relative flex justify-center">
+          <span className="bg-background px-4 font-mono text-xs uppercase text-muted-foreground">
             New to AgentID?
           </span>
         </div>
@@ -135,7 +131,7 @@ export default function LoginPage() {
       <div className="text-center">
         <Link
           href="/register"
-          className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 font-mono text-sm font-medium text-white/70 hover:text-white transition-colors uppercase"
         >
           Create a free account
           <ArrowRight className="h-3.5 w-3.5" />

@@ -2,64 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Shield, Zap, Lock, Eye, RefreshCw, Code2, ArrowRight, Github, Check, Terminal, Blocks, Box, Store } from 'lucide-react';
-
-// Animated Building Blocks Component
-function BuildingBlocks() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const blocks = [
-    { color: 'bg-black', size: 'w-16 h-16', delay: 'delay-0', x: 0, y: 0 },
-    { color: 'bg-black', size: 'w-12 h-12', delay: 'delay-100', x: 60, y: -20 },
-    { color: 'bg-gray-800', size: 'w-14 h-14', delay: 'delay-200', x: -30, y: -40 },
-    { color: 'bg-black', size: 'w-10 h-10', delay: 'delay-300', x: 40, y: -60 },
-    { color: 'bg-gray-700', size: 'w-12 h-12', delay: 'delay-400', x: -10, y: -80 },
-    { color: 'bg-black', size: 'w-8 h-8', delay: 'delay-500', x: 50, y: -100 },
-  ];
-
-  return (
-    <div className="relative w-32 h-40">
-      {blocks.map((block, i) => (
-        <div
-          key={i}
-          className={`
-            absolute ${block.color} ${block.size} border-2 border-black
-            ${mounted ? 'animate-block-stack' : 'opacity-0'}
-            ${block.delay}
-          `}
-          style={{
-            left: `calc(50% + ${block.x}px)`,
-            bottom: `${-block.y}px`,
-            transform: 'translateX(-50%)',
-          }}
-        >
-          {/* Block studs */}
-          <div className="absolute -top-1 left-1/4 w-2 h-2 bg-inherit border border-black rounded-sm" />
-          <div className="absolute -top-1 right-1/4 w-2 h-2 bg-inherit border border-black rounded-sm" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// Floating Block Animation
-function FloatingBlock({ className, delay = '0' }: { className?: string; delay?: string }) {
-  return (
-    <div
-      className={`absolute animate-block-float ${className}`}
-      style={{ animationDelay: `${delay}s` }}
-    >
-      <div className="w-8 h-8 bg-black border-2 border-black relative">
-        <div className="absolute -top-1 left-1 w-2 h-2 bg-black border border-gray-600" />
-        <div className="absolute -top-1 right-1 w-2 h-2 bg-black border border-gray-600" />
-      </div>
-    </div>
-  );
-}
+import { Shield, Zap, Lock, Eye, RefreshCw, Code2, ArrowRight, Github, Check, Terminal, Box, Store, Bot, Cpu, Network, FileCheck } from 'lucide-react';
+import { AgentVerificationIllustration, AgentIconSmall, VerificationGatewayIcon, CredentialCardIcon, TrustScoreMeter } from '@/components/illustrations/agent-verification';
 
 // Retro Terminal Window
 function TerminalWindow({ children, title }: { children: React.ReactNode; title: string }) {
@@ -80,19 +24,23 @@ function TerminalWindow({ children, title }: { children: React.ReactNode; title:
   );
 }
 
-// Feature Card with Block Style
-function FeatureCard({ icon: Icon, title, description, delay }: {
+// Feature Card with Retro Robot Icon
+function FeatureCard({ icon: Icon, title, description, delay, showAgent = false }: {
   icon: React.ElementType;
   title: string;
   description: string;
   delay: string;
+  showAgent?: boolean;
 }) {
   return (
     <div
       className={`bg-white border-4 border-black p-6 block-shadow block-hover opacity-0 animate-slide-up ${delay}`}
     >
-      <div className="w-12 h-12 bg-black text-white flex items-center justify-center mb-4 block-shadow-sm">
-        <Icon className="w-6 h-6" />
+      <div className="flex items-start gap-4 mb-4">
+        <div className="w-12 h-12 bg-black text-white flex items-center justify-center block-shadow-sm flex-shrink-0">
+          <Icon className="w-6 h-6" />
+        </div>
+        {showAgent && <AgentIconSmall verified className="flex-shrink-0" />}
       </div>
       <h3 className="font-retro font-bold text-lg mb-2 uppercase">{title}</h3>
       <p className="font-retro text-gray-600 text-sm leading-relaxed">{description}</p>
@@ -100,22 +48,28 @@ function FeatureCard({ icon: Icon, title, description, delay }: {
   );
 }
 
-// Step Component
-function Step({ number, title, description, delay }: {
+// Step Component with Robot
+function Step({ number, title, description, delay, IconComponent }: {
   number: number;
   title: string;
   description: string;
   delay: string;
+  IconComponent?: React.ReactNode;
 }) {
   return (
     <div className={`flex gap-6 opacity-0 animate-slide-up ${delay}`}>
       <div className="w-16 h-16 bg-black text-white flex items-center justify-center font-pixel text-4xl block-shadow flex-shrink-0">
         {number}
       </div>
-      <div>
+      <div className="flex-1">
         <h3 className="font-retro font-bold text-xl mb-2 uppercase">{title}</h3>
         <p className="font-retro text-gray-600">{description}</p>
       </div>
+      {IconComponent && (
+        <div className="flex-shrink-0 hidden md:block">
+          {IconComponent}
+        </div>
+      )}
     </div>
   );
 }
@@ -123,9 +77,46 @@ function Step({ number, title, description, delay }: {
 // Stats Block
 function StatBlock({ value, label, delay }: { value: string; label: string; delay: string }) {
   return (
-    <div className={`text-center opacity-0 animate-pop-in ${delay}`}>
-      <div className="font-pixel text-5xl md:text-6xl mb-2">{value}</div>
-      <div className="font-retro text-sm uppercase tracking-wider text-gray-600">{label}</div>
+    <div className={`text-center p-4 bg-white border-4 border-black block-shadow opacity-0 animate-pop-in ${delay}`}>
+      <div className="font-pixel text-4xl md:text-5xl mb-2">{value}</div>
+      <div className="font-retro text-xs uppercase tracking-wider text-gray-600">{label}</div>
+    </div>
+  );
+}
+
+// Marketplace Preview Card
+function MarketplaceCard({ index, delay }: { index: number; delay: string }) {
+  return (
+    <div className={`bg-white border-4 border-black p-6 block-shadow block-hover opacity-0 animate-slide-up ${delay}`}>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-12 h-12 bg-black border-2 border-black flex items-center justify-center">
+          <AgentIconSmall verified className="w-8 h-10" />
+        </div>
+        <div>
+          <div className="h-4 bg-gray-800 w-24 mb-1" />
+          <div className="h-3 bg-gray-300 w-16" />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <div className="h-3 bg-gray-200 w-full" />
+        <div className="h-3 bg-gray-200 w-3/4" />
+      </div>
+      <div className="mt-4 pt-4 border-t-2 border-black flex items-center justify-between">
+        <span className="font-pixel text-sm">VERIFIED</span>
+        <span className="font-retro text-xs bg-black text-white px-2 py-1">★ 4.{8 + index}</span>
+      </div>
+    </div>
+  );
+}
+
+// Floating decorative element
+function FloatingRobot({ className, delay = '0' }: { className?: string; delay?: string }) {
+  return (
+    <div
+      className={`absolute animate-block-float ${className}`}
+      style={{ animationDelay: `${delay}s` }}
+    >
+      <AgentIconSmall verified={false} className="opacity-20" />
     </div>
   );
 }
@@ -151,11 +142,10 @@ export default function RetroLandingPage() {
       {/* Dotted Background Pattern */}
       <div className="fixed inset-0 dot-pattern pointer-events-none" />
 
-      {/* Floating Blocks */}
-      <FloatingBlock className="top-20 left-[10%] hidden md:block" delay="0" />
-      <FloatingBlock className="top-40 right-[15%] hidden md:block" delay="0.5" />
-      <FloatingBlock className="top-60 left-[20%] hidden lg:block" delay="1" />
-      <FloatingBlock className="bottom-40 right-[10%] hidden md:block" delay="1.5" />
+      {/* Floating Robots */}
+      <FloatingRobot className="top-20 left-[10%] hidden md:block" delay="0" />
+      <FloatingRobot className="top-40 right-[15%] hidden md:block" delay="0.5" />
+      <FloatingRobot className="bottom-40 right-[10%] hidden md:block" delay="1.5" />
 
       {/* Header */}
       <header className="relative z-50 border-b-4 border-black bg-white">
@@ -194,7 +184,7 @@ export default function RetroLandingPage() {
 
       <main>
         {/* Hero Section */}
-        <section className="relative py-20 md:py-32 overflow-hidden">
+        <section className="relative py-16 md:py-24 overflow-hidden">
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
@@ -222,7 +212,7 @@ export default function RetroLandingPage() {
                 <div className={`flex flex-col sm:flex-row gap-4 ${mounted ? 'animate-slide-up delay-300' : 'opacity-0'}`}>
                   <Link href="/register">
                     <button className="flex items-center justify-center gap-2 px-8 py-4 bg-black text-white font-retro font-bold uppercase btn-retro">
-                      <Code2 className="w-5 h-5" />
+                      <Bot className="w-5 h-5" />
                       Start Building
                     </button>
                   </Link>
@@ -235,21 +225,9 @@ export default function RetroLandingPage() {
                 </div>
               </div>
 
-              {/* Building Blocks Animation */}
-              <div className="flex items-center justify-center">
-                <div className="relative">
-                  <BuildingBlocks />
-
-                  {/* Verification Badge */}
-                  <div className={`absolute -right-8 top-0 bg-white border-2 border-black p-3 block-shadow-sm ${mounted ? 'animate-pop-in delay-700' : 'opacity-0'}`}>
-                    <Check className="w-6 h-6" />
-                  </div>
-
-                  {/* Trust Score */}
-                  <div className={`absolute -left-12 bottom-20 bg-white border-2 border-black px-3 py-2 block-shadow-sm ${mounted ? 'animate-pop-in delay-800' : 'opacity-0'}`}>
-                    <span className="font-pixel text-lg">100%</span>
-                  </div>
-                </div>
+              {/* AI Agent Verification Illustration */}
+              <div className={`${mounted ? 'animate-fade-in' : 'opacity-0'}`}>
+                <AgentVerificationIllustration />
               </div>
             </div>
           </div>
@@ -260,17 +238,22 @@ export default function RetroLandingPage() {
           <div className="max-w-4xl mx-auto px-4">
             <TerminalWindow title="verification.ts">
               <div className="space-y-2">
-                <div className="text-gray-500">// Verify agent credential</div>
+                <div className="text-gray-500">// Verify AI agent credential</div>
                 <div>
-                  <span className="text-gray-600">const</span> result = <span className="text-gray-600">await</span> agentid.<span className="font-bold">verify</span>(credential);
+                  <span className="text-gray-600">const</span> agent = <span className="text-gray-600">await</span> agentid.<span className="font-bold">verify</span>(credential);
                 </div>
                 <div className="h-4" />
-                <div className="flex items-center gap-2 text-green-600">
+                <div className="flex items-center gap-2 text-green-700">
                   <Check className="w-4 h-4" />
-                  <span>Verified in 47ms</span>
+                  <span>Agent Verified in 47ms</span>
                 </div>
-                <div className="pl-6 text-gray-600">
-                  {'{'} valid: <span className="font-bold">true</span>, trust_score: <span className="font-bold">98</span> {'}'}
+                <div className="pl-6 text-gray-600 font-mono">
+                  {'{'}<br />
+                  &nbsp;&nbsp;valid: <span className="font-bold">true</span>,<br />
+                  &nbsp;&nbsp;agent_id: <span className="font-bold">"agent_x7k9m2..."</span>,<br />
+                  &nbsp;&nbsp;trust_score: <span className="font-bold">98</span>,<br />
+                  &nbsp;&nbsp;permissions: [<span className="font-bold">"read"</span>, <span className="font-bold">"write"</span>]<br />
+                  {'}'}
                 </div>
               </div>
             </TerminalWindow>
@@ -282,57 +265,100 @@ export default function RetroLandingPage() {
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-black bg-white block-shadow-sm mb-6">
-                <Blocks className="w-4 h-4" />
+                <Cpu className="w-4 h-4" />
                 <span className="font-retro text-sm uppercase tracking-wider">Features</span>
               </div>
-              <h2 className="font-pixel text-4xl md:text-5xl uppercase">
+              <h2 className="font-pixel text-4xl md:text-5xl uppercase mb-4">
                 Everything You Need
               </h2>
+              <p className="font-retro text-gray-600 max-w-xl mx-auto">
+                Complete infrastructure for AI agent identity and verification
+              </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <FeatureCard
                 icon={Shield}
                 title="Issue Credentials"
-                description="Create verifiable credentials with cryptographic signatures and custom permissions."
+                description="Create verifiable credentials with cryptographic signatures. Each agent gets a unique, tamper-proof identity."
                 delay="delay-0"
+                showAgent
               />
               <FeatureCard
                 icon={Zap}
                 title="Instant Verify"
-                description="Verify any credential in under 50ms. No network calls for cached credentials."
+                description="Verify any agent credential in under 50ms. No network calls for cached credentials."
                 delay="delay-100"
               />
               <FeatureCard
                 icon={Lock}
                 title="Permission Scopes"
-                description="Define granular permissions. Control exactly what your agents can access."
+                description="Define granular permissions. Control exactly what your AI agents can access and do."
                 delay="delay-200"
               />
               <FeatureCard
                 icon={RefreshCw}
                 title="Instant Revoke"
-                description="Revoke compromised credentials instantly. Changes propagate globally."
+                description="Revoke compromised credentials instantly. Changes propagate globally in real-time."
                 delay="delay-300"
               />
               <FeatureCard
                 icon={Eye}
                 title="Audit Logs"
-                description="Complete trail of every verification. Meet compliance requirements."
+                description="Complete trail of every verification. Meet compliance requirements with full transparency."
                 delay="delay-400"
               />
               <FeatureCard
                 icon={Code2}
                 title="SDK Support"
-                description="Python and TypeScript SDKs. Integrate in minutes, not days."
+                description="Python and TypeScript SDKs with FastAPI, LangChain, and Express integrations."
                 delay="delay-500"
               />
             </div>
           </div>
         </section>
 
-        {/* Marketplace Preview */}
+        {/* How It Works */}
         <section className="py-20 md:py-32 border-y-4 border-black bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-black bg-white block-shadow-sm mb-6">
+                <Network className="w-4 h-4" />
+                <span className="font-retro text-sm uppercase tracking-wider">How It Works</span>
+              </div>
+              <h2 className="font-pixel text-4xl md:text-5xl uppercase">
+                Three Simple Steps
+              </h2>
+            </div>
+
+            <div className="space-y-12">
+              <Step
+                number={1}
+                title="Register Your Agent"
+                description="Create an issuer account and register your AI agent. Get cryptographic signing keys in seconds."
+                delay="delay-0"
+                IconComponent={<AgentIconSmall verified={false} className="opacity-60" />}
+              />
+              <Step
+                number={2}
+                title="Issue Credentials"
+                description="Generate cryptographically signed credentials with custom permissions and expiration policies."
+                delay="delay-200"
+                IconComponent={<CredentialCardIcon className="opacity-60" />}
+              />
+              <Step
+                number={3}
+                title="Verify Anywhere"
+                description="Any service can verify your agent's identity, permissions, and trust score with a single API call."
+                delay="delay-400"
+                IconComponent={<AgentIconSmall verified className="opacity-60" />}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Marketplace Preview */}
+        <section className="py-20 md:py-32">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-black bg-white block-shadow-sm mb-6">
@@ -340,24 +366,17 @@ export default function RetroLandingPage() {
                 <span className="font-retro text-sm uppercase tracking-wider">Marketplace</span>
               </div>
               <h2 className="font-pixel text-4xl md:text-5xl uppercase mb-4">
-                Discover AI Apps
+                Discover Verified AI Agents
               </h2>
               <p className="font-retro text-gray-600 max-w-xl mx-auto">
-                Browse verified AI applications built by developers worldwide.
+                Browse verified AI applications and agents built by developers worldwide.
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 mb-12">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-white border-4 border-black p-6 block-shadow block-hover">
-                  <div className="w-12 h-12 bg-gray-200 border-2 border-black mb-4 flex items-center justify-center font-pixel text-2xl">
-                    {i}
-                  </div>
-                  <div className="h-4 bg-gray-200 mb-2 w-3/4" />
-                  <div className="h-3 bg-gray-100 w-full mb-1" />
-                  <div className="h-3 bg-gray-100 w-2/3" />
-                </div>
-              ))}
+              <MarketplaceCard index={1} delay="delay-0" />
+              <MarketplaceCard index={2} delay="delay-100" />
+              <MarketplaceCard index={3} delay="delay-200" />
             </div>
 
             <div className="text-center">
@@ -371,65 +390,80 @@ export default function RetroLandingPage() {
           </div>
         </section>
 
-        {/* How It Works */}
-        <section className="py-20 md:py-32">
-          <div className="max-w-4xl mx-auto px-4">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-black bg-white block-shadow-sm mb-6">
-                <Box className="w-4 h-4" />
-                <span className="font-retro text-sm uppercase tracking-wider">How It Works</span>
-              </div>
-              <h2 className="font-pixel text-4xl md:text-5xl uppercase">
-                Three Simple Steps
-              </h2>
-            </div>
-
-            <div className="space-y-12">
-              <Step
-                number={1}
-                title="Register Your Agent"
-                description="Create an issuer account and register your AI agent in seconds."
-                delay="delay-0"
-              />
-              <Step
-                number={2}
-                title="Issue Credentials"
-                description="Generate cryptographically signed credentials with custom permissions."
-                delay="delay-200"
-              />
-              <Step
-                number={3}
-                title="Verify Anywhere"
-                description="Any service can verify your agent's identity with a single API call."
-                delay="delay-400"
-              />
-            </div>
-          </div>
-        </section>
-
         {/* Stats */}
         <section className="py-20 md:py-32 border-y-4 border-black bg-gray-50">
           <div className="max-w-6xl mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-              <StatBlock value="10K+" label="Credentials Issued" delay="delay-0" />
-              <StatBlock value="<50ms" label="Verification Time" delay="delay-100" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <StatBlock value="10K+" label="Credentials" delay="delay-0" />
+              <StatBlock value="<50ms" label="Verify Time" delay="delay-100" />
               <StatBlock value="99.9%" label="Uptime" delay="delay-200" />
               <StatBlock value="500+" label="Companies" delay="delay-300" />
             </div>
           </div>
         </section>
 
-        {/* CTA Section */}
+        {/* Trust Score Section */}
         <section className="py-20 md:py-32">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-black bg-white block-shadow-sm mb-6">
+                  <FileCheck className="w-4 h-4" />
+                  <span className="font-retro text-sm uppercase tracking-wider">Trust Scores</span>
+                </div>
+                <h2 className="font-pixel text-4xl md:text-5xl uppercase mb-6">
+                  Build Agent Reputation
+                </h2>
+                <p className="font-retro text-gray-600 mb-8">
+                  Every verification builds your agent's reputation. Track trust scores, verification history, and compliance metrics in real-time.
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 p-4 bg-white border-4 border-black block-shadow">
+                    <div className="w-12 h-12 bg-black text-white flex items-center justify-center font-pixel text-xl">98</div>
+                    <div>
+                      <div className="font-retro font-bold uppercase">Trust Score</div>
+                      <div className="font-retro text-sm text-gray-600">Based on verification history</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 bg-white border-4 border-black block-shadow">
+                    <div className="w-12 h-12 bg-black text-white flex items-center justify-center font-pixel text-lg">1.2K</div>
+                    <div>
+                      <div className="font-retro font-bold uppercase">Verifications</div>
+                      <div className="font-retro text-sm text-gray-600">Successful identity checks</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <div className="relative">
+                  <div className="w-64 h-64 bg-white border-4 border-black block-shadow-lg p-6 flex flex-col items-center justify-center">
+                    <div className="font-retro text-sm uppercase tracking-wider mb-2">Agent Trust</div>
+                    <div className="font-pixel text-8xl">98</div>
+                    <div className="font-retro text-sm text-gray-600 mt-2">/ 100</div>
+                    <div className="mt-4 w-full bg-gray-200 h-3 border border-black">
+                      <div className="bg-black h-full" style={{ width: '98%' }} />
+                    </div>
+                  </div>
+                  <div className="absolute -top-4 -right-4 bg-white border-2 border-black p-2 block-shadow-sm">
+                    <Check className="w-6 h-6" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 md:py-32 border-t-4 border-black bg-black text-white">
           <div className="max-w-4xl mx-auto px-4 text-center">
             <h2 className="font-pixel text-4xl md:text-6xl uppercase mb-6">
               Ready to Build?
             </h2>
-            <p className="font-retro text-lg text-gray-600 mb-8 max-w-xl mx-auto">
+            <p className="font-retro text-lg text-gray-400 mb-8 max-w-xl mx-auto">
               Start issuing verifiable credentials for your AI agents today. Free tier includes 1,000 verifications per month.
             </p>
             <Link href="/register">
-              <button className="inline-flex items-center gap-2 px-10 py-5 bg-black text-white font-retro font-bold text-lg uppercase btn-retro">
+              <button className="inline-flex items-center gap-2 px-10 py-5 bg-white text-black font-retro font-bold text-lg uppercase border-4 border-white hover:bg-gray-100 transition-colors">
                 Get Started Free
                 <ArrowRight className="w-5 h-5" />
               </button>
@@ -481,7 +515,7 @@ export default function RetroLandingPage() {
           </div>
 
           <div className="mt-12 pt-8 border-t-2 border-black text-center font-retro text-sm text-gray-600">
-            <span className="font-pixel">&copy; 2024 AgentID</span> — Built with blocks of trust
+            <span className="font-pixel">&copy; 2024 AgentID</span> — Identity for autonomous AI agents
           </div>
         </div>
       </footer>

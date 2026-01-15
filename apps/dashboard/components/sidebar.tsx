@@ -28,7 +28,6 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { LogoFull } from '@/components/brand/logo';
 
 interface NavItem {
   href: string;
@@ -118,11 +117,14 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-black border-r border-white/5 flex flex-col">
+    <aside className="w-64 bg-black border-r-2 border-white/10 flex flex-col">
       {/* Logo */}
-      <div className="p-4 border-b border-white/5">
-        <Link href="/" className="block">
-          <LogoFull />
+      <div className="p-4 border-b-2 border-white/10">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-9 h-9 bg-white flex items-center justify-center group-hover:scale-105 transition-transform">
+            <Shield className="w-5 h-5 text-black" />
+          </div>
+          <span className="font-mono text-lg font-bold uppercase tracking-tight">AgentID</span>
         </Link>
       </div>
 
@@ -130,7 +132,7 @@ export function Sidebar() {
       <nav className="flex-1 p-3 space-y-6 overflow-y-auto scrollbar-hide">
         {navItems.map((group) => (
           <div key={group.section}>
-            <div className="text-[10px] font-semibold text-muted-foreground/50 px-3 py-2 uppercase tracking-widest">
+            <div className="font-mono text-[10px] font-bold text-muted-foreground/50 px-3 py-2 uppercase tracking-widest">
               {group.section}
             </div>
             <div className="space-y-1">
@@ -142,21 +144,12 @@ export function Sidebar() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200',
+                      'group relative flex items-center gap-3 px-3 py-2.5 text-sm font-mono transition-all duration-200',
                       active
-                        ? 'bg-white/[0.08] text-white font-medium'
-                        : 'text-muted-foreground hover:bg-white/[0.04] hover:text-white'
+                        ? 'bg-white/[0.08] text-white font-medium border-l-2 border-white'
+                        : 'text-muted-foreground hover:bg-white/[0.04] hover:text-white border-l-2 border-transparent hover:border-white/20'
                     )}
                   >
-                    {/* Active indicator */}
-                    <div
-                      className={cn(
-                        'absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full transition-all duration-200',
-                        active
-                          ? 'bg-white'
-                          : 'bg-transparent group-hover:bg-white/20'
-                      )}
-                    />
                     <Icon
                       className={cn(
                         'h-4 w-4 shrink-0 transition-colors',
@@ -187,14 +180,14 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t border-white/5">
+      <div className="p-3 border-t-2 border-white/10">
         <form action="/api/auth/signout" method="post">
           <button
             type="submit"
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-red-500/10 hover:text-red-400 transition-all"
+            className="w-full flex items-center gap-3 px-3 py-2 text-sm font-mono text-muted-foreground hover:bg-red-500/10 hover:text-red-400 transition-all border-l-2 border-transparent hover:border-red-400"
           >
             <LogOut className="h-4 w-4" />
-            <span>Sign out</span>
+            <span className="uppercase">Sign out</span>
           </button>
         </form>
       </div>
