@@ -93,7 +93,7 @@ export default function AppDetailPage() {
         <h1 className="text-2xl font-bold text-white mb-4">App Not Found</h1>
         <p className="text-white/60 mb-6">The app you're looking for doesn't exist.</p>
         <Link href="/marketplace">
-          <Button>Back to Marketplace</Button>
+          <Button className="bg-white text-black hover:bg-white/90">Back to Marketplace</Button>
         </Link>
       </div>
     );
@@ -112,7 +112,7 @@ export default function AppDetailPage() {
 
       {/* Header */}
       <div className="flex flex-col md:flex-row gap-6 md:gap-8 mb-8">
-        <div className="w-24 h-24 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+        <div className="w-24 h-24 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center flex-shrink-0">
           {app.icon_url ? (
             <img
               src={app.icon_url}
@@ -120,7 +120,7 @@ export default function AppDetailPage() {
               className="w-20 h-20 rounded-xl object-cover"
             />
           ) : (
-            <span className="text-4xl font-bold text-white/60">
+            <span className="text-4xl font-bold text-white/40">
               {app.name.charAt(0)}
             </span>
           )}
@@ -130,7 +130,7 @@ export default function AppDetailPage() {
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-3xl font-bold text-white">{app.name}</h1>
             {app.verified && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 text-sm rounded-full">
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-white/10 text-white/80 text-sm rounded-full">
                 <CheckCircle className="h-4 w-4" />
                 Verified
               </span>
@@ -144,7 +144,7 @@ export default function AppDetailPage() {
               <span className="flex items-center gap-1">
                 by <span className="text-white">{app.issuer.name}</span>
                 {app.issuer.is_verified && (
-                  <Shield className="h-4 w-4 text-emerald-400" />
+                  <Shield className="h-4 w-4 text-white/60" />
                 )}
               </span>
             )}
@@ -153,13 +153,13 @@ export default function AppDetailPage() {
               {app.view_count.toLocaleString()} views
             </span>
             {app.average_rating && (
-              <span className="flex items-center gap-1 text-amber-400">
+              <span className="flex items-center gap-1 text-white/70">
                 <Star className="h-4 w-4 fill-current" />
                 {app.average_rating.toFixed(1)}
               </span>
             )}
             {app.credential?.trust_score && (
-              <span className="flex items-center gap-1 text-emerald-400">
+              <span className="flex items-center gap-1 text-white/70">
                 <Shield className="h-4 w-4" />
                 Trust Score: {app.credential.trust_score}
               </span>
@@ -170,7 +170,7 @@ export default function AppDetailPage() {
         {/* CTA Buttons */}
         <div className="flex flex-col gap-3">
           <a href={app.app_url} target="_blank" rel="noopener noreferrer">
-            <Button className="w-full bg-emerald-500 hover:bg-emerald-600 gap-2">
+            <Button className="w-full bg-white text-black hover:bg-white/90 gap-2">
               <ExternalLink className="h-4 w-4" />
               Visit App
             </Button>
@@ -183,14 +183,7 @@ export default function AppDetailPage() {
               </Button>
             </a>
           )}
-          <span className={cn(
-            'text-center text-sm px-3 py-1.5 rounded-lg',
-            app.pricing_type === 'free'
-              ? 'bg-emerald-500/20 text-emerald-400'
-              : app.pricing_type === 'freemium'
-              ? 'bg-blue-500/20 text-blue-400'
-              : 'bg-amber-500/20 text-amber-400'
-          )}>
+          <span className="text-center text-sm px-3 py-1.5 rounded-lg bg-white/10 text-white/70">
             {app.pricing_type === 'free' ? 'Free' :
              app.pricing_type === 'freemium' ? 'Freemium' :
              app.pricing_type === 'paid'
@@ -230,7 +223,7 @@ export default function AppDetailPage() {
               <button
                 key={screenshot.id}
                 onClick={() => setSelectedScreenshot(screenshot.image_url)}
-                className="aspect-video bg-white/5 rounded-lg overflow-hidden hover:ring-2 hover:ring-emerald-500 transition-all"
+                className="aspect-video bg-white/5 rounded-lg overflow-hidden hover:ring-2 hover:ring-white/30 transition-all"
               >
                 <img
                   src={screenshot.image_url}

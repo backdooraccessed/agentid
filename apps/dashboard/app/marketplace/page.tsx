@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Search, Star, ExternalLink, Code, PenTool, Zap, BarChart2, Headphones, Palette, CheckSquare, Terminal, Grid, Filter } from 'lucide-react';
+import { Search, Star, Code, PenTool, Zap, BarChart2, Headphones, Palette, CheckSquare, Terminal, Grid, Filter, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -118,7 +118,7 @@ export default function MarketplacePage() {
           />
           <Button
             type="submit"
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-emerald-500 hover:bg-emerald-600"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white text-black hover:bg-white/90"
           >
             Search
           </Button>
@@ -132,7 +132,7 @@ export default function MarketplacePage() {
           className={cn(
             'px-4 py-2 rounded-full text-sm font-medium transition-colors',
             !selectedCategory
-              ? 'bg-emerald-500 text-white'
+              ? 'bg-white text-black'
               : 'bg-white/5 text-white/70 hover:bg-white/10'
           )}
         >
@@ -145,7 +145,7 @@ export default function MarketplacePage() {
             className={cn(
               'px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2',
               selectedCategory === cat.slug
-                ? 'bg-emerald-500 text-white'
+                ? 'bg-white text-black'
                 : 'bg-white/5 text-white/70 hover:bg-white/10'
             )}
           >
@@ -179,7 +179,7 @@ export default function MarketplacePage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white/5 rounded-xl p-6 animate-pulse">
+            <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-6 animate-pulse">
               <div className="flex items-start gap-4">
                 <div className="w-16 h-16 bg-white/10 rounded-xl" />
                 <div className="flex-1">
@@ -198,7 +198,7 @@ export default function MarketplacePage() {
             {search ? 'Try a different search term' : 'Be the first to submit an app!'}
           </p>
           <Link href="/apps/new">
-            <Button className="mt-4 bg-emerald-500 hover:bg-emerald-600">
+            <Button className="mt-4 bg-white text-black hover:bg-white/90">
               Submit Your App
             </Button>
           </Link>
@@ -209,10 +209,10 @@ export default function MarketplacePage() {
             <Link
               key={app.id}
               href={`/marketplace/${app.slug}`}
-              className="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-6 transition-all"
+              className="group bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 hover:border-white/20 rounded-xl p-6 transition-all"
             >
               <div className="flex items-start gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/10 transition-colors">
                   {app.icon_url ? (
                     <img
                       src={app.icon_url}
@@ -220,23 +220,21 @@ export default function MarketplacePage() {
                       className="w-12 h-12 rounded-lg object-cover"
                     />
                   ) : (
-                    <span className="text-2xl font-bold text-white/60">
+                    <span className="text-2xl font-bold text-white/40">
                       {app.name.charAt(0)}
                     </span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-white truncate group-hover:text-emerald-400 transition-colors">
+                    <h3 className="font-semibold text-white truncate group-hover:text-white/90 transition-colors">
                       {app.name}
                     </h3>
                     {app.verified && (
-                      <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded">
-                        Verified
-                      </span>
+                      <Shield className="h-4 w-4 text-white/60" />
                     )}
                   </div>
-                  <p className="text-sm text-white/60 line-clamp-2 mt-1">
+                  <p className="text-sm text-white/50 line-clamp-2 mt-1">
                     {app.tagline}
                   </p>
                 </div>
@@ -245,7 +243,7 @@ export default function MarketplacePage() {
               <div className="mt-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {app.average_rating && (
-                    <div className="flex items-center gap-1 text-amber-400">
+                    <div className="flex items-center gap-1 text-white/60">
                       <Star className="h-4 w-4 fill-current" />
                       <span className="text-sm">{app.average_rating.toFixed(1)}</span>
                     </div>
@@ -257,10 +255,10 @@ export default function MarketplacePage() {
                 <span className={cn(
                   'text-xs px-2 py-1 rounded-full',
                   app.pricing_type === 'free'
-                    ? 'bg-emerald-500/20 text-emerald-400'
+                    ? 'bg-white/10 text-white/70'
                     : app.pricing_type === 'freemium'
-                    ? 'bg-blue-500/20 text-blue-400'
-                    : 'bg-amber-500/20 text-amber-400'
+                    ? 'bg-white/10 text-white/70'
+                    : 'bg-white/10 text-white/70'
                 )}>
                   {app.pricing_type === 'free' ? 'Free' :
                    app.pricing_type === 'freemium' ? 'Freemium' :
