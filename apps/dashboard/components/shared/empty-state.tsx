@@ -14,6 +14,9 @@ type IllustrationType =
   | 'audit-logs'
   | 'activity'
   | 'search'
+  | 'conversations'
+  | 'policies'
+  | 'verifications'
   | 'generic';
 
 interface EmptyStateProps {
@@ -173,6 +176,45 @@ function GenericIllustration() {
   );
 }
 
+function ConversationsIllustration() {
+  return (
+    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="30" width="50" height="35" rx="8" stroke="currentColor" strokeWidth="2" strokeOpacity="0.2" />
+      <rect x="28" y="40" width="30" height="4" rx="2" fill="currentColor" fillOpacity="0.15" />
+      <rect x="28" y="48" width="24" height="3" rx="1.5" fill="currentColor" fillOpacity="0.1" />
+      <path d="M25 65L35 70L25 75" fill="currentColor" fillOpacity="0.1" />
+      <rect x="50" y="55" width="50" height="35" rx="8" stroke="currentColor" strokeWidth="2" strokeOpacity="0.15" />
+      <rect x="58" y="65" width="30" height="4" rx="2" fill="currentColor" fillOpacity="0.1" />
+      <rect x="58" y="73" width="20" height="3" rx="1.5" fill="currentColor" fillOpacity="0.08" />
+      <path d="M95 90L85 85L95 80" fill="currentColor" fillOpacity="0.08" />
+    </svg>
+  );
+}
+
+function PoliciesIllustration() {
+  return (
+    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M60 25L90 40V60C90 80 75 95 60 100C45 95 30 80 30 60V40L60 25Z" stroke="currentColor" strokeWidth="2" strokeOpacity="0.2" />
+      <path d="M60 35L80 45V60C80 75 70 85 60 88C50 85 40 75 40 60V45L60 35Z" stroke="currentColor" strokeWidth="2" strokeOpacity="0.1" />
+      <path d="M50 60L57 67L72 52" stroke="currentColor" strokeWidth="3" strokeOpacity="0.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function VerificationsIllustration() {
+  return (
+    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="60" cy="60" r="30" stroke="currentColor" strokeWidth="2" strokeOpacity="0.2" />
+      <circle cx="60" cy="60" r="20" stroke="currentColor" strokeWidth="2" strokeOpacity="0.1" />
+      <path d="M50 60L57 67L72 52" stroke="currentColor" strokeWidth="3" strokeOpacity="0.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M60 25V35" stroke="currentColor" strokeWidth="2" strokeOpacity="0.15" strokeLinecap="round" />
+      <path d="M60 85V95" stroke="currentColor" strokeWidth="2" strokeOpacity="0.15" strokeLinecap="round" />
+      <path d="M25 60H35" stroke="currentColor" strokeWidth="2" strokeOpacity="0.15" strokeLinecap="round" />
+      <path d="M85 60H95" stroke="currentColor" strokeWidth="2" strokeOpacity="0.15" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 const illustrations: Record<IllustrationType, React.FC> = {
   credentials: CredentialsIllustration,
   webhooks: WebhooksIllustration,
@@ -182,6 +224,9 @@ const illustrations: Record<IllustrationType, React.FC> = {
   'audit-logs': AuditLogsIllustration,
   activity: ActivityIllustration,
   search: SearchIllustration,
+  conversations: ConversationsIllustration,
+  policies: PoliciesIllustration,
+  verifications: VerificationsIllustration,
   generic: GenericIllustration,
 };
 
@@ -198,37 +243,39 @@ export function EmptyState({
   const Illustration = illustrations[illustration];
 
   return (
-    <div className={cn('flex flex-col items-center justify-center py-12 px-4', className)}>
-      <div className="text-white/40 mb-6">
+    <div className={cn('flex flex-col items-center justify-center py-12 px-4 animate-fade-in', className)}>
+      <div className="text-white/40 mb-6 animate-scale-in">
         <Illustration />
       </div>
 
       {Icon && (
-        <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-4">
+        <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 animate-bounce-in">
           <Icon className="h-6 w-6 text-white/30" />
         </div>
       )}
 
-      <h3 className="text-lg font-medium text-white mb-2">{title}</h3>
+      <h3 className="text-lg font-medium text-white mb-2 animate-slide-in-up">{title}</h3>
 
       {description && (
-        <p className="text-sm text-white/50 text-center max-w-sm mb-6">{description}</p>
+        <p className="text-sm text-white/50 text-center max-w-sm mb-6 animate-slide-in-up delay-100">{description}</p>
       )}
 
       {(actionLabel && (actionHref || onAction)) && (
-        actionHref ? (
-          <Link href={actionHref}>
-            <Button className="gap-2">
+        <div className="animate-slide-in-up delay-200">
+          {actionHref ? (
+            <Link href={actionHref}>
+              <Button className="gap-2 press-scale">
+                <Plus className="h-4 w-4" />
+                {actionLabel}
+              </Button>
+            </Link>
+          ) : (
+            <Button onClick={onAction} className="gap-2 press-scale">
               <Plus className="h-4 w-4" />
               {actionLabel}
             </Button>
-          </Link>
-        ) : (
-          <Button onClick={onAction} className="gap-2">
-            <Plus className="h-4 w-4" />
-            {actionLabel}
-          </Button>
-        )
+          )}
+        </div>
       )}
     </div>
   );

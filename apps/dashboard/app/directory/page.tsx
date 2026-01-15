@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,9 +17,24 @@ import {
   ChevronDown,
   Loader2,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  SlidersHorizontal,
+  ArrowUpDown,
+  Filter,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// Debounce hook for search
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
 
 interface Issuer {
   id: string;
@@ -55,12 +70,27 @@ const ISSUER_TYPE_ICONS: Record<string, React.ReactNode> = {
   platform: <Globe className="h-4 w-4" />,
 };
 
+type SortOption = 'trust_score' | 'joined' | 'credentials';
+type IssuerType = 'all' | 'individual' | 'organization' | 'platform';
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'trust_score', label: 'Trust Score' },
+  { value: 'joined', label: 'Recently Joined' },
+  { value: 'credentials', label: 'Most Credentials' },
+];
+
 export default function DirectoryPage() {
   const [issuers, setIssuers] = useState<Issuer[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [verifiedOnly, setVerifiedOnly] = useState(true);
+  const [typeFilter, setTypeFilter] = useState<IssuerType>('all');
+  const [sortBy, setSortBy] = useState<SortOption>('trust_score');
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Debounce search input
+  const debouncedSearch = useDebounce(search, 300);
 
   const fetchDirectory = async (offset = 0, append = false) => {
     setLoading(true);
@@ -90,14 +120,39 @@ export default function DirectoryPage() {
     }
   };
 
+  // Refetch when filters change (with debounced search)
   useEffect(() => {
     fetchDirectory(0);
-  }, [verifiedOnly]);
+  }, [verifiedOnly, typeFilter, sortBy, debouncedSearch]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchDirectory(0);
-  };
+  // Sort issuers client-side for immediate feedback
+  const sortedIssuers = useMemo(() => {
+    const sorted = [...issuers];
+    switch (sortBy) {
+      case 'trust_score':
+        return sorted.sort((a, b) => (b.stats?.trust_score ?? 0) - (a.stats?.trust_score ?? 0));
+      case 'joined':
+        return sorted.sort((a, b) => new Date(b.joined).getTime() - new Date(a.joined).getTime());
+      case 'credentials':
+        return sorted.sort((a, b) => (b.stats?.active_credentials ?? 0) - (a.stats?.active_credentials ?? 0));
+      default:
+        return sorted;
+    }
+  }, [issuers, sortBy]);
+
+  // Filter by type client-side for immediate feedback
+  const filteredIssuers = useMemo(() => {
+    if (typeFilter === 'all') return sortedIssuers;
+    return sortedIssuers.filter(issuer => issuer.type === typeFilter);
+  }, [sortedIssuers, typeFilter]);
+
+  // Count active filters
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (verifiedOnly) count++;
+    if (typeFilter !== 'all') count++;
+    return count;
+  }, [verifiedOnly, typeFilter]);
 
   const loadMore = () => {
     if (pagination?.has_more) {
@@ -141,8 +196,9 @@ export default function DirectoryPage() {
 
         {/* Search & Filters */}
         <Card className="overflow-hidden">
-          <CardContent className="pt-6">
-            <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
+          <CardContent className="pt-6 space-y-4">
+            {/* Search Row */}
+            <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                 <Input
@@ -151,54 +207,162 @@ export default function DirectoryPage() {
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-10 bg-white/[0.02] border-white/10 focus:border-white/30"
                 />
+                {search && (
+                  <button
+                    onClick={() => setSearch('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
+                  >
+                    &times;
+                  </button>
+                )}
               </div>
-              <Button type="submit" className="gap-2">
-                <Search className="h-4 w-4" />
-                Search
-              </Button>
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setVerifiedOnly(!verifiedOnly)}
+                onClick={() => setShowFilters(!showFilters)}
                 className={cn(
                   'gap-2 transition-all',
-                  verifiedOnly
-                    ? 'bg-white text-black border-white hover:bg-white/90'
+                  showFilters || activeFilterCount > 0
+                    ? 'bg-white/10 border-white/20'
                     : 'border-white/10 hover:bg-white/[0.04]'
                 )}
               >
-                <CheckCircle className="h-4 w-4" />
-                {verifiedOnly ? 'Verified Only' : 'Show All'}
+                <SlidersHorizontal className="h-4 w-4" />
+                Filters
+                {activeFilterCount > 0 && (
+                  <span className="ml-1 px-1.5 py-0.5 rounded-full bg-white text-black text-xs font-medium">
+                    {activeFilterCount}
+                  </span>
+                )}
               </Button>
-            </form>
+            </div>
+
+            {/* Expandable Filters */}
+            {showFilters && (
+              <div className="flex flex-wrap gap-3 pt-2 border-t border-white/10">
+                {/* Verified Filter */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setVerifiedOnly(!verifiedOnly)}
+                  className={cn(
+                    'gap-2 transition-all',
+                    verifiedOnly
+                      ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/30'
+                      : 'border-white/10 hover:bg-white/[0.04]'
+                  )}
+                >
+                  <CheckCircle className="h-3.5 w-3.5" />
+                  Verified Only
+                </Button>
+
+                {/* Type Filter */}
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-white/50 mr-1">Type:</span>
+                  {(['all', 'individual', 'organization', 'platform'] as const).map((type) => (
+                    <Button
+                      key={type}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setTypeFilter(type)}
+                      className={cn(
+                        'gap-1.5 transition-all capitalize',
+                        typeFilter === type
+                          ? 'bg-white/10 border-white/30'
+                          : 'border-white/10 hover:bg-white/[0.04]'
+                      )}
+                    >
+                      {type !== 'all' && ISSUER_TYPE_ICONS[type]}
+                      {type === 'all' ? 'All Types' : ISSUER_TYPE_LABELS[type]}
+                    </Button>
+                  ))}
+                </div>
+
+                {/* Sort */}
+                <div className="flex items-center gap-1 ml-auto">
+                  <span className="text-sm text-white/50 mr-1">Sort:</span>
+                  <div className="flex gap-1">
+                    {SORT_OPTIONS.map((option) => (
+                      <Button
+                        key={option.value}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSortBy(option.value)}
+                        className={cn(
+                          'gap-1.5 transition-all',
+                          sortBy === option.value
+                            ? 'bg-white/10 border-white/30'
+                            : 'border-white/10 hover:bg-white/[0.04]'
+                        )}
+                      >
+                        <ArrowUpDown className="h-3 w-3" />
+                        {option.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
         {/* Stats */}
         {pagination && (
-          <div className="text-sm text-white/50">
-            {pagination.total} issuer{pagination.total !== 1 ? 's' : ''} found
+          <div className="flex items-center justify-between text-sm text-white/50">
+            <span>
+              {filteredIssuers.length} of {pagination.total} issuer{pagination.total !== 1 ? 's' : ''}
+              {typeFilter !== 'all' && ` (${ISSUER_TYPE_LABELS[typeFilter]})`}
+            </span>
+            {(search || typeFilter !== 'all' || verifiedOnly) && (
+              <button
+                onClick={() => {
+                  setSearch('');
+                  setTypeFilter('all');
+                  setVerifiedOnly(false);
+                }}
+                className="text-white/50 hover:text-white transition-colors"
+              >
+                Clear filters
+              </button>
+            )}
           </div>
         )}
 
         {/* Results */}
-        {loading && issuers.length === 0 ? (
+        {loading && filteredIssuers.length === 0 ? (
           <div className="text-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-white/30 mx-auto mb-4" />
             <p className="text-white/50">Loading directory...</p>
           </div>
-        ) : issuers.length === 0 ? (
+        ) : filteredIssuers.length === 0 ? (
           <Card className="overflow-hidden">
             <CardContent className="py-12 text-center">
               <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
                 <Building2 className="h-6 w-6 text-white/30" />
               </div>
-              <p className="text-white/50">No issuers found matching your criteria.</p>
+              <p className="text-white/50 mb-4">No issuers found matching your criteria.</p>
+              {(search || typeFilter !== 'all' || verifiedOnly) && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearch('');
+                    setTypeFilter('all');
+                    setVerifiedOnly(false);
+                  }}
+                  className="border-white/10 hover:bg-white/[0.04]"
+                >
+                  Clear filters
+                </Button>
+              )}
             </CardContent>
           </Card>
         ) : (
           <div className="grid md:grid-cols-2 gap-4">
-            {issuers.map((issuer) => (
+            {filteredIssuers.map((issuer) => (
               <Card
                 key={issuer.id}
                 className="overflow-hidden hover:bg-white/[0.02] transition-colors"

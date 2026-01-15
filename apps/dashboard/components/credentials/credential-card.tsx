@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { LogoIcon } from '@/components/brand/logo';
-import { TrustScoreInline } from '@/components/shared/trust-score';
+import { TrustScore, TrustScoreInline } from '@/components/shared/trust-score';
 import {
   Shield,
   CheckCircle,
@@ -12,6 +12,8 @@ import {
   Bot,
   Eye,
   Sparkles,
+  Calendar,
+  ShieldCheck,
 } from 'lucide-react';
 import type { CredentialStatus, AgentType } from '@agentid/shared';
 
@@ -36,6 +38,12 @@ const agentTypeIcons: Record<AgentType, typeof Bot> = {
   autonomous: Bot,
   supervised: Eye,
   hybrid: Sparkles,
+};
+
+const agentTypeLabels: Record<AgentType, string> = {
+  autonomous: 'Autonomous',
+  supervised: 'Supervised',
+  hybrid: 'Hybrid',
 };
 
 const statusConfig: Record<CredentialStatus, { variant: 'active' | 'revoked' | 'expired' | 'warning'; icon: typeof CheckCircle; label: string }> = {
@@ -149,6 +157,145 @@ export function CredentialCard({ credential, onClick, className }: CredentialCar
           ID: {credential.id.slice(0, 8)}
         </span>
       </div>
+    </div>
+  );
+}
+
+// Visual "physical card" style credential display
+export function CredentialCardVisual({ credential, className }: Omit<CredentialCardProps, 'onClick'>) {
+  const status = statusConfig[credential.status];
+  const AgentIcon = agentTypeIcons[credential.agent_type] || Bot;
+  const StatusIcon = status.icon;
+
+  const statusStyles = {
+    active: { border: 'border-emerald-500/30', glow: 'shadow-emerald-500/20' },
+    expired: { border: 'border-amber-500/30', glow: 'shadow-amber-500/20' },
+    revoked: { border: 'border-red-500/30', glow: 'shadow-red-500/20' },
+    suspended: { border: 'border-orange-500/30', glow: 'shadow-orange-500/20' },
+  };
+
+  const currentStyle = statusStyles[credential.status];
+
+  return (
+    <div
+      className={cn(
+        'relative overflow-hidden rounded-2xl border-2 bg-gradient-to-br from-white/[0.08] to-white/[0.02] p-6 shadow-xl backdrop-blur-sm',
+        currentStyle.border,
+        currentStyle.glow,
+        'shadow-2xl',
+        className
+      )}
+    >
+      {/* Background pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_25%,rgba(255,255,255,0.02)_25%,rgba(255,255,255,0.02)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.02)_75%)] bg-[length:20px_20px] opacity-50" />
+
+      {/* Holographic stripe */}
+      <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white/[0.05] to-transparent" />
+
+      {/* Content */}
+      <div className="relative z-10">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
+              <Shield className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <div className="text-xs font-medium text-white/50 uppercase tracking-wider">
+                AgentID Credential
+              </div>
+              <div className="flex items-center gap-2 mt-0.5">
+                <StatusIcon className={cn(
+                  'w-4 h-4',
+                  credential.status === 'active' && 'text-emerald-400',
+                  credential.status === 'expired' && 'text-amber-400',
+                  credential.status === 'revoked' && 'text-red-400',
+                  credential.status === 'suspended' && 'text-orange-400'
+                )} />
+                <span className={cn(
+                  'text-sm font-medium',
+                  credential.status === 'active' && 'text-emerald-400',
+                  credential.status === 'expired' && 'text-amber-400',
+                  credential.status === 'revoked' && 'text-red-400',
+                  credential.status === 'suspended' && 'text-orange-400'
+                )}>
+                  {status.label}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Trust Score */}
+          {credential.trust_score !== undefined && (
+            <TrustScore score={credential.trust_score} size="sm" showLabel={false} />
+          )}
+        </div>
+
+        {/* Agent Info */}
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+              <AgentIcon className="w-5 h-5 text-white/70" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">{credential.agent_name}</h3>
+              <p className="text-xs font-mono text-white/40">{credential.agent_id}</p>
+            </div>
+          </div>
+          <div className="ml-13">
+            <span className="inline-flex items-center px-2 py-1 rounded-md bg-white/5 border border-white/10 text-xs text-white/60">
+              {agentTypeLabels[credential.agent_type]}
+            </span>
+          </div>
+        </div>
+
+        {/* Issuer */}
+        <div className="mb-6 p-3 rounded-lg bg-white/5 border border-white/10">
+          <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Issued By</div>
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-white">{credential.issuer_name}</span>
+            {credential.issuer_verified && (
+              <span className="inline-flex items-center gap-1 text-xs bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded">
+                <ShieldCheck className="w-3 h-3" />
+                Verified
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Validity */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <div className="flex items-center gap-1.5 text-xs text-white/40 mb-1">
+              <Calendar className="w-3 h-3" />
+              <span className="uppercase tracking-wider">Valid From</span>
+            </div>
+            <div className="text-sm font-medium text-white">
+              {new Date(credential.valid_from).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5 text-xs text-white/40 mb-1">
+              <Calendar className="w-3 h-3" />
+              <span className="uppercase tracking-wider">Valid Until</span>
+            </div>
+            <div className="text-sm font-medium text-white">
+              {new Date(credential.valid_until).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Decorative chip */}
+      <div className="absolute bottom-4 right-4 w-10 h-7 rounded bg-gradient-to-br from-amber-500/30 to-amber-600/20 border border-amber-500/30" />
     </div>
   );
 }

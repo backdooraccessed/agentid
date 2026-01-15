@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { CodeBlock } from '@/components/docs/code-block';
 import {
   BookOpen,
   Sparkles,
@@ -246,7 +247,7 @@ export default function DocsPage() {
                   <h4>Credential Structure</h4>
                   <p>Each credential contains:</p>
 
-                  <pre className="bg-white/[0.02] border border-white/10 p-4 rounded-lg text-xs text-white/70 overflow-x-auto">{`{
+                  <CodeBlock language="json">{`{
   "credential_id": "uuid",
   "agent": {
     "id": "agent-123",
@@ -268,7 +269,7 @@ export default function DocsPage() {
     "allowed_domains": ["api.example.com"]
   },
   "signature": "ed25519-signature"
-}`}</pre>
+}`}</CodeBlock>
 
                   <h4>Capabilities</h4>
                   <p>Define what your agent is authorized to do:</p>
@@ -364,7 +365,7 @@ export default function DocsPage() {
                   <p>
                     Anyone can verify a credential using our public API. No authentication required:
                   </p>
-                  <pre className="bg-white/[0.02] border border-white/10 p-4 rounded-lg text-xs text-white/70 overflow-x-auto">{`POST https://agentid.dev/api/verify
+                  <CodeBlock language="http">{`POST https://agentid.dev/api/verify
 Content-Type: application/json
 
 {
@@ -385,11 +386,11 @@ Content-Type: application/json
     "trust_score": 85,
     "verification_count": 150
   }
-}`}</pre>
+}`}</CodeBlock>
 
                   <h4>Batch Verification</h4>
                   <p>Verify multiple credentials in a single request (up to 100):</p>
-                  <pre className="bg-white/[0.02] border border-white/10 p-4 rounded-lg text-xs text-white/70 overflow-x-auto">{`POST https://agentid.dev/api/verify/batch
+                  <CodeBlock language="http">{`POST https://agentid.dev/api/verify/batch
 Content-Type: application/json
 
 {
@@ -397,7 +398,7 @@ Content-Type: application/json
     { "credential_id": "uuid-1" },
     { "credential_id": "uuid-2" }
   ]
-}`}</pre>
+}`}</CodeBlock>
 
                   <h4>Verification Response</h4>
                   <p>The verification response tells you:</p>
@@ -410,8 +411,8 @@ Content-Type: application/json
 
                   <h4>Verification Badge</h4>
                   <p>Display a verification badge on your website:</p>
-                  <pre className="bg-white/[0.02] border border-white/10 p-4 rounded-lg text-xs text-white/70 overflow-x-auto">{`<img src="https://agentid.dev/api/badge/{credential_id}"
-     alt="AgentID Verified" />`}</pre>
+                  <CodeBlock language="html">{`<img src="https://agentid.dev/api/badge/{credential_id}"
+     alt="AgentID Verified" />`}</CodeBlock>
                 </CardContent>
               </Card>
             </section>
@@ -446,7 +447,7 @@ Content-Type: application/json
 
                   <h4>Authentication</h4>
                   <p>Include your API key in the Authorization header:</p>
-                  <pre className="bg-white/[0.02] border border-white/10 p-4 rounded-lg text-xs text-white/70 overflow-x-auto">{`Authorization: Bearer agid_xxxxx_xxxxxxxxx`}</pre>
+                  <CodeBlock>{`Authorization: Bearer agid_xxxxx_xxxxxxxxx`}</CodeBlock>
 
                   <h4>API Endpoints</h4>
                   <div className="not-prose">
@@ -495,11 +496,11 @@ Content-Type: application/json
 
                   <h4>SDKs</h4>
                   <p>Official SDKs are available for quick integration:</p>
-                  <pre className="bg-white/[0.02] border border-white/10 p-4 rounded-lg text-xs text-white/70 overflow-x-auto">{`# JavaScript/TypeScript
+                  <CodeBlock language="bash">{`# JavaScript/TypeScript
 npm install @agentid/sdk
 
 # Python
-pip install agentid`}</pre>
+pip install agentid`}</CodeBlock>
                 </CardContent>
               </Card>
             </section>
@@ -529,7 +530,7 @@ pip install agentid`}</pre>
                   </ul>
 
                   <h4>Webhook Payload</h4>
-                  <pre className="bg-white/[0.02] border border-white/10 p-4 rounded-lg text-xs text-white/70 overflow-x-auto">{`{
+                  <CodeBlock language="json">{`{
   "event": "credential.revoked",
   "timestamp": "2025-01-13T12:00:00Z",
   "data": {
@@ -538,14 +539,14 @@ pip install agentid`}</pre>
     "revoked_at": "2025-01-13T12:00:00Z",
     "reason": "Security concern"
   }
-}`}</pre>
+}`}</CodeBlock>
 
                   <h4>Signature Verification</h4>
                   <p>
                     Each webhook includes an HMAC signature in the <code>X-AgentID-Signature</code>
                     header. Always verify this signature before processing webhooks:
                   </p>
-                  <pre className="bg-white/[0.02] border border-white/10 p-4 rounded-lg text-xs text-white/70 overflow-x-auto">{`const crypto = require('crypto');
+                  <CodeBlock language="javascript">{`const crypto = require('crypto');
 
 function verifyWebhook(payload, signature, secret) {
   const expected = crypto
@@ -556,7 +557,7 @@ function verifyWebhook(payload, signature, secret) {
     Buffer.from(signature),
     Buffer.from(expected)
   );
-}`}</pre>
+}`}</CodeBlock>
 
                   <h4>Retry Behavior</h4>
                   <p>
@@ -639,9 +640,9 @@ function verifyWebhook(payload, signature, secret) {
                   </div>
 
                   <h4>Reputation API</h4>
-                  <pre className="bg-white/[0.02] border border-white/10 p-4 rounded-lg text-xs text-white/70 overflow-x-auto">{`GET /api/reputation/agent/{agent_id}
+                  <CodeBlock language="http">{`GET /api/reputation/agent/{agent_id}
 GET /api/reputation/issuer/{issuer_id}
-GET /api/reputation/leaderboard`}</pre>
+GET /api/reputation/leaderboard`}</CodeBlock>
                 </CardContent>
               </Card>
             </section>
