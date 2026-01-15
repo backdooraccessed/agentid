@@ -8,6 +8,7 @@ import {
   Shield,
   PlusCircle,
   FileStack,
+  FileKey,
   Key,
   Webhook,
   BarChart3,
@@ -18,6 +19,9 @@ import {
   LogOut,
   Activity,
   ChevronRight,
+  Bell,
+  MessageSquare,
+  ShieldCheck,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -50,12 +54,14 @@ const navItems: NavGroup[] = [
       { href: '/credentials', label: 'All Credentials', icon: Shield },
       { href: '/credentials/new', label: 'Issue New', icon: PlusCircle, exact: true },
       { href: '/templates', label: 'Templates', icon: FileStack },
+      { href: '/policies', label: 'Policies', icon: FileKey, badge: 'Live' },
     ],
   },
   {
     section: 'Insights',
     items: [
       { href: '/verifications', label: 'Verifications', icon: Activity },
+      { href: '/alerts', label: 'Alerts', icon: Bell },
       { href: '/analytics', label: 'Analytics', icon: BarChart3 },
       { href: '/audit-logs', label: 'Audit Logs', icon: ScrollText },
     ],
@@ -65,6 +71,13 @@ const navItems: NavGroup[] = [
     items: [
       { href: '/api-keys', label: 'API Keys', icon: Key },
       { href: '/webhooks', label: 'Webhooks', icon: Webhook },
+    ],
+  },
+  {
+    section: 'A2A Protocol',
+    items: [
+      { href: '/conversations', label: 'Conversations', icon: MessageSquare },
+      { href: '/authorizations', label: 'Authorizations', icon: ShieldCheck },
     ],
   },
   {

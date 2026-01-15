@@ -51,25 +51,48 @@ export async function POST(
     const parsed = revokeCredentialRequestSchema.safeParse(body);
     const reason = parsed.success ? parsed.data.reason : 'Revoked by issuer';
 
-    // 4. Verify credential ownership and revoke
+    // 4. Use revoke_credential function for instant revocation broadcast
+    // This function updates the credential AND inserts into revocations_stream
+    // which triggers Supabase Realtime broadcast to all connected verifiers
+    const { data: revokeResult, error: revokeError } = await supabase.rpc(
+      'revoke_credential',
+      {
+        p_credential_id: id,
+        p_reason: reason,
+        p_user_id: auth.userId,
+      }
+    );
+
+    if (revokeError) {
+      console.error('Revoke RPC error:', revokeError);
+      return NextResponse.json(
+        { error: 'Failed to revoke credential' },
+        { status: 500 }
+      );
+    }
+
+    const result = revokeResult?.[0];
+    if (!result?.success) {
+      return NextResponse.json(
+        { error: result?.message || 'Credential not found, not owned by you, or already revoked' },
+        { status: 404 }
+      );
+    }
+
+    // Fetch the updated credential for webhook payload
     const { data: credential, error } = await supabase
       .from('credentials')
-      .update({
-        status: 'revoked',
-        revoked_at: new Date().toISOString(),
-        revocation_reason: reason,
-      })
-      .eq('id', id)
-      .eq('issuer_id', auth.issuerId)
-      .eq('status', 'active')
       .select()
+      .eq('id', id)
       .single();
 
     if (error || !credential) {
-      return NextResponse.json(
-        { error: 'Credential not found, not owned by you, or already revoked' },
-        { status: 404 }
-      );
+      // Revocation succeeded but couldn't fetch - still return success
+      return NextResponse.json({
+        success: true,
+        credential: { id, status: 'revoked' },
+        instant_broadcast: true,
+      });
     }
 
     // Trigger webhooks (fire and forget)
@@ -95,6 +118,9 @@ export async function POST(
         revoked_at: credential.revoked_at,
         revocation_reason: credential.revocation_reason,
       },
+      // Instant revocation: all connected verifiers are notified in real-time
+      instant_broadcast: true,
+      revocation_id: result.revocation_id,
     });
   } catch (error) {
     console.error('Revocation error:', error);

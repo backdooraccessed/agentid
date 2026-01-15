@@ -44,9 +44,101 @@ function getSupabase(): SupabaseClient {
   return supabase;
 }
 
+// Extract region from Vercel geo headers
+function getRegionFromRequest(request: NextRequest): string | null {
+  // Vercel provides geo info via headers
+  const country = request.headers.get('x-vercel-ip-country');
+  if (country) return country;
+
+  // Fallback to CF headers (if behind Cloudflare)
+  const cfCountry = request.headers.get('cf-ipcountry');
+  if (cfCountry) return cfCountry;
+
+  return null;
+}
+
+// Send alert notifications (webhook and email)
+async function sendAlertNotifications(alertEventId: string) {
+  try {
+    // Fetch the alert event with rule info
+    const { data: event, error } = await getSupabase()
+      .from('alert_events')
+      .select(`
+        *,
+        alert_rules (
+          notify_webhook,
+          notify_email,
+          name
+        )
+      `)
+      .eq('id', alertEventId)
+      .single();
+
+    if (error || !event) {
+      console.error('Failed to fetch alert event for notifications:', error);
+      return;
+    }
+
+    const rule = event.alert_rules;
+
+    // Send webhook notification
+    if (rule?.notify_webhook) {
+      try {
+        const webhookPayload = {
+          event_type: 'alert.triggered',
+          alert: {
+            id: event.id,
+            rule_name: rule.name,
+            severity: event.severity,
+            title: event.title,
+            message: event.message,
+            event_data: event.event_data,
+            credential_id: event.credential_id,
+            triggered_at: event.triggered_at,
+          },
+        };
+
+        const response = await fetch(rule.notify_webhook, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-AgentID-Event': 'alert.triggered',
+          },
+          body: JSON.stringify(webhookPayload),
+        });
+
+        // Update webhook status
+        await getSupabase()
+          .from('alert_events')
+          .update({
+            webhook_sent_at: new Date().toISOString(),
+            webhook_response_code: response.status,
+          })
+          .eq('id', alertEventId);
+      } catch (webhookError) {
+        console.error('Failed to send alert webhook:', webhookError);
+      }
+    }
+
+    // Email notification would be sent here via a service like Resend
+    // For now, we'll just mark it as sent if configured
+    if (rule?.notify_email) {
+      // TODO: Integrate with email service (Resend, SendGrid, etc.)
+      console.log(`Would send alert email to: ${rule.notify_email}`);
+      await getSupabase()
+        .from('alert_events')
+        .update({ email_sent_at: new Date().toISOString() })
+        .eq('id', alertEventId);
+    }
+  } catch (err) {
+    console.error('Failed to send alert notifications:', err);
+  }
+}
+
 export async function POST(request: NextRequest) {
   const startTime = performance.now();
   const requestId = generateRequestId();
+  const region = getRegionFromRequest(request);
 
   // Rate limiting
   const clientId = getClientIdentifier(request);
@@ -69,6 +161,7 @@ export async function POST(request: NextRequest) {
         failureReason: 'Invalid request format',
         startTime,
         requestId,
+        region,
       });
     }
 
@@ -76,12 +169,12 @@ export async function POST(request: NextRequest) {
 
     // Route 1: Verify by credential_id (database lookup)
     if (credential_id) {
-      return await verifyById(credential_id, startTime, requestId);
+      return await verifyById(credential_id, startTime, requestId, region);
     }
 
     // Route 2: Verify provided credential payload
     if (credential) {
-      return await verifyPayload(credential, startTime, requestId);
+      return await verifyPayload(credential, startTime, requestId, region);
     }
 
     return logAndRespond({
@@ -92,6 +185,7 @@ export async function POST(request: NextRequest) {
       failureReason: 'Must provide credential_id or credential',
       startTime,
       requestId,
+      region,
     });
   } catch (error) {
     console.error(`[${requestId}] Verification error:`, error);
@@ -109,13 +203,14 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function verifyById(credentialId: string, startTime: number, requestId: string) {
-  // Fetch credential with issuer info
+async function verifyById(credentialId: string, startTime: number, requestId: string, region: string | null) {
+  // Fetch credential with issuer info and permission policy
   const { data: dbCredential, error } = await getSupabase()
     .from('credentials')
     .select(`
       *,
-      issuers!inner (public_key, is_verified, name, issuer_type)
+      issuers!inner (public_key, is_verified, name, issuer_type),
+      permission_policies (id, name, permissions, version, is_active)
     `)
     .eq('id', credentialId)
     .single();
@@ -129,6 +224,7 @@ async function verifyById(credentialId: string, startTime: number, requestId: st
       failureReason: 'Credential not found',
       startTime,
       requestId,
+      region,
     });
   }
 
@@ -142,6 +238,7 @@ async function verifyById(credentialId: string, startTime: number, requestId: st
       failureReason: `Credential status: ${dbCredential.status}`,
       startTime,
       requestId,
+      region,
     });
   }
 
@@ -159,6 +256,7 @@ async function verifyById(credentialId: string, startTime: number, requestId: st
       failureReason: 'Credential not yet valid',
       startTime,
       requestId,
+      region,
     });
   }
 
@@ -171,6 +269,7 @@ async function verifyById(credentialId: string, startTime: number, requestId: st
       failureReason: 'Credential expired',
       startTime,
       requestId,
+      region,
     });
   }
 
@@ -190,8 +289,14 @@ async function verifyById(credentialId: string, startTime: number, requestId: st
       failureReason: 'Invalid signature',
       startTime,
       requestId,
+      region,
     });
   }
+
+  // Determine effective permissions (policy takes precedence if active)
+  const policy = dbCredential.permission_policies;
+  const usePolicy = policy && policy.is_active;
+  const effectivePermissions = usePolicy ? policy.permissions : payload.permissions;
 
   // SUCCESS
   return logAndRespond({
@@ -201,21 +306,31 @@ async function verifyById(credentialId: string, startTime: number, requestId: st
     failureReason: null,
     startTime,
     requestId,
+    region,
     credential: {
       agent_id: payload.agent_id,
       agent_name: payload.agent_name,
       agent_type: payload.agent_type,
       issuer: payload.issuer,
-      permissions: payload.permissions,
+      permissions: effectivePermissions,
       valid_until: payload.constraints.valid_until,
     },
+    // Include policy info for transparency
+    policy: usePolicy
+      ? {
+          id: policy.id,
+          name: policy.name,
+          version: policy.version,
+        }
+      : undefined,
   });
 }
 
 async function verifyPayload(
   credential: NonNullable<ReturnType<typeof verificationRequestSchema.parse>['credential']>,
   startTime: number,
-  requestId: string
+  requestId: string,
+  region: string | null
 ) {
   // Check validity period first (no DB call needed)
   const now = new Date();
@@ -231,6 +346,7 @@ async function verifyPayload(
       failureReason: 'Credential not yet valid',
       startTime,
       requestId,
+      region,
     });
   }
 
@@ -243,6 +359,7 @@ async function verifyPayload(
       failureReason: 'Credential expired',
       startTime,
       requestId,
+      region,
     });
   }
 
@@ -269,6 +386,7 @@ async function verifyPayload(
       failureReason: 'Issuer not found',
       startTime,
       requestId,
+      region,
     });
   }
 
@@ -282,6 +400,7 @@ async function verifyPayload(
       failureReason: `Credential status: ${credentialResult.data.status}`,
       startTime,
       requestId,
+      region,
     });
   }
 
@@ -297,6 +416,7 @@ async function verifyPayload(
       failureReason: 'Invalid signature',
       startTime,
       requestId,
+      region,
     });
   }
 
@@ -308,6 +428,7 @@ async function verifyPayload(
     failureReason: null,
     startTime,
     requestId,
+    region,
     credential: {
       agent_id: credential.agent_id,
       agent_name: credential.agent_name,
@@ -384,6 +505,7 @@ interface LogAndRespondParams {
   failureReason: string | null;
   startTime: number;
   requestId: string;
+  region?: string | null;
   credential?: {
     agent_id: string;
     agent_name: string;
@@ -391,6 +513,11 @@ interface LogAndRespondParams {
     issuer: unknown;
     permissions: unknown;
     valid_until: string;
+  };
+  policy?: {
+    id: string;
+    name: string;
+    version: number;
   };
 }
 
@@ -402,11 +529,13 @@ async function logAndRespond({
   failureReason,
   startTime,
   requestId,
+  region,
   credential,
+  policy,
 }: LogAndRespondParams) {
   const verificationTimeMs = Math.round(performance.now() - startTime);
 
-  // Log verification and update reputation (fire and forget - don't block response)
+  // Log verification, update reputation, and check alerts (fire and forget - don't block response)
   void (async () => {
     try {
       // Log to verification_logs
@@ -421,6 +550,28 @@ async function logAndRespond({
       // Update reputation if we have a credential ID
       if (credentialId) {
         await updateAgentReputation(credentialId, isValid);
+
+        // Record usage metrics for anomaly detection
+        await getSupabase().rpc('record_usage_metric', {
+          p_credential_id: credentialId,
+          p_success: isValid,
+          p_permission_denied: failureReason?.toLowerCase().includes('permission') || false,
+          p_region: region || null,
+          p_verification_time_ms: verificationTimeMs,
+        });
+
+        // Check and trigger alerts
+        const { data: alertResult } = await getSupabase().rpc('check_verification_alerts', {
+          p_credential_id: credentialId,
+          p_success: isValid,
+          p_failure_reason: failureReason || null,
+          p_region: region || null,
+        });
+
+        // If alert triggered, send notifications asynchronously
+        if (alertResult?.[0]?.alert_triggered && alertResult[0].alert_event_id) {
+          void sendAlertNotifications(alertResult[0].alert_event_id);
+        }
 
         // Also log to verification_events for analytics (get issuer_id from credential)
         const { data: credData } = await getSupabase()
@@ -445,12 +596,21 @@ async function logAndRespond({
   })();
 
   if (isValid && credential) {
-    return NextResponse.json({
+    const response: Record<string, unknown> = {
       valid: true,
       credential,
       verification_time_ms: verificationTimeMs,
       request_id: requestId,
-    });
+    };
+
+    // Include policy info if permissions come from a policy
+    // This enables verifiers to know permissions may update without re-verification
+    if (policy) {
+      response.permission_policy = policy;
+      response.live_permissions = true;
+    }
+
+    return NextResponse.json(response);
   }
 
   return NextResponse.json({
