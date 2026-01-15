@@ -422,11 +422,11 @@ SELECT
   -- Initiator info
   c.initiator_credential_id,
   init.agent_name AS initiator_name,
-  init_i.display_name AS initiator_issuer,
+  init_i.name AS initiator_issuer,
   -- Recipient info
   c.recipient_credential_id,
   recp.agent_name AS recipient_name,
-  recp_i.display_name AS recipient_issuer,
+  recp_i.name AS recipient_issuer,
   -- Message count
   (SELECT COUNT(*) FROM a2a_messages m WHERE m.conversation_id = c.id) AS message_count
 FROM a2a_conversations c
@@ -446,16 +446,16 @@ SELECT
   -- Requester info
   ar.requester_credential_id,
   req.agent_name AS requester_name,
-  req_i.display_name AS requester_issuer,
+  req_i.name AS requester_issuer,
   req_rep.trust_score AS requester_trust_score,
   -- Grantor info
   ar.grantor_credential_id,
   gra.agent_name AS grantor_name,
-  gra_i.display_name AS grantor_issuer
+  gra_i.name AS grantor_issuer
 FROM a2a_authorization_requests ar
 JOIN credentials req ON req.id = ar.requester_credential_id
 JOIN issuers req_i ON req_i.id = req.issuer_id
-LEFT JOIN reputation req_rep ON req_rep.credential_id = req.id
+LEFT JOIN agent_reputation req_rep ON req_rep.credential_id = req.id
 JOIN credentials gra ON gra.id = ar.grantor_credential_id
 JOIN issuers gra_i ON gra_i.id = gra.issuer_id
 WHERE ar.status = 'pending';

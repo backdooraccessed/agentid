@@ -88,9 +88,30 @@ CREATE INDEX idx_agent_registry_featured ON agent_registry(is_featured, created_
 CREATE INDEX idx_agent_registry_verified ON agent_registry(is_verified, trust_score DESC) WHERE is_verified = true;
 CREATE INDEX idx_agent_registry_issuer ON agent_registry(issuer_id);
 
+-- Full text search: add a column for the search vector
+ALTER TABLE agent_registry ADD COLUMN search_vector tsvector;
+
+-- Function to update search vector
+CREATE OR REPLACE FUNCTION update_agent_search_vector()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.search_vector := to_tsvector('english',
+    coalesce(NEW.display_name, '') || ' ' ||
+    coalesce(NEW.description, '') || ' ' ||
+    coalesce(array_to_string(NEW.tags, ' '), '')
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to update search vector on insert/update
+CREATE TRIGGER trg_agent_registry_search_vector
+  BEFORE INSERT OR UPDATE ON agent_registry
+  FOR EACH ROW
+  EXECUTE FUNCTION update_agent_search_vector();
+
 -- Full text search index
-CREATE INDEX idx_agent_registry_search ON agent_registry
-  USING GIN(to_tsvector('english', coalesce(display_name, '') || ' ' || coalesce(description, '') || ' ' || coalesce(array_to_string(tags, ' '), '')));
+CREATE INDEX idx_agent_registry_search ON agent_registry USING GIN(search_vector);
 
 -- Function to register an agent in the registry
 CREATE OR REPLACE FUNCTION register_agent(
