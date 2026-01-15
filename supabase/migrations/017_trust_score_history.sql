@@ -72,7 +72,7 @@ BEGIN
       COALESCE(NEW.verification_score, 0),
       COALESCE(NEW.longevity_score, 0),
       COALESCE(NEW.activity_score, 0),
-      COALESCE(NEW.issuer_score, 0),
+      50, -- Default issuer score
       'verification',
       v_delta
     );
@@ -203,7 +203,7 @@ SELECT
   COALESCE(verification_score, 50),
   COALESCE(longevity_score, 0),
   COALESCE(activity_score, 0),
-  COALESCE(issuer_score, 50),
+  50, -- Default issuer score (column may not exist in agent_reputation)
   'initial'
 FROM agent_reputation;
 
