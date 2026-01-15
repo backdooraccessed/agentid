@@ -18,7 +18,7 @@ export async function GET(
 ) {
   // Rate limiting
   const clientId = getClientIdentifier(request);
-  const rateLimit = await checkRateLimit(clientId, RateLimits.reputation);
+  const rateLimit = checkRateLimit(clientId, RateLimits.reputation);
   if (!rateLimit.success) {
     return rateLimitExceededResponse(rateLimit);
   }

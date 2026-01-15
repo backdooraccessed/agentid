@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
   // Rate limiting
   const clientId = getClientIdentifier(request);
-  const rateLimit = await checkRateLimit(clientId, RateLimits.verify);
+  const rateLimit = checkRateLimit(clientId, RateLimits.verify);
   if (!rateLimit.success) {
     return rateLimitExceededResponse(rateLimit);
   }

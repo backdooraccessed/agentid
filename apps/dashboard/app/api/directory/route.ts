@@ -32,7 +32,7 @@ function getSupabase() {
 export async function GET(request: NextRequest) {
   // Rate limiting
   const clientId = getClientIdentifier(request);
-  const rateLimit = await checkRateLimit(clientId, RateLimits.directory);
+  const rateLimit = checkRateLimit(clientId, RateLimits.directory);
   if (!rateLimit.success) {
     return rateLimitExceededResponse(rateLimit);
   }
