@@ -197,3 +197,158 @@ export function rateLimitExceededResponse(result: RateLimitResult): Response {
     }
   );
 }
+
+// ============================================================================
+// Per-Permission Rate Limiting
+// ============================================================================
+
+// Store for per-permission rate limits (credential:permission -> count)
+const permissionRateLimitStore = new Map<string, {
+  minuteCount: number;
+  minuteResetAt: number;
+  dayCount: number;
+  dayResetAt: number;
+}>();
+
+export interface PermissionRateLimitConfig {
+  max_requests_per_minute?: number;
+  max_requests_per_day?: number;
+}
+
+export interface PermissionRateLimitResult {
+  allowed: boolean;
+  reason?: string;
+  minute_remaining?: number;
+  day_remaining?: number;
+}
+
+/**
+ * Check and update rate limit for a specific permission on a credential
+ */
+export function checkPermissionRateLimit(
+  credentialId: string,
+  permission: string,
+  config: PermissionRateLimitConfig
+): PermissionRateLimitResult {
+  // If no rate limits configured, allow
+  if (!config.max_requests_per_minute && !config.max_requests_per_day) {
+    return { allowed: true };
+  }
+
+  const now = Date.now();
+  const storeKey = `${credentialId}:${permission}`;
+
+  let entry = permissionRateLimitStore.get(storeKey);
+
+  // Initialize or reset windows
+  if (!entry) {
+    entry = {
+      minuteCount: 0,
+      minuteResetAt: now + 60000, // 1 minute
+      dayCount: 0,
+      dayResetAt: now + 86400000, // 24 hours
+    };
+  }
+
+  // Reset minute window if expired
+  if (entry.minuteResetAt < now) {
+    entry.minuteCount = 0;
+    entry.minuteResetAt = now + 60000;
+  }
+
+  // Reset day window if expired
+  if (entry.dayResetAt < now) {
+    entry.dayCount = 0;
+    entry.dayResetAt = now + 86400000;
+  }
+
+  // Check minute limit
+  if (config.max_requests_per_minute && entry.minuteCount >= config.max_requests_per_minute) {
+    return {
+      allowed: false,
+      reason: `Rate limit exceeded: ${config.max_requests_per_minute} requests per minute`,
+      minute_remaining: 0,
+      day_remaining: config.max_requests_per_day ? config.max_requests_per_day - entry.dayCount : undefined,
+    };
+  }
+
+  // Check day limit
+  if (config.max_requests_per_day && entry.dayCount >= config.max_requests_per_day) {
+    return {
+      allowed: false,
+      reason: `Rate limit exceeded: ${config.max_requests_per_day} requests per day`,
+      minute_remaining: config.max_requests_per_minute ? config.max_requests_per_minute - entry.minuteCount : undefined,
+      day_remaining: 0,
+    };
+  }
+
+  // Increment counts
+  entry.minuteCount++;
+  entry.dayCount++;
+  permissionRateLimitStore.set(storeKey, entry);
+
+  return {
+    allowed: true,
+    minute_remaining: config.max_requests_per_minute ? config.max_requests_per_minute - entry.minuteCount : undefined,
+    day_remaining: config.max_requests_per_day ? config.max_requests_per_day - entry.dayCount : undefined,
+  };
+}
+
+/**
+ * Get current rate limit status without incrementing
+ */
+export function getPermissionRateLimitStatus(
+  credentialId: string,
+  permission: string,
+  config: PermissionRateLimitConfig
+): {
+  minute_count: number;
+  minute_remaining: number;
+  day_count: number;
+  day_remaining: number;
+} {
+  const storeKey = `${credentialId}:${permission}`;
+  const entry = permissionRateLimitStore.get(storeKey);
+  const now = Date.now();
+
+  if (!entry) {
+    return {
+      minute_count: 0,
+      minute_remaining: config.max_requests_per_minute || Infinity,
+      day_count: 0,
+      day_remaining: config.max_requests_per_day || Infinity,
+    };
+  }
+
+  const minuteCount = entry.minuteResetAt < now ? 0 : entry.minuteCount;
+  const dayCount = entry.dayResetAt < now ? 0 : entry.dayCount;
+
+  return {
+    minute_count: minuteCount,
+    minute_remaining: (config.max_requests_per_minute || Infinity) - minuteCount,
+    day_count: dayCount,
+    day_remaining: (config.max_requests_per_day || Infinity) - dayCount,
+  };
+}
+
+/**
+ * Extract rate limit config from permission conditions
+ */
+export function extractRateLimitConfig(conditions: unknown): PermissionRateLimitConfig | null {
+  if (!conditions || typeof conditions !== 'object') {
+    return null;
+  }
+
+  const cond = conditions as Record<string, unknown>;
+  const config: PermissionRateLimitConfig = {};
+
+  if (typeof cond.max_requests_per_minute === 'number') {
+    config.max_requests_per_minute = cond.max_requests_per_minute;
+  }
+
+  if (typeof cond.max_requests_per_day === 'number') {
+    config.max_requests_per_day = cond.max_requests_per_day;
+  }
+
+  return Object.keys(config).length > 0 ? config : null;
+}

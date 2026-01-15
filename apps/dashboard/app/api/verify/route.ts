@@ -331,6 +331,7 @@ async function verifyById(
         region,
         currentHour: new Date().getHours(),
         currentDay: new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+        credentialId: dbCredential.id, // Enable per-permission rate limiting
       }
     );
   }
@@ -474,6 +475,7 @@ async function verifyPayload(
         region,
         currentHour: new Date().getHours(),
         currentDay: new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+        credentialId: credential.credential_id, // Enable per-permission rate limiting
       }
     );
   }

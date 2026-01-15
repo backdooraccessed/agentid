@@ -3,6 +3,12 @@
  * Evaluates permission checks against credential permissions and policy conditions
  */
 
+import {
+  checkPermissionRateLimit,
+  extractRateLimitConfig,
+  type PermissionRateLimitResult,
+} from './rate-limit';
+
 export interface PermissionCheck {
   action: string;
   resource?: string;
@@ -32,6 +38,10 @@ export interface PermissionCheckResult {
   granted: boolean;
   reason?: string;
   conditions_applied?: string[];
+  rate_limit?: {
+    minute_remaining?: number;
+    day_remaining?: number;
+  };
 }
 
 // Standard permission actions
@@ -47,6 +57,7 @@ export function checkPermission(
     region?: string | null;
     currentHour?: number;
     currentDay?: string;
+    credentialId?: string; // For rate limiting
   }
 ): PermissionCheckResult {
   const { action, resource } = check;
@@ -67,6 +78,8 @@ export function checkPermission(
   }
 
   // Evaluate conditions if present
+  let rateLimitResult: PermissionRateLimitResult | null = null;
+
   if (matchingPermission.conditions) {
     const conditionResult = evaluateConditions(
       matchingPermission.conditions,
@@ -82,12 +95,41 @@ export function checkPermission(
         conditions_applied: conditionsApplied,
       };
     }
+
+    // Check rate limits if credential ID is provided
+    if (context?.credentialId) {
+      const rateLimitConfig = extractRateLimitConfig(matchingPermission.conditions);
+      if (rateLimitConfig) {
+        rateLimitResult = checkPermissionRateLimit(
+          context.credentialId,
+          action,
+          rateLimitConfig
+        );
+
+        if (!rateLimitResult.allowed) {
+          return {
+            action,
+            granted: false,
+            reason: rateLimitResult.reason,
+            conditions_applied: conditionsApplied,
+            rate_limit: {
+              minute_remaining: rateLimitResult.minute_remaining,
+              day_remaining: rateLimitResult.day_remaining,
+            },
+          };
+        }
+      }
+    }
   }
 
   return {
     action,
     granted: true,
     conditions_applied: conditionsApplied.length > 0 ? conditionsApplied : undefined,
+    rate_limit: rateLimitResult ? {
+      minute_remaining: rateLimitResult.minute_remaining,
+      day_remaining: rateLimitResult.day_remaining,
+    } : undefined,
   };
 }
 
