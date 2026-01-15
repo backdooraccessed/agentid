@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CodeBlock } from '@/components/docs/code-block';
 import {
@@ -39,25 +38,25 @@ export default function DocsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-white/10 sticky top-0 bg-black z-50">
+      <header className="border-b-4 border-black sticky top-0 bg-white z-50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
           <Link href="/" className="text-xl font-bold flex items-center gap-3">
-            <span className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black text-sm font-bold">
+            <span className="w-10 h-10 bg-black rounded-xl flex items-center justify-center text-white text-sm font-bold">
               A
             </span>
-            <span className="text-white">AgentID Docs</span>
+            <span className="text-black font-retro">AgentID Docs</span>
           </Link>
           <div className="flex gap-2">
             <Link href="/directory">
-              <Button variant="ghost" className="text-white/70 hover:text-white hover:bg-white/[0.04]">Directory</Button>
+              <Button variant="ghost" className="text-gray-600 hover:text-black hover:bg-gray-100 font-retro">Directory</Button>
             </Link>
             <Link href="/login">
-              <Button variant="outline" className="border-white/10 hover:bg-white/[0.04]">Sign In</Button>
+              <Button variant="outline" className="border-gray-300 hover:bg-gray-100 font-retro">Sign In</Button>
             </Link>
             <Link href="/register">
-              <Button>Get Started</Button>
+              <Button className="font-retro">Get Started</Button>
             </Link>
           </div>
         </div>
@@ -68,7 +67,7 @@ export default function DocsPage() {
           {/* Table of Contents - Fixed Sidebar */}
           <nav className="hidden lg:block w-56 shrink-0">
             <div className="sticky top-24">
-              <h3 className="font-semibold mb-4 text-sm text-white/70">Documentation</h3>
+              <h3 className="font-semibold mb-4 text-sm text-gray-700 font-retro">Documentation</h3>
               <ul className="space-y-1">
                 {sections.map((section) => {
                   const Icon = section.icon;
@@ -77,10 +76,10 @@ export default function DocsPage() {
                       <button
                         onClick={() => scrollToSection(section.id)}
                         className={cn(
-                          'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all',
+                          'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all font-retro',
                           activeSection === section.id
-                            ? 'bg-white text-black font-medium'
-                            : 'text-white/60 hover:text-white hover:bg-white/5'
+                            ? 'bg-white text-black font-medium border-2 border-black'
+                            : 'text-gray-600 hover:text-black hover:bg-gray-100'
                         )}
                       >
                         <Icon className="h-4 w-4" />
@@ -91,15 +90,15 @@ export default function DocsPage() {
                 })}
               </ul>
 
-              <div className="mt-8 pt-8 border-t border-white/10 space-y-3">
+              <div className="mt-8 pt-8 border-t-4 border-black space-y-3">
                 <Link href="/docs/playground">
-                  <Button variant="outline" className="w-full gap-2 border-white/10 hover:bg-white/[0.04]">
+                  <Button variant="outline" className="w-full gap-2 border-gray-300 hover:bg-gray-100 font-retro">
                     <Code className="h-4 w-4" />
                     API Playground
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button className="w-full gap-2">
+                  <Button className="w-full gap-2 font-retro">
                     Get Started Free
                     <ArrowRight className="h-4 w-4" />
                   </Button>
@@ -113,12 +112,12 @@ export default function DocsPage() {
             {/* Hero */}
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                  <BookOpen className="h-7 w-7 text-white/70" />
+                <div className="w-14 h-14 rounded-xl bg-gray-50 border-4 border-black flex items-center justify-center">
+                  <BookOpen className="h-7 w-7 text-gray-700" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold tracking-tight">Documentation</h1>
-                  <p className="text-white/60">
+                  <h1 className="text-4xl font-bold tracking-tight text-black font-pixel">Documentation</h1>
+                  <p className="text-gray-600 font-retro">
                     Everything you need to know about AgentID
                   </p>
                 </div>
@@ -127,21 +126,21 @@ export default function DocsPage() {
 
             {/* Overview */}
             <section id="overview" className="scroll-mt-24">
-              <Card className="overflow-hidden">
-                <CardHeader className="bg-white/[0.02] border-b border-white/5">
+              <div className="overflow-hidden border-4 border-black bg-white">
+                <div className="bg-gray-50 border-b-4 border-black p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                      <Sparkles className="h-4 w-4 text-white/70" />
+                    <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <Sparkles className="h-4 w-4 text-gray-700" />
                     </div>
                     <div>
-                      <CardTitle className="text-base">What is AgentID?</CardTitle>
-                      <CardDescription>
+                      <h3 className="font-retro font-bold text-black text-base">What is AgentID?</h3>
+                      <p className="font-retro text-gray-600 text-sm">
                         A credential infrastructure for AI agents
-                      </CardDescription>
+                      </p>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="pt-6 prose prose-sm prose-invert prose-headings:text-white prose-p:text-white/70 prose-li:text-white/70 prose-strong:text-white max-w-none">
+                </div>
+                <div className="p-6 prose prose-sm prose-headings:text-black prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-black max-w-none font-retro">
                   <p>
                     AgentID is a platform that enables organizations to issue verifiable credentials
                     to AI agents. These credentials help establish trust and accountability in
@@ -166,37 +165,37 @@ export default function DocsPage() {
                   </ul>
 
                   <h4>How It Works</h4>
-                  <ol className="text-white/70">
+                  <ol className="text-gray-700">
                     <li>Create an issuer profile and set up your organization</li>
                     <li>Issue credentials to your AI agents with specific permissions</li>
                     <li>Your agents present these credentials when interacting with others</li>
                     <li>Third parties verify credentials using our public API</li>
                     <li>You can revoke or renew credentials at any time</li>
                   </ol>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </section>
 
             {/* Getting Started */}
             <section id="getting-started" className="scroll-mt-24">
-              <Card className="overflow-hidden">
-                <CardHeader className="bg-white/[0.02] border-b border-white/5">
+              <div className="overflow-hidden border-4 border-black bg-white">
+                <div className="bg-gray-50 border-b-4 border-black p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                      <Rocket className="h-4 w-4 text-white/70" />
+                    <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <Rocket className="h-4 w-4 text-gray-700" />
                     </div>
                     <div>
-                      <CardTitle className="text-base">Getting Started</CardTitle>
-                      <CardDescription>
+                      <h3 className="font-retro font-bold text-black text-base">Getting Started</h3>
+                      <p className="font-retro text-gray-600 text-sm">
                         Set up your account and start issuing credentials
-                      </CardDescription>
+                      </p>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="pt-6 prose prose-sm prose-invert prose-headings:text-white prose-p:text-white/70 prose-li:text-white/70 prose-strong:text-white max-w-none">
+                </div>
+                <div className="p-6 prose prose-sm prose-headings:text-black prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-black max-w-none font-retro">
                   <h4>Step 1: Create Your Account</h4>
                   <p>
-                    <Link href="/register" className="text-white hover:underline">Sign up for free</Link> to
+                    <Link href="/register" className="text-black hover:underline">Sign up for free</Link> to
                     create your AgentID account. You&apos;ll need a valid email address.
                   </p>
 
@@ -229,27 +228,27 @@ export default function DocsPage() {
                     include the credential ID in requests, allowing third parties to verify its
                     identity and permissions.
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </section>
 
             {/* Issuing Credentials */}
             <section id="credentials" className="scroll-mt-24">
-              <Card className="overflow-hidden">
-                <CardHeader className="bg-white/[0.02] border-b border-white/5">
+              <div className="overflow-hidden border-4 border-black bg-white">
+                <div className="bg-gray-50 border-b-4 border-black p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                      <Shield className="h-4 w-4 text-white/70" />
+                    <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <Shield className="h-4 w-4 text-gray-700" />
                     </div>
                     <div>
-                      <CardTitle className="text-base">Issuing Credentials</CardTitle>
-                      <CardDescription>
+                      <h3 className="font-retro font-bold text-black text-base">Issuing Credentials</h3>
+                      <p className="font-retro text-gray-600 text-sm">
                         Create and manage credentials for your AI agents
-                      </CardDescription>
+                      </p>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="pt-6 prose prose-sm prose-invert prose-headings:text-white prose-p:text-white/70 prose-li:text-white/70 prose-strong:text-white prose-code:text-white/80 prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded max-w-none">
+                </div>
+                <div className="p-6 prose prose-sm prose-headings:text-black prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-black prose-code:text-gray-800 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded max-w-none font-retro">
                   <h4>Credential Structure</h4>
                   <p>Each credential contains:</p>
 
@@ -296,27 +295,27 @@ export default function DocsPage() {
                     <li><strong>Allowed Domains</strong> - Restrict to specific APIs</li>
                     <li><strong>Allowed Actions</strong> - Specific permitted operations</li>
                   </ul>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </section>
 
             {/* Managing Credentials */}
             <section id="managing" className="scroll-mt-24">
-              <Card className="overflow-hidden">
-                <CardHeader className="bg-white/[0.02] border-b border-white/5">
+              <div className="overflow-hidden border-4 border-black bg-white">
+                <div className="bg-gray-50 border-b-4 border-black p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                      <Settings className="h-4 w-4 text-white/70" />
+                    <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <Settings className="h-4 w-4 text-gray-700" />
                     </div>
                     <div>
-                      <CardTitle className="text-base">Managing Credentials</CardTitle>
-                      <CardDescription>
+                      <h3 className="font-retro font-bold text-black text-base">Managing Credentials</h3>
+                      <p className="font-retro text-gray-600 text-sm">
                         View, revoke, and renew your issued credentials
-                      </CardDescription>
+                      </p>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="pt-6 prose prose-sm prose-invert prose-headings:text-white prose-p:text-white/70 prose-li:text-white/70 prose-strong:text-white max-w-none">
+                </div>
+                <div className="p-6 prose prose-sm prose-headings:text-black prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-black max-w-none font-retro">
                   <h4>Credential Lifecycle</h4>
                   <p>Credentials go through several states:</p>
                   <ul>
@@ -346,27 +345,27 @@ export default function DocsPage() {
                     <li><strong>Bulk Renew</strong> - Extend multiple credentials</li>
                     <li><strong>Export</strong> - Download credentials as CSV or JSON</li>
                   </ul>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </section>
 
             {/* Verification */}
             <section id="verification" className="scroll-mt-24">
-              <Card className="overflow-hidden">
-                <CardHeader className="bg-white/[0.02] border-b border-white/5">
+              <div className="overflow-hidden border-4 border-black bg-white">
+                <div className="bg-gray-50 border-b-4 border-black p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                      <CheckCircle className="h-4 w-4 text-white/70" />
+                    <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <CheckCircle className="h-4 w-4 text-gray-700" />
                     </div>
                     <div>
-                      <CardTitle className="text-base">Verification</CardTitle>
-                      <CardDescription>
+                      <h3 className="font-retro font-bold text-black text-base">Verification</h3>
+                      <p className="font-retro text-gray-600 text-sm">
                         How to verify agent credentials
-                      </CardDescription>
+                      </p>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="pt-6 prose prose-sm prose-invert prose-headings:text-white prose-p:text-white/70 prose-li:text-white/70 prose-strong:text-white prose-code:text-white/80 prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded max-w-none">
+                </div>
+                <div className="p-6 prose prose-sm prose-headings:text-black prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-black prose-code:text-gray-800 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded max-w-none font-retro">
                   <h4>Public Verification Endpoint</h4>
                   <p>
                     Anyone can verify a credential using our public API. No authentication required:
@@ -419,27 +418,27 @@ Content-Type: application/json
                   <p>Display a verification badge on your website:</p>
                   <CodeBlock language="html">{`<img src="https://agentid.dev/api/badge/{credential_id}"
      alt="AgentID Verified" />`}</CodeBlock>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </section>
 
             {/* API Integration */}
             <section id="api" className="scroll-mt-24">
-              <Card className="overflow-hidden">
-                <CardHeader className="bg-white/[0.02] border-b border-white/5">
+              <div className="overflow-hidden border-4 border-black bg-white">
+                <div className="bg-gray-50 border-b-4 border-black p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                      <Code className="h-4 w-4 text-white/70" />
+                    <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <Code className="h-4 w-4 text-gray-700" />
                     </div>
                     <div>
-                      <CardTitle className="text-base">API Integration</CardTitle>
-                      <CardDescription>
+                      <h3 className="font-retro font-bold text-black text-base">API Integration</h3>
+                      <p className="font-retro text-gray-600 text-sm">
                         Programmatic access to AgentID features
-                      </CardDescription>
+                      </p>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="pt-6 prose prose-sm prose-invert prose-headings:text-white prose-p:text-white/70 prose-li:text-white/70 prose-strong:text-white prose-code:text-white/80 prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded max-w-none">
+                </div>
+                <div className="p-6 prose prose-sm prose-headings:text-black prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-black prose-code:text-gray-800 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded max-w-none font-retro">
                   <h4>API Keys</h4>
                   <p>
                     Create API keys in your dashboard to access the API programmatically.
@@ -457,44 +456,44 @@ Content-Type: application/json
 
                   <h4>API Endpoints</h4>
                   <div className="not-prose">
-                    <table className="w-full text-sm border border-white/10 rounded-lg overflow-hidden">
+                    <table className="w-full text-sm border-2 border-black rounded-lg overflow-hidden">
                       <thead>
-                        <tr className="bg-white/[0.02] border-b border-white/10">
-                          <th className="text-left px-4 py-3 font-medium text-white/70">Endpoint</th>
-                          <th className="text-left px-4 py-3 font-medium text-white/70">Method</th>
-                          <th className="text-left px-4 py-3 font-medium text-white/70">Description</th>
+                        <tr className="bg-gray-50 border-b-2 border-black">
+                          <th className="text-left px-4 py-3 font-medium text-gray-700 font-retro">Endpoint</th>
+                          <th className="text-left px-4 py-3 font-medium text-gray-700 font-retro">Method</th>
+                          <th className="text-left px-4 py-3 font-medium text-gray-700 font-retro">Description</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/5">
+                      <tbody className="divide-y divide-gray-200">
                         <tr>
-                          <td className="px-4 py-3"><code className="text-white/80 bg-white/10 px-1 py-0.5 rounded text-xs">/api/credentials</code></td>
-                          <td className="px-4 py-3 text-white/60">GET</td>
-                          <td className="px-4 py-3 text-white/60">List your credentials</td>
+                          <td className="px-4 py-3"><code className="text-gray-800 bg-gray-100 px-1 py-0.5 rounded text-xs">/api/credentials</code></td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">GET</td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">List your credentials</td>
                         </tr>
                         <tr>
-                          <td className="px-4 py-3"><code className="text-white/80 bg-white/10 px-1 py-0.5 rounded text-xs">/api/credentials</code></td>
-                          <td className="px-4 py-3 text-white/60">POST</td>
-                          <td className="px-4 py-3 text-white/60">Issue a new credential</td>
+                          <td className="px-4 py-3"><code className="text-gray-800 bg-gray-100 px-1 py-0.5 rounded text-xs">/api/credentials</code></td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">POST</td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">Issue a new credential</td>
                         </tr>
                         <tr>
-                          <td className="px-4 py-3"><code className="text-white/80 bg-white/10 px-1 py-0.5 rounded text-xs">/api/credentials/:id</code></td>
-                          <td className="px-4 py-3 text-white/60">GET</td>
-                          <td className="px-4 py-3 text-white/60">Get credential details</td>
+                          <td className="px-4 py-3"><code className="text-gray-800 bg-gray-100 px-1 py-0.5 rounded text-xs">/api/credentials/:id</code></td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">GET</td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">Get credential details</td>
                         </tr>
                         <tr>
-                          <td className="px-4 py-3"><code className="text-white/80 bg-white/10 px-1 py-0.5 rounded text-xs">/api/credentials/:id/revoke</code></td>
-                          <td className="px-4 py-3 text-white/60">POST</td>
-                          <td className="px-4 py-3 text-white/60">Revoke a credential</td>
+                          <td className="px-4 py-3"><code className="text-gray-800 bg-gray-100 px-1 py-0.5 rounded text-xs">/api/credentials/:id/revoke</code></td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">POST</td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">Revoke a credential</td>
                         </tr>
                         <tr>
-                          <td className="px-4 py-3"><code className="text-white/80 bg-white/10 px-1 py-0.5 rounded text-xs">/api/credentials/:id/renew</code></td>
-                          <td className="px-4 py-3 text-white/60">POST</td>
-                          <td className="px-4 py-3 text-white/60">Renew a credential</td>
+                          <td className="px-4 py-3"><code className="text-gray-800 bg-gray-100 px-1 py-0.5 rounded text-xs">/api/credentials/:id/renew</code></td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">POST</td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">Renew a credential</td>
                         </tr>
                         <tr>
-                          <td className="px-4 py-3"><code className="text-white/80 bg-white/10 px-1 py-0.5 rounded text-xs">/api/verify</code></td>
-                          <td className="px-4 py-3 text-white/60">POST</td>
-                          <td className="px-4 py-3 text-white/60">Verify a credential (public)</td>
+                          <td className="px-4 py-3"><code className="text-gray-800 bg-gray-100 px-1 py-0.5 rounded text-xs">/api/verify</code></td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">POST</td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">Verify a credential (public)</td>
                         </tr>
                       </tbody>
                     </table>
@@ -507,27 +506,27 @@ npm install @agentid/sdk
 
 # Python
 pip install agentid`}</CodeBlock>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </section>
 
             {/* Webhooks */}
             <section id="webhooks" className="scroll-mt-24">
-              <Card className="overflow-hidden">
-                <CardHeader className="bg-white/[0.02] border-b border-white/5">
+              <div className="overflow-hidden border-4 border-black bg-white">
+                <div className="bg-gray-50 border-b-4 border-black p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                      <Webhook className="h-4 w-4 text-white/70" />
+                    <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <Webhook className="h-4 w-4 text-gray-700" />
                     </div>
                     <div>
-                      <CardTitle className="text-base">Webhooks</CardTitle>
-                      <CardDescription>
+                      <h3 className="font-retro font-bold text-black text-base">Webhooks</h3>
+                      <p className="font-retro text-gray-600 text-sm">
                         Receive real-time notifications for credential events
-                      </CardDescription>
+                      </p>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="pt-6 prose prose-sm prose-invert prose-headings:text-white prose-p:text-white/70 prose-li:text-white/70 prose-strong:text-white prose-code:text-white/80 prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded max-w-none">
+                </div>
+                <div className="p-6 prose prose-sm prose-headings:text-black prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-black prose-code:text-gray-800 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded max-w-none font-retro">
                   <h4>Available Events</h4>
                   <ul>
                     <li><code>credential.revoked</code> - A credential was revoked</li>
@@ -570,27 +569,27 @@ function verifyWebhook(payload, signature, secret) {
                     Failed webhooks are retried with exponential backoff. After 5 consecutive
                     failures, the webhook subscription is automatically disabled.
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </section>
 
             {/* Reputation */}
             <section id="reputation" className="scroll-mt-24">
-              <Card className="overflow-hidden">
-                <CardHeader className="bg-white/[0.02] border-b border-white/5">
+              <div className="overflow-hidden border-4 border-black bg-white">
+                <div className="bg-gray-50 border-b-4 border-black p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                      <Star className="h-4 w-4 text-white/70" />
+                    <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <Star className="h-4 w-4 text-gray-700" />
                     </div>
                     <div>
-                      <CardTitle className="text-base">Reputation System</CardTitle>
-                      <CardDescription>
+                      <h3 className="font-retro font-bold text-black text-base">Reputation System</h3>
+                      <p className="font-retro text-gray-600 text-sm">
                         Understanding trust scores and reputation
-                      </CardDescription>
+                      </p>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="pt-6 prose prose-sm prose-invert prose-headings:text-white prose-p:text-white/70 prose-li:text-white/70 prose-strong:text-white prose-code:text-white/80 prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded max-w-none">
+                </div>
+                <div className="p-6 prose prose-sm prose-headings:text-black prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-black prose-code:text-gray-800 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded max-w-none font-retro">
                   <h4>How Reputation Works</h4>
                   <p>
                     Every credential and issuer has a trust score from 0-100. Higher scores
@@ -617,29 +616,29 @@ function verifyWebhook(payload, signature, secret) {
 
                   <h4>What Affects Scores</h4>
                   <div className="not-prose">
-                    <table className="w-full text-sm border border-white/10 rounded-lg overflow-hidden">
+                    <table className="w-full text-sm border-2 border-black rounded-lg overflow-hidden">
                       <thead>
-                        <tr className="bg-white/[0.02] border-b border-white/10">
-                          <th className="text-left px-4 py-3 font-medium text-white/70">Action</th>
-                          <th className="text-left px-4 py-3 font-medium text-white/70">Effect</th>
+                        <tr className="bg-gray-50 border-b-2 border-black">
+                          <th className="text-left px-4 py-3 font-medium text-gray-700 font-retro">Action</th>
+                          <th className="text-left px-4 py-3 font-medium text-gray-700 font-retro">Effect</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/5">
+                      <tbody className="divide-y divide-gray-200">
                         <tr>
-                          <td className="px-4 py-3 text-white/60">Successful verification</td>
-                          <td className="px-4 py-3 text-emerald-400">+1 to +3 points</td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">Successful verification</td>
+                          <td className="px-4 py-3 text-emerald-600 font-retro">+1 to +3 points</td>
                         </tr>
                         <tr>
-                          <td className="px-4 py-3 text-white/60">Failed verification</td>
-                          <td className="px-4 py-3 text-red-400">-2 to -5 points</td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">Failed verification</td>
+                          <td className="px-4 py-3 text-red-600 font-retro">-2 to -5 points</td>
                         </tr>
                         <tr>
-                          <td className="px-4 py-3 text-white/60">Credential revocation</td>
-                          <td className="px-4 py-3 text-red-400">-10 points</td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">Credential revocation</td>
+                          <td className="px-4 py-3 text-red-600 font-retro">-10 points</td>
                         </tr>
                         <tr>
-                          <td className="px-4 py-3 text-white/60">Issuer becomes verified</td>
-                          <td className="px-4 py-3 text-emerald-400">+10 points</td>
+                          <td className="px-4 py-3 text-gray-600 font-retro">Issuer becomes verified</td>
+                          <td className="px-4 py-3 text-emerald-600 font-retro">+10 points</td>
                         </tr>
                       </tbody>
                     </table>
@@ -649,55 +648,55 @@ function verifyWebhook(payload, signature, secret) {
                   <CodeBlock language="http">{`GET /api/reputation/agent/{agent_id}
 GET /api/reputation/issuer/{issuer_id}
 GET /api/reputation/leaderboard`}</CodeBlock>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </section>
 
             {/* CTA */}
-            <Card className="overflow-hidden bg-white/[0.02]">
-              <CardContent className="py-10 text-center space-y-6">
+            <div className="overflow-hidden border-4 border-black bg-gray-50">
+              <div className="py-10 text-center space-y-6 p-6">
                 <div className="flex justify-center">
-                  <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                    <Sparkles className="h-7 w-7 text-white/70" />
+                  <div className="w-14 h-14 rounded-xl bg-gray-100 border-4 border-black flex items-center justify-center">
+                    <Sparkles className="h-7 w-7 text-gray-700" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-bold">Ready to Get Started?</h2>
-                  <p className="text-white/60 max-w-xl mx-auto">
+                  <h2 className="text-2xl font-bold text-black font-pixel">Ready to Get Started?</h2>
+                  <p className="text-gray-600 max-w-xl mx-auto font-retro">
                     Create your free account and start issuing credentials to your AI agents today.
                   </p>
                 </div>
                 <div className="flex gap-4 justify-center">
                   <Link href="/register">
-                    <Button size="lg" className="gap-2">
+                    <Button size="lg" className="gap-2 font-retro">
                       Create Free Account
                       <ArrowRight className="h-4 w-4" />
                     </Button>
                   </Link>
                   <Link href="/directory">
-                    <Button size="lg" variant="outline" className="border-white/10 hover:bg-white/[0.04]">
+                    <Button size="lg" variant="outline" className="border-gray-300 hover:bg-gray-100 font-retro">
                       Browse Directory
                     </Button>
                   </Link>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 mt-12">
+      <footer className="border-t-4 border-black mt-12">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-white/40">
+            <p className="text-sm text-gray-500 font-retro">
               AgentID - Credential Infrastructure for AI Agents
             </p>
-            <div className="flex gap-6 text-sm text-white/40">
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <Link href="/directory" className="hover:text-white transition-colors">Directory</Link>
-              <Link href="/docs" className="hover:text-white transition-colors">Docs</Link>
-              <Link href="/login" className="hover:text-white transition-colors">Sign In</Link>
+            <div className="flex gap-6 text-sm text-gray-500 font-retro">
+              <Link href="/" className="hover:text-black transition-colors">Home</Link>
+              <Link href="/directory" className="hover:text-black transition-colors">Directory</Link>
+              <Link href="/docs" className="hover:text-black transition-colors">Docs</Link>
+              <Link href="/login" className="hover:text-black transition-colors">Sign In</Link>
             </div>
           </div>
         </div>

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -259,37 +258,37 @@ export default function AuthorizationsPage() {
     switch (status) {
       case 'pending':
         return (
-          <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20">
+          <Badge className="bg-amber-100 text-amber-700 border-2 border-amber-300 font-retro">
             <Clock className="h-3 w-3 mr-1" />
-            Pending
+            PENDING
           </Badge>
         );
       case 'approved':
         return (
-          <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+          <Badge className="bg-emerald-100 text-emerald-700 border-2 border-emerald-300 font-retro">
             <CheckCircle className="h-3 w-3 mr-1" />
-            Approved
+            APPROVED
           </Badge>
         );
       case 'denied':
         return (
-          <Badge className="bg-red-500/10 text-red-400 border-red-500/20">
+          <Badge className="bg-red-100 text-red-700 border-2 border-red-300 font-retro">
             <XCircle className="h-3 w-3 mr-1" />
-            Denied
+            DENIED
           </Badge>
         );
       case 'revoked':
         return (
-          <Badge className="bg-white/10 text-white/60 border-white/20">
+          <Badge className="bg-gray-100 text-gray-600 border-2 border-gray-300 font-retro">
             <Ban className="h-3 w-3 mr-1" />
-            Revoked
+            REVOKED
           </Badge>
         );
       case 'expired':
         return (
-          <Badge className="bg-white/10 text-white/60 border-white/20">
+          <Badge className="bg-gray-100 text-gray-600 border-2 border-gray-300 font-retro">
             <AlertTriangle className="h-3 w-3 mr-1" />
-            Expired
+            EXPIRED
           </Badge>
         );
       default:
@@ -326,21 +325,23 @@ export default function AuthorizationsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold">Agent Authorizations</h1>
-          <p className="text-white/60">Manage permission requests between agents</p>
+          <h1 className="font-pixel text-3xl text-black uppercase">Agent Authorizations</h1>
+          <p className="text-gray-600 font-retro">Manage permission requests between agents</p>
         </div>
 
-        <Card>
-          <CardContent className="py-12 text-center">
-            <Shield className="h-12 w-12 text-white/30 mx-auto mb-4" />
-            <p className="text-white/50 mb-4">
+        <div className="border-4 border-black bg-white p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div className="py-12 text-center">
+            <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-500 font-retro mb-4">
               You need at least one credential to manage authorizations.
             </p>
             <Link href="/credentials/new">
-              <Button>Create Credential</Button>
+              <Button className="bg-black text-white hover:bg-gray-800 font-retro uppercase border-2 border-black">
+                Create Credential
+              </Button>
             </Link>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
@@ -351,37 +352,37 @@ export default function AuthorizationsPage() {
       <div className="flex justify-between items-start">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Link href="/conversations" className="text-white/60 hover:text-white">
+            <Link href="/conversations" className="text-gray-600 hover:text-black">
               <ArrowLeft className="h-4 w-4" />
             </Link>
-            <h1 className="text-2xl font-bold">Agent Authorizations</h1>
+            <h1 className="font-pixel text-3xl text-black uppercase">Agent Authorizations</h1>
           </div>
-          <p className="text-white/60">Manage permission requests between agents</p>
+          <p className="text-gray-600 font-retro">Manage permission requests between agents</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
+            <Button className="gap-2 bg-black text-white hover:bg-gray-800 font-retro uppercase border-2 border-black">
               <Plus className="h-4 w-4" />
               Request Authorization
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <DialogHeader>
-              <DialogTitle>Request Authorization</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="font-pixel text-xl text-black uppercase">Request Authorization</DialogTitle>
+              <DialogDescription className="text-gray-600 font-retro">
                 Request permission to perform actions on behalf of another agent
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Your Agent (Requester)</label>
+                <label className="text-sm font-retro font-medium text-black uppercase">Your Agent (Requester)</label>
                 <Select value={newReqCredential} onValueChange={setNewReqCredential}>
-                  <SelectTrigger>
+                  <SelectTrigger className="border-2 border-black font-retro">
                     <SelectValue placeholder="Select your agent" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="border-2 border-black bg-white">
                     {credentials.map((cred) => (
-                      <SelectItem key={cred.id} value={cred.id}>
+                      <SelectItem key={cred.id} value={cred.id} className="font-retro">
                         {cred.agent_name}
                       </SelectItem>
                     ))}
@@ -389,44 +390,52 @@ export default function AuthorizationsPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Grantor Credential ID</label>
+                <label className="text-sm font-retro font-medium text-black uppercase">Grantor Credential ID</label>
                 <Input
                   placeholder="cred_..."
                   value={newReqGrantor}
                   onChange={(e) => setNewReqGrantor(e.target.value)}
+                  className="border-2 border-black font-retro"
                 />
-                <p className="text-xs text-white/50">
+                <p className="text-xs text-gray-500 font-retro">
                   The credential ID of the agent you&apos;re requesting authorization from
                 </p>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Permissions</label>
+                <label className="text-sm font-retro font-medium text-black uppercase">Permissions</label>
                 <Textarea
                   placeholder='e.g., "read-data" or [{"action": "read", "resource": "users"}]'
                   value={newReqPermissions}
                   onChange={(e) => setNewReqPermissions(e.target.value)}
                   rows={3}
+                  className="border-2 border-black font-retro"
                 />
-                <p className="text-xs text-white/50">
+                <p className="text-xs text-gray-500 font-retro">
                   Enter a permission name or JSON array of permissions
                 </p>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Scope (optional)</label>
+                <label className="text-sm font-retro font-medium text-black uppercase">Scope (optional)</label>
                 <Input
                   placeholder="Describe the scope of access needed"
                   value={newReqScope}
                   onChange={(e) => setNewReqScope(e.target.value)}
+                  className="border-2 border-black font-retro"
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setDialogOpen(false)}
+                className="border-2 border-black font-retro uppercase hover:bg-gray-100"
+              >
                 Cancel
               </Button>
               <Button
                 onClick={createRequest}
                 disabled={!newReqCredential || !newReqGrantor || !newReqPermissions || creating}
+                className="bg-black text-white hover:bg-gray-800 font-retro uppercase border-2 border-black"
               >
                 {creating ? (
                   <>
@@ -443,158 +452,156 @@ export default function AuthorizationsPage() {
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <Select value={selectedCredential} onValueChange={setSelectedCredential}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select agent" />
-                </SelectTrigger>
-                <SelectContent>
-                  {credentials.map((cred) => (
-                    <SelectItem key={cred.id} value={cred.id}>
-                      {cred.agent_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
+      <div className="border-4 border-black bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1">
+            <Select value={selectedCredential} onValueChange={setSelectedCredential}>
+              <SelectTrigger className="border-2 border-black font-retro">
+                <SelectValue placeholder="Select agent" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="denied">Denied</SelectItem>
-                <SelectItem value="revoked">Revoked</SelectItem>
+              <SelectContent className="border-2 border-black bg-white">
+                {credentials.map((cred) => (
+                  <SelectItem key={cred.id} value={cred.id} className="font-retro">
+                    {cred.agent_name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
-        </CardContent>
-      </Card>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[180px] border-2 border-black font-retro">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent className="border-2 border-black bg-white">
+              <SelectItem value="all" className="font-retro">All Status</SelectItem>
+              <SelectItem value="pending" className="font-retro">Pending</SelectItem>
+              <SelectItem value="approved" className="font-retro">Approved</SelectItem>
+              <SelectItem value="denied" className="font-retro">Denied</SelectItem>
+              <SelectItem value="revoked" className="font-retro">Revoked</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
       {/* Tabs for Incoming/Outgoing */}
       <Tabs defaultValue="incoming" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="incoming" className="gap-2">
+        <TabsList className="border-4 border-black bg-gray-100">
+          <TabsTrigger value="incoming" className="gap-2 font-retro uppercase data-[state=active]:bg-black data-[state=active]:text-white">
             Incoming Requests
             {incomingRequests.filter((r) => r.status === 'pending').length > 0 && (
-              <Badge variant="secondary" className="ml-1 bg-amber-500/20 text-amber-400">
+              <Badge className="ml-1 bg-amber-100 text-amber-700 border-2 border-amber-300 font-retro">
                 {incomingRequests.filter((r) => r.status === 'pending').length}
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="outgoing">Outgoing Requests</TabsTrigger>
+          <TabsTrigger value="outgoing" className="font-retro uppercase data-[state=active]:bg-black data-[state=active]:text-white">
+            Outgoing Requests
+          </TabsTrigger>
         </TabsList>
 
         {/* Incoming Requests */}
         <TabsContent value="incoming">
           {loading ? (
             <div className="text-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-white/30 mx-auto mb-4" />
-              <p className="text-white/50">Loading...</p>
+              <Loader2 className="h-8 w-8 animate-spin text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500 font-retro">Loading...</p>
             </div>
           ) : incomingRequests.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <Shield className="h-12 w-12 text-white/30 mx-auto mb-4" />
-                <p className="text-white/50">No incoming authorization requests</p>
-              </CardContent>
-            </Card>
+            <div className="border-4 border-black bg-white p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="py-12 text-center">
+                <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500 font-retro">No incoming authorization requests</p>
+              </div>
+            </div>
           ) : (
             <div className="space-y-3">
               {incomingRequests.map((auth) => {
                 const requester = getAgentInfo(auth, 'requester');
 
                 return (
-                  <Card key={auth.id}>
-                    <CardContent className="py-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
-                            <Bot className="h-5 w-5 text-white/50" />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="font-medium">{requester.name}</span>
-                              {getStatusBadge(auth.status)}
-                            </div>
-                            <p className="text-sm text-white/50 mb-2">
-                              {requester.issuer}
-                            </p>
-                            <div className="space-y-1">
-                              <p className="text-sm text-white/70">
-                                <span className="text-white/50">Permissions:</span>{' '}
-                                {auth.requested_permissions
-                                  .map((p) => p.action)
-                                  .join(', ')}
-                              </p>
-                              {auth.scope && (
-                                <p className="text-sm text-white/50">
-                                  <span className="text-white/40">Scope:</span> {auth.scope}
-                                </p>
-                              )}
-                              <p className="text-xs text-white/40">
-                                Requested {formatDate(auth.created_at)}
-                                {auth.valid_until && ` · Expires ${formatDate(auth.valid_until)}`}
-                              </p>
-                            </div>
-                          </div>
+                  <div key={auth.id} className="border-4 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 bg-gray-100 border-2 border-black flex items-center justify-center">
+                          <Bot className="h-5 w-5 text-gray-600" />
                         </div>
-
-                        <div className="flex gap-2">
-                          {auth.status === 'pending' && (
-                            <>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="text-red-400 border-red-500/20 hover:bg-red-500/10"
-                                onClick={() => {
-                                  setSelectedRequest(auth);
-                                  setResponseDialogOpen(true);
-                                }}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                className="bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
-                                onClick={() => {
-                                  setSelectedRequest(auth);
-                                  setResponseDialogOpen(true);
-                                }}
-                              >
-                                <Check className="h-4 w-4 mr-1" />
-                                Approve
-                              </Button>
-                            </>
-                          )}
-                          {auth.status === 'approved' && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-red-400"
-                              onClick={() => revokeAuthorization(auth.id)}
-                            >
-                              Revoke
-                            </Button>
-                          )}
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-retro font-medium text-black">{requester.name}</span>
+                            {getStatusBadge(auth.status)}
+                          </div>
+                          <p className="text-sm text-gray-500 font-retro mb-2">
+                            {requester.issuer}
+                          </p>
+                          <div className="space-y-1">
+                            <p className="text-sm text-gray-600 font-retro">
+                              <span className="text-gray-500">Permissions:</span>{' '}
+                              {auth.requested_permissions
+                                .map((p) => p.action)
+                                .join(', ')}
+                            </p>
+                            {auth.scope && (
+                              <p className="text-sm text-gray-500 font-retro">
+                                <span className="text-gray-400">Scope:</span> {auth.scope}
+                              </p>
+                            )}
+                            <p className="text-xs text-gray-400 font-retro">
+                              Requested {formatDate(auth.created_at)}
+                              {auth.valid_until && ` · Expires ${formatDate(auth.valid_until)}`}
+                            </p>
+                          </div>
                         </div>
                       </div>
 
-                      {auth.response_message && (
-                        <div className="mt-3 pt-3 border-t border-white/5">
-                          <p className="text-sm text-white/50">
-                            <span className="text-white/40">Response:</span>{' '}
-                            {auth.response_message}
-                          </p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
+                      <div className="flex gap-2">
+                        {auth.status === 'pending' && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-red-600 border-2 border-red-300 hover:bg-red-50 font-retro uppercase"
+                              onClick={() => {
+                                setSelectedRequest(auth);
+                                setResponseDialogOpen(true);
+                              }}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              className="bg-emerald-100 text-emerald-700 border-2 border-emerald-300 hover:bg-emerald-200 font-retro uppercase"
+                              onClick={() => {
+                                setSelectedRequest(auth);
+                                setResponseDialogOpen(true);
+                              }}
+                            >
+                              <Check className="h-4 w-4 mr-1" />
+                              Approve
+                            </Button>
+                          </>
+                        )}
+                        {auth.status === 'approved' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 border-2 border-red-300 hover:bg-red-50 font-retro uppercase"
+                            onClick={() => revokeAuthorization(auth.id)}
+                          >
+                            Revoke
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    {auth.response_message && (
+                      <div className="mt-3 pt-3 border-t-2 border-gray-200">
+                        <p className="text-sm text-gray-500 font-retro">
+                          <span className="text-gray-400">Response:</span>{' '}
+                          {auth.response_message}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -605,77 +612,79 @@ export default function AuthorizationsPage() {
         <TabsContent value="outgoing">
           {loading ? (
             <div className="text-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-white/30 mx-auto mb-4" />
-              <p className="text-white/50">Loading...</p>
+              <Loader2 className="h-8 w-8 animate-spin text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500 font-retro">Loading...</p>
             </div>
           ) : outgoingRequests.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <Shield className="h-12 w-12 text-white/30 mx-auto mb-4" />
-                <p className="text-white/50 mb-4">No outgoing authorization requests</p>
-                <Button variant="outline" onClick={() => setDialogOpen(true)}>
+            <div className="border-4 border-black bg-white p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="py-12 text-center">
+                <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500 font-retro mb-4">No outgoing authorization requests</p>
+                <Button
+                  variant="outline"
+                  onClick={() => setDialogOpen(true)}
+                  className="border-2 border-black font-retro uppercase hover:bg-gray-100"
+                >
                   Request Authorization
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ) : (
             <div className="space-y-3">
               {outgoingRequests.map((auth) => {
                 const grantor = getAgentInfo(auth, 'grantor');
 
                 return (
-                  <Card key={auth.id}>
-                    <CardContent className="py-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
-                            <Bot className="h-5 w-5 text-white/50" />
+                  <div key={auth.id} className="border-4 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 bg-gray-100 border-2 border-black flex items-center justify-center">
+                          <Bot className="h-5 w-5 text-gray-600" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-retro font-medium text-black">To: {grantor.name}</span>
+                            {getStatusBadge(auth.status)}
                           </div>
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="font-medium">To: {grantor.name}</span>
-                              {getStatusBadge(auth.status)}
-                            </div>
-                            <p className="text-sm text-white/50 mb-2">
-                              {grantor.issuer}
+                          <p className="text-sm text-gray-500 font-retro mb-2">
+                            {grantor.issuer}
+                          </p>
+                          <div className="space-y-1">
+                            <p className="text-sm text-gray-600 font-retro">
+                              <span className="text-gray-500">Permissions:</span>{' '}
+                              {auth.requested_permissions
+                                .map((p) => p.action)
+                                .join(', ')}
                             </p>
-                            <div className="space-y-1">
-                              <p className="text-sm text-white/70">
-                                <span className="text-white/50">Permissions:</span>{' '}
-                                {auth.requested_permissions
-                                  .map((p) => p.action)
-                                  .join(', ')}
+                            {auth.scope && (
+                              <p className="text-sm text-gray-500 font-retro">
+                                <span className="text-gray-400">Scope:</span> {auth.scope}
                               </p>
-                              {auth.scope && (
-                                <p className="text-sm text-white/50">
-                                  <span className="text-white/40">Scope:</span> {auth.scope}
-                                </p>
+                            )}
+                            <p className="text-xs text-gray-400 font-retro">
+                              Requested {formatDate(auth.created_at)}
+                              {auth.responded_at && (
+                                <>
+                                  {' · '}
+                                  {auth.status === 'approved' ? 'Approved' : 'Responded'}{' '}
+                                  {formatDate(auth.responded_at)}
+                                </>
                               )}
-                              <p className="text-xs text-white/40">
-                                Requested {formatDate(auth.created_at)}
-                                {auth.responded_at && (
-                                  <>
-                                    {' · '}
-                                    {auth.status === 'approved' ? 'Approved' : 'Responded'}{' '}
-                                    {formatDate(auth.responded_at)}
-                                  </>
-                                )}
-                              </p>
-                            </div>
+                            </p>
                           </div>
                         </div>
                       </div>
+                    </div>
 
-                      {auth.response_message && (
-                        <div className="mt-3 pt-3 border-t border-white/5">
-                          <p className="text-sm text-white/50">
-                            <span className="text-white/40">Response:</span>{' '}
-                            {auth.response_message}
-                          </p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
+                    {auth.response_message && (
+                      <div className="mt-3 pt-3 border-t-2 border-gray-200">
+                        <p className="text-sm text-gray-500 font-retro">
+                          <span className="text-gray-400">Response:</span>{' '}
+                          {auth.response_message}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -685,13 +694,13 @@ export default function AuthorizationsPage() {
 
       {/* Response Dialog */}
       <Dialog open={responseDialogOpen} onOpenChange={setResponseDialogOpen}>
-        <DialogContent>
+        <DialogContent className="border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           <DialogHeader>
-            <DialogTitle>Respond to Authorization Request</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="font-pixel text-xl text-black uppercase">Respond to Authorization Request</DialogTitle>
+            <DialogDescription className="text-gray-600 font-retro">
               {selectedRequest && (
                 <>
-                  <span className="font-medium">
+                  <span className="font-medium text-black">
                     {getAgentInfo(selectedRequest, 'requester').name}
                   </span>{' '}
                   is requesting:{' '}
@@ -702,12 +711,13 @@ export default function AuthorizationsPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Response Message (optional)</label>
+              <label className="text-sm font-retro font-medium text-black uppercase">Response Message (optional)</label>
               <Textarea
                 placeholder="Add a message to your response..."
                 value={responseMessage}
                 onChange={(e) => setResponseMessage(e.target.value)}
                 rows={3}
+                className="border-2 border-black font-retro"
               />
             </div>
           </div>
@@ -715,19 +725,20 @@ export default function AuthorizationsPage() {
             <Button
               variant="outline"
               onClick={() => setResponseDialogOpen(false)}
+              className="border-2 border-black font-retro uppercase hover:bg-gray-100"
             >
               Cancel
             </Button>
             <Button
               variant="outline"
-              className="text-red-400 border-red-500/20 hover:bg-red-500/10"
+              className="text-red-600 border-2 border-red-300 hover:bg-red-50 font-retro uppercase"
               onClick={() => respondToRequest(false)}
               disabled={responding}
             >
               {responding ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Deny'}
             </Button>
             <Button
-              className="bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
+              className="bg-emerald-100 text-emerald-700 border-2 border-emerald-300 hover:bg-emerald-200 font-retro uppercase"
               onClick={() => respondToRequest(true)}
               disabled={responding}
             >

@@ -5,13 +5,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -27,7 +20,6 @@ import {
   Search,
   FileKey,
   CheckCircle,
-  XCircle,
   ArrowRight,
   Users,
   History,
@@ -135,84 +127,83 @@ export default function PoliciesPage() {
 
   if (loading) {
     return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-muted rounded w-48" />
-          <div className="grid grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 bg-muted rounded" />
-            ))}
-          </div>
-          <div className="h-64 bg-muted rounded" />
-        </div>
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-2xl font-semibold">Permission Policies</h1>
-          <p className="text-muted-foreground mt-1">
-            Create reusable permission sets that update instantly across all assigned credentials
-          </p>
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-gray-100 border-4 border-black flex items-center justify-center">
+            <FileKey className="h-7 w-7 text-gray-600" />
+          </div>
+          <div>
+            <h1 className="font-pixel text-3xl uppercase">Permission Policies</h1>
+            <p className="font-retro text-gray-600">
+              Create reusable permission sets that update instantly across all assigned credentials
+            </p>
+          </div>
         </div>
         <Dialog open={showCreate} onOpenChange={setShowCreate}>
           <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button className="gap-2 bg-black text-white hover:bg-gray-800 font-retro uppercase block-shadow-sm">
+              <Plus className="h-4 w-4" />
               New Policy
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="border-4 border-black bg-white">
             <DialogHeader>
-              <DialogTitle>Create Permission Policy</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="font-pixel text-xl uppercase">Create Permission Policy</DialogTitle>
+              <DialogDescription className="font-retro text-gray-600">
                 Define a reusable set of permissions. Changes to this policy will instantly apply
                 to all credentials using it.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Policy Name</Label>
+                <Label htmlFor="name" className="font-retro font-bold uppercase">Policy Name</Label>
                 <Input
                   id="name"
                   placeholder="e.g., read-only, admin-access"
                   value={newPolicy.name}
                   onChange={(e) => setNewPolicy({ ...newPolicy, name: e.target.value })}
+                  className="border-2 border-gray-300 font-retro"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">Description (optional)</Label>
+                <Label htmlFor="description" className="font-retro font-bold uppercase">Description (optional)</Label>
                 <Input
                   id="description"
                   placeholder="What this policy allows"
                   value={newPolicy.description}
                   onChange={(e) => setNewPolicy({ ...newPolicy, description: e.target.value })}
+                  className="border-2 border-gray-300 font-retro"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="permissions">Permissions (JSON)</Label>
+                <Label htmlFor="permissions" className="font-retro font-bold uppercase">Permissions (JSON)</Label>
                 <Textarea
                   id="permissions"
                   placeholder='["read", "write"]'
-                  className="font-mono text-sm"
+                  className="font-mono text-sm border-2 border-gray-300"
                   rows={6}
                   value={newPolicy.permissions}
                   onChange={(e) => setNewPolicy({ ...newPolicy, permissions: e.target.value })}
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs font-retro text-gray-500">
                   Simple strings or structured permissions with resources, actions, and conditions
                 </p>
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowCreate(false)}>
+              <Button variant="outline" onClick={() => setShowCreate(false)} className="border-2 border-gray-300 font-retro uppercase">
                 Cancel
               </Button>
-              <Button onClick={handleCreate} disabled={!newPolicy.name || creating}>
+              <Button onClick={handleCreate} disabled={!newPolicy.name || creating} className="bg-black text-white hover:bg-gray-800 font-retro uppercase">
                 {creating ? 'Creating...' : 'Create Policy'}
               </Button>
             </DialogFooter>
@@ -222,7 +213,7 @@ export default function PoliciesPage() {
 
       {/* Error Alert */}
       {error && (
-        <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md">
+        <div className="p-3 text-sm text-red-700 bg-red-50 border-4 border-red-500 font-retro">
           {error}
           <button className="ml-2 underline" onClick={() => setError(null)}>
             Dismiss
@@ -232,47 +223,35 @@ export default function PoliciesPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Total Policies</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <FileKey className="h-5 w-5 text-muted-foreground" />
-              <span className="text-2xl font-bold">{stats.total}</span>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Active Policies</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-500" />
-              <span className="text-2xl font-bold">{stats.active}</span>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Credentials Using Policies</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-muted-foreground" />
-              <span className="text-2xl font-bold">{stats.credentialsUsing}</span>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="border-4 border-black bg-white p-4">
+          <p className="text-xs font-retro text-gray-500 uppercase">Total Policies</p>
+          <div className="flex items-center gap-2 mt-2">
+            <FileKey className="h-5 w-5 text-gray-600" />
+            <span className="font-pixel text-2xl">{stats.total}</span>
+          </div>
+        </div>
+        <div className="border-4 border-black bg-white p-4">
+          <p className="text-xs font-retro text-gray-500 uppercase">Active Policies</p>
+          <div className="flex items-center gap-2 mt-2">
+            <CheckCircle className="h-5 w-5 text-emerald-600" />
+            <span className="font-pixel text-2xl text-emerald-600">{stats.active}</span>
+          </div>
+        </div>
+        <div className="border-4 border-black bg-white p-4">
+          <p className="text-xs font-retro text-gray-500 uppercase">Credentials Using Policies</p>
+          <div className="flex items-center gap-2 mt-2">
+            <Users className="h-5 w-5 text-gray-600" />
+            <span className="font-pixel text-2xl">{stats.credentialsUsing}</span>
+          </div>
+        </div>
       </div>
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
         <Input
           placeholder="Search policies..."
-          className="pl-10"
+          className="pl-10 border-2 border-gray-300 font-retro"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -280,68 +259,68 @@ export default function PoliciesPage() {
 
       {/* Policies List */}
       {filteredPolicies.length === 0 ? (
-        <EmptyState
-          title={search ? 'No policies found' : 'No permission policies yet'}
-          description={
-            search
-              ? 'Try a different search term'
-              : 'Create your first policy to enable live permission updates'
-          }
-          actionLabel={search ? undefined : 'Create Policy'}
-          onAction={search ? undefined : () => setShowCreate(true)}
-        />
+        <div className="border-4 border-black bg-white">
+          <EmptyState
+            title={search ? 'No policies found' : 'No permission policies yet'}
+            description={
+              search
+                ? 'Try a different search term'
+                : 'Create your first policy to enable live permission updates'
+            }
+            actionLabel={search ? undefined : 'Create Policy'}
+            onAction={search ? undefined : () => setShowCreate(true)}
+          />
+        </div>
       ) : (
         <div className="space-y-3">
           {filteredPolicies.map((policy) => (
-            <Link key={policy.id} href={`/policies/${policy.id}`}>
-              <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <FileKey className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <CardTitle className="text-base flex items-center gap-2">
-                          {policy.name}
-                          {policy.is_active ? (
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-600">
-                              Active
-                            </span>
-                          ) : (
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-                              Inactive
-                            </span>
-                          )}
-                        </CardTitle>
-                        <CardDescription className="text-sm">
-                          {policy.description || 'No description'}
-                        </CardDescription>
-                      </div>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <History className="h-4 w-4" />
-                      <span>v{policy.version}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      <span>
-                        {policy.active_credential_count || 0} credential
-                        {(policy.active_credential_count || 0) !== 1 ? 's' : ''}
-                      </span>
+            <Link key={policy.id} href={`/policies/${policy.id}`} className="block group">
+              <div className="border-4 border-gray-200 bg-white p-4 hover:border-black hover:bg-gray-50 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                      <FileKey className="h-5 w-5 text-gray-600" />
                     </div>
                     <div>
-                      {Array.isArray(policy.permissions) ? policy.permissions.length : 0} permission
-                      {Array.isArray(policy.permissions) && policy.permissions.length !== 1
-                        ? 's'
-                        : ''}
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-retro font-bold text-black">{policy.name}</h3>
+                        {policy.is_active ? (
+                          <span className="text-xs font-retro font-bold uppercase px-2 py-0.5 bg-emerald-100 text-emerald-700 border-2 border-emerald-300">
+                            Active
+                          </span>
+                        ) : (
+                          <span className="text-xs font-retro font-bold uppercase px-2 py-0.5 bg-gray-100 text-gray-500 border-2 border-gray-300">
+                            Inactive
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs font-retro text-gray-500">
+                        {policy.description || 'No description'}
+                      </p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                  <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-black group-hover:translate-x-1 transition-all" />
+                </div>
+                <div className="flex items-center gap-6 text-xs font-retro text-gray-500 mt-3 pl-13">
+                  <div className="flex items-center gap-1">
+                    <History className="h-4 w-4" />
+                    <span>v{policy.version}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Users className="h-4 w-4" />
+                    <span>
+                      {policy.active_credential_count || 0} credential
+                      {(policy.active_credential_count || 0) !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <div>
+                    {Array.isArray(policy.permissions) ? policy.permissions.length : 0} permission
+                    {Array.isArray(policy.permissions) && policy.permissions.length !== 1
+                      ? 's'
+                      : ''}
+                  </div>
+                </div>
+              </div>
             </Link>
           ))}
         </div>

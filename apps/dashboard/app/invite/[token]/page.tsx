@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/client';
 import { Loader2, CheckCircle, XCircle, AlertCircle, Users } from 'lucide-react';
 
@@ -112,14 +111,14 @@ export default function InvitePage() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-4">
-            <Users className="h-6 w-6 text-white" />
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+      <div className="w-full max-w-md border-4 border-black bg-white">
+        <div className="bg-gray-50 border-b-4 border-black p-4 text-center">
+          <div className="mx-auto w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
+            <Users className="h-6 w-6 text-black" />
           </div>
-          <CardTitle className="text-xl">Team Invitation</CardTitle>
-          <CardDescription>
+          <h2 className="font-pixel text-xl text-black uppercase">Team Invitation</h2>
+          <p className="font-retro text-gray-600">
             {status === 'loading' && 'Loading invitation details...'}
             {status === 'valid' && invitation && `Join ${invitation.issuer_name}`}
             {status === 'expired' && 'Invitation Expired'}
@@ -127,14 +126,14 @@ export default function InvitePage() {
             {status === 'error' && 'Invalid Invitation'}
             {status === 'success' && 'Welcome to the team!'}
             {status === 'accepting' && 'Joining team...'}
-          </CardDescription>
-        </CardHeader>
+          </p>
+        </div>
 
-        <CardContent className="space-y-6">
+        <div className="p-4 space-y-6">
           {/* Loading State */}
           {status === 'loading' && (
             <div className="flex justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin text-white/50" />
+              <div className="h-8 w-8 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
             </div>
           )}
 
@@ -142,39 +141,39 @@ export default function InvitePage() {
           {status === 'valid' && invitation && (
             <>
               <div className="space-y-4">
-                <div className="bg-white/5 rounded-lg p-4 space-y-3">
+                <div className="bg-gray-50 rounded-lg p-4 space-y-3">
                   <div>
-                    <p className="text-sm text-white/50">Organization</p>
-                    <p className="text-white font-medium">{invitation.issuer_name}</p>
+                    <p className="text-sm font-retro text-gray-600">Organization</p>
+                    <p className="text-black font-medium font-retro">{invitation.issuer_name}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-white/50">Your Role</p>
-                    <p className="text-white font-medium">{getRoleLabel(invitation.role)}</p>
+                    <p className="text-sm font-retro text-gray-600">Your Role</p>
+                    <p className="text-black font-medium font-retro">{getRoleLabel(invitation.role)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-white/50">Invited Email</p>
-                    <p className="text-white font-medium">{invitation.email}</p>
+                    <p className="text-sm font-retro text-gray-600">Invited Email</p>
+                    <p className="text-black font-medium font-retro">{invitation.email}</p>
                   </div>
                 </div>
 
                 {error && (
-                  <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 flex items-start gap-2">
-                    <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-red-400">{error}</p>
+                  <div className="bg-red-100 border border-red-300 rounded-lg p-3 flex items-start gap-2">
+                    <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm font-retro text-red-600">{error}</p>
                   </div>
                 )}
 
                 {isLoggedIn === false && (
-                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
-                    <p className="text-sm text-yellow-400">
+                  <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-3">
+                    <p className="text-sm font-retro text-yellow-600">
                       Please log in with <strong>{invitation.email}</strong> to accept this invitation.
                     </p>
                   </div>
                 )}
 
                 {isLoggedIn === true && userEmail?.toLowerCase() !== invitation.email.toLowerCase() && (
-                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
-                    <p className="text-sm text-yellow-400">
+                  <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-3">
+                    <p className="text-sm font-retro text-yellow-600">
                       You are logged in as <strong>{userEmail}</strong>, but this invitation was sent to <strong>{invitation.email}</strong>.
                     </p>
                   </div>
@@ -200,29 +199,29 @@ export default function InvitePage() {
           {/* Accepting State */}
           {status === 'accepting' && (
             <div className="flex flex-col items-center py-8 gap-4">
-              <Loader2 className="h-8 w-8 animate-spin text-white/50" />
-              <p className="text-white/70">Joining the team...</p>
+              <div className="h-8 w-8 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
+              <p className="font-retro text-gray-600">Joining the team...</p>
             </div>
           )}
 
           {/* Success State */}
           {status === 'success' && (
             <div className="flex flex-col items-center py-8 gap-4">
-              <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center">
-                <CheckCircle className="h-8 w-8 text-emerald-400" />
+              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-8 w-8 text-emerald-600" />
               </div>
-              <p className="text-white/70 text-center">{successMessage}</p>
-              <p className="text-sm text-white/50">Redirecting to dashboard...</p>
+              <p className="font-retro text-gray-600 text-center">{successMessage}</p>
+              <p className="text-sm font-retro text-gray-600">Redirecting to dashboard...</p>
             </div>
           )}
 
           {/* Expired State */}
           {status === 'expired' && (
             <div className="flex flex-col items-center py-8 gap-4">
-              <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center">
-                <AlertCircle className="h-8 w-8 text-yellow-400" />
+              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center">
+                <AlertCircle className="h-8 w-8 text-yellow-600" />
               </div>
-              <p className="text-white/70 text-center">{error}</p>
+              <p className="font-retro text-gray-600 text-center">{error}</p>
               <Button variant="outline" onClick={() => router.push('/')}>
                 Go to Homepage
               </Button>
@@ -232,10 +231,10 @@ export default function InvitePage() {
           {/* Already Accepted State */}
           {status === 'accepted' && (
             <div className="flex flex-col items-center py-8 gap-4">
-              <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center">
-                <CheckCircle className="h-8 w-8 text-blue-400" />
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-8 w-8 text-blue-600" />
               </div>
-              <p className="text-white/70 text-center">{error}</p>
+              <p className="font-retro text-gray-600 text-center">{error}</p>
               <Button onClick={() => router.push('/credentials')}>
                 Go to Dashboard
               </Button>
@@ -245,17 +244,17 @@ export default function InvitePage() {
           {/* Error State */}
           {status === 'error' && (
             <div className="flex flex-col items-center py-8 gap-4">
-              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
-                <XCircle className="h-8 w-8 text-red-400" />
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                <XCircle className="h-8 w-8 text-red-600" />
               </div>
-              <p className="text-white/70 text-center">{error}</p>
+              <p className="font-retro text-gray-600 text-center">{error}</p>
               <Button variant="outline" onClick={() => router.push('/')}>
                 Go to Homepage
               </Button>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

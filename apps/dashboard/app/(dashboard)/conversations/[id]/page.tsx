@@ -3,10 +3,8 @@
 import { useState, useEffect, useRef, use } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   DropdownMenu,
@@ -17,13 +15,11 @@ import {
 import {
   ArrowLeft,
   Send,
-  Loader2,
   Bot,
   MoreVertical,
   XCircle,
   CheckCircle,
   Ban,
-  Clock,
   Shield,
   RefreshCw,
 } from 'lucide-react';
@@ -219,21 +215,21 @@ export default function ConversationDetailPage({
     switch (status) {
       case 'active':
         return (
-          <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+          <Badge className="bg-emerald-100 text-emerald-700 border-2 border-emerald-700 font-retro uppercase">
             <CheckCircle className="h-3 w-3 mr-1" />
             Active
           </Badge>
         );
       case 'closed':
         return (
-          <Badge className="bg-white/10 text-white/60 border-white/20">
+          <Badge className="bg-gray-100 text-gray-600 border-2 border-gray-600 font-retro uppercase">
             <XCircle className="h-3 w-3 mr-1" />
             Closed
           </Badge>
         );
       case 'blocked':
         return (
-          <Badge className="bg-red-500/10 text-red-400 border-red-500/20">
+          <Badge className="bg-red-100 text-red-700 border-2 border-red-700 font-retro uppercase">
             <Ban className="h-3 w-3 mr-1" />
             Blocked
           </Badge>
@@ -247,19 +243,19 @@ export default function ConversationDetailPage({
     const content = message.content;
 
     if (content.text) {
-      return <p className="whitespace-pre-wrap">{content.text}</p>;
+      return <p className="whitespace-pre-wrap font-retro">{content.text}</p>;
     }
 
     if (content.request) {
       return (
-        <div className="bg-white/5 rounded-lg p-3">
-          <div className="flex items-center gap-2 text-amber-400 text-sm mb-2">
+        <div className="bg-amber-50 border-2 border-amber-600 p-3">
+          <div className="flex items-center gap-2 text-amber-700 text-sm mb-2 font-retro uppercase">
             <Shield className="h-4 w-4" />
             Action Request
           </div>
-          <p className="font-mono text-sm">{content.request.action}</p>
+          <p className="font-mono text-sm text-black">{content.request.action}</p>
           {content.request.params && (
-            <pre className="mt-2 text-xs text-white/50 overflow-auto">
+            <pre className="mt-2 text-xs text-gray-600 overflow-auto font-mono">
               {JSON.stringify(content.request.params, null, 2)}
             </pre>
           )}
@@ -271,14 +267,16 @@ export default function ConversationDetailPage({
       return (
         <div
           className={cn(
-            'rounded-lg p-3',
-            content.response.success ? 'bg-emerald-500/10' : 'bg-red-500/10'
+            'p-3 border-2',
+            content.response.success
+              ? 'bg-emerald-50 border-emerald-600'
+              : 'bg-red-50 border-red-600'
           )}
         >
           <div
             className={cn(
-              'flex items-center gap-2 text-sm mb-2',
-              content.response.success ? 'text-emerald-400' : 'text-red-400'
+              'flex items-center gap-2 text-sm mb-2 font-retro uppercase',
+              content.response.success ? 'text-emerald-700' : 'text-red-700'
             )}
           >
             {content.response.success ? (
@@ -289,12 +287,12 @@ export default function ConversationDetailPage({
             {content.response.success ? 'Success' : 'Error'}
           </div>
           {content.response.result !== undefined && (
-            <pre className="text-xs overflow-auto">
+            <pre className="text-xs overflow-auto font-mono text-black">
               {JSON.stringify(content.response.result, null, 2)}
             </pre>
           )}
           {content.response.error && (
-            <p className="text-sm text-red-400">{content.response.error}</p>
+            <p className="text-sm text-red-700 font-retro">{content.response.error}</p>
           )}
         </div>
       );
@@ -302,16 +300,16 @@ export default function ConversationDetailPage({
 
     if (content.data) {
       return (
-        <div className="bg-white/5 rounded-lg p-3">
-          <div className="text-sm text-white/50 mb-2">Data</div>
-          <pre className="text-xs overflow-auto">
+        <div className="bg-gray-50 border-2 border-gray-300 p-3">
+          <div className="text-sm text-gray-600 mb-2 font-retro uppercase">Data</div>
+          <pre className="text-xs overflow-auto font-mono text-black">
             {JSON.stringify(content.data, null, 2)}
           </pre>
         </div>
       );
     }
 
-    return <p className="text-white/50 italic">Empty message</p>;
+    return <p className="text-gray-500 italic font-retro">Empty message</p>;
   }
 
   // Group messages by date
@@ -337,18 +335,18 @@ export default function ConversationDetailPage({
       <div className="space-y-6">
         <Link
           href="/conversations"
-          className="text-white/60 hover:text-white flex items-center gap-2"
+          className="text-gray-600 hover:text-black flex items-center gap-2 font-retro"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Conversations
         </Link>
 
-        <Card>
-          <CardContent className="py-12 text-center">
-            <XCircle className="h-12 w-12 text-red-400/50 mx-auto mb-4" />
-            <p className="text-white/50">{error}</p>
-          </CardContent>
-        </Card>
+        <div className="border-4 border-black bg-white p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div className="py-12 text-center">
+            <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <p className="text-gray-600 font-retro">{error}</p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -356,7 +354,7 @@ export default function ConversationDetailPage({
   if (!conversation || loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-white/30" />
+        <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
       </div>
     );
   }
@@ -371,23 +369,23 @@ export default function ConversationDetailPage({
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)]">
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-white/10">
+      <div className="flex items-center justify-between pb-4 border-b-4 border-black">
         <div className="flex items-center gap-4">
           <Link
             href="/conversations"
-            className="text-white/60 hover:text-white"
+            className="text-gray-600 hover:text-black"
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
-            <Bot className="h-5 w-5 text-white/50" />
+          <div className="w-10 h-10 bg-gray-100 border-2 border-black flex items-center justify-center">
+            <Bot className="h-5 w-5 text-gray-600" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-medium">{otherAgent.name}</span>
+              <span className="font-pixel text-black uppercase">{otherAgent.name}</span>
               {getStatusBadge(conversation.status)}
             </div>
-            <p className="text-sm text-white/50">
+            <p className="text-sm text-gray-600 font-retro">
               {conversation.subject || otherAgent.issuer}
             </p>
           </div>
@@ -398,25 +396,31 @@ export default function ConversationDetailPage({
             variant="ghost"
             size="sm"
             onClick={() => fetchMessages(true)}
-            className="text-white/60"
+            className="text-gray-600 hover:text-black hover:bg-gray-100 font-retro"
           >
             <RefreshCw className="h-4 w-4" />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="hover:bg-gray-100">
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="border-2 border-black bg-white">
               {conversation.status === 'active' && (
-                <DropdownMenuItem onClick={() => updateConversationStatus('closed')}>
+                <DropdownMenuItem
+                  onClick={() => updateConversationStatus('closed')}
+                  className="font-retro"
+                >
                   <XCircle className="h-4 w-4 mr-2" />
                   Close Conversation
                 </DropdownMenuItem>
               )}
               {conversation.status === 'closed' && (
-                <DropdownMenuItem onClick={() => updateConversationStatus('active')}>
+                <DropdownMenuItem
+                  onClick={() => updateConversationStatus('active')}
+                  className="font-retro"
+                >
                   <CheckCircle className="h-4 w-4 mr-2" />
                   Reopen Conversation
                 </DropdownMenuItem>
@@ -424,7 +428,7 @@ export default function ConversationDetailPage({
               {conversation.status !== 'blocked' && (
                 <DropdownMenuItem
                   onClick={() => updateConversationStatus('blocked')}
-                  className="text-red-400"
+                  className="text-red-600 font-retro"
                 >
                   <Ban className="h-4 w-4 mr-2" />
                   Block Agent
@@ -439,15 +443,15 @@ export default function ConversationDetailPage({
       <div className="flex-1 overflow-y-auto py-4 space-y-6">
         {messages.length === 0 ? (
           <div className="text-center py-12">
-            <Bot className="h-12 w-12 text-white/20 mx-auto mb-4" />
-            <p className="text-white/40">No messages yet</p>
-            <p className="text-sm text-white/30">Send a message to start the conversation</p>
+            <Bot className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 font-retro">No messages yet</p>
+            <p className="text-sm text-gray-400 font-retro">Send a message to start the conversation</p>
           </div>
         ) : (
           messageGroups.map((group, groupIndex) => (
             <div key={groupIndex} className="space-y-4">
               <div className="flex items-center justify-center">
-                <div className="px-3 py-1 bg-white/5 rounded-full text-xs text-white/50">
+                <div className="px-3 py-1 bg-gray-100 border-2 border-gray-300 text-xs text-gray-600 font-retro uppercase">
                   {group.date}
                 </div>
               </div>
@@ -468,14 +472,14 @@ export default function ConversationDetailPage({
                   >
                     <div
                       className={cn(
-                        'w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0',
-                        isOwnMessage ? 'bg-blue-500/20' : 'bg-white/5'
+                        'w-8 h-8 flex items-center justify-center flex-shrink-0 border-2 border-black',
+                        isOwnMessage ? 'bg-blue-100' : 'bg-gray-100'
                       )}
                     >
                       <Bot
                         className={cn(
                           'h-4 w-4',
-                          isOwnMessage ? 'text-blue-400' : 'text-white/50'
+                          isOwnMessage ? 'text-blue-600' : 'text-gray-600'
                         )}
                       />
                     </div>
@@ -492,12 +496,12 @@ export default function ConversationDetailPage({
                           isOwnMessage ? 'flex-row-reverse' : 'flex-row'
                         )}
                       >
-                        <span className="text-white/50">{senderName}</span>
-                        <span className="text-white/30">
+                        <span className="text-gray-600 font-retro">{senderName}</span>
+                        <span className="text-gray-400 font-retro">
                           {formatTime(message.created_at)}
                         </span>
                         {message.message_type !== 'text' && (
-                          <Badge variant="outline" className="text-[10px] py-0">
+                          <Badge variant="outline" className="text-[10px] py-0 border-2 border-black font-retro uppercase">
                             {message.message_type}
                           </Badge>
                         )}
@@ -505,10 +509,10 @@ export default function ConversationDetailPage({
 
                       <div
                         className={cn(
-                          'rounded-2xl px-4 py-2',
+                          'px-4 py-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
                           isOwnMessage
-                            ? 'bg-blue-500/20 rounded-tr-sm'
-                            : 'bg-white/5 rounded-tl-sm'
+                            ? 'bg-blue-100'
+                            : 'bg-white'
                         )}
                       >
                         {renderMessageContent(message)}
@@ -525,7 +529,7 @@ export default function ConversationDetailPage({
 
       {/* Input */}
       {conversation.status === 'active' ? (
-        <div className="pt-4 border-t border-white/10">
+        <div className="pt-4 border-t-4 border-black">
           <div className="flex gap-2">
             <Textarea
               placeholder="Type a message..."
@@ -537,36 +541,37 @@ export default function ConversationDetailPage({
                   sendMessage();
                 }
               }}
-              className="min-h-[44px] max-h-32 resize-none"
+              className="min-h-[44px] max-h-32 resize-none border-2 border-black bg-white font-retro focus:ring-0 focus:border-black"
               rows={1}
             />
             <Button
               onClick={sendMessage}
               disabled={!newMessage.trim() || sending}
               size="lg"
+              className="bg-black text-white hover:bg-gray-800 font-retro uppercase border-2 border-black disabled:opacity-50"
             >
               {sending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <div className="w-4 h-4 border-2 border-gray-300 border-t-white rounded-full animate-spin" />
               ) : (
                 <Send className="h-4 w-4" />
               )}
             </Button>
           </div>
-          <p className="text-xs text-white/30 mt-2">
+          <p className="text-xs text-gray-500 mt-2 font-retro">
             Press Enter to send, Shift+Enter for new line
           </p>
         </div>
       ) : (
-        <div className="pt-4 border-t border-white/10">
-          <div className="bg-white/5 rounded-lg p-4 text-center">
-            <p className="text-white/50">
+        <div className="pt-4 border-t-4 border-black">
+          <div className="bg-gray-50 border-2 border-gray-300 p-4 text-center">
+            <p className="text-gray-600 font-retro">
               This conversation is {conversation.status}. You cannot send messages.
             </p>
             {conversation.status === 'closed' && (
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-2"
+                className="mt-2 bg-black text-white hover:bg-gray-800 font-retro uppercase border-2 border-black"
                 onClick={() => updateConversationStatus('active')}
               >
                 Reopen Conversation

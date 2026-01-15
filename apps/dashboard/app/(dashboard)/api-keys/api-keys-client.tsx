@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -153,32 +152,32 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
       {/* Create Key Dialog */}
       <Dialog onOpenChange={(open) => !open && resetForm()}>
         <DialogTrigger asChild>
-          <Button className="gap-2">
+          <Button className="gap-2 bg-black text-white hover:bg-gray-800 font-retro uppercase block-shadow-sm">
             <Plus className="h-4 w-4" />
             Create API Key
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md bg-black border-white/10">
+        <DialogContent className="sm:max-w-md border-4 border-black bg-white">
           {newKeyData ? (
             <>
               <DialogHeader>
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-emerald-400" />
+                  <div className="w-10 h-10 bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center">
+                    <CheckCircle className="h-5 w-5 text-emerald-600" />
                   </div>
                   <div>
-                    <DialogTitle>API Key Created</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="font-pixel text-xl uppercase">API Key Created</DialogTitle>
+                    <DialogDescription className="font-retro text-gray-600">
                       Copy your API key now. It will not be shown again.
                     </DialogDescription>
                   </div>
                 </div>
               </DialogHeader>
               <div className="space-y-4">
-                <div className="p-4 bg-white/[0.02] border border-white/10 rounded-xl font-mono text-sm break-all">
+                <div className="p-4 bg-gray-50 border-2 border-gray-300 font-mono text-sm break-all text-black">
                   {newKeyData.key}
                 </div>
-                <Button onClick={handleCopy} className="w-full gap-2">
+                <Button onClick={handleCopy} className="w-full gap-2 bg-black text-white hover:bg-gray-800 font-retro uppercase">
                   {copied ? (
                     <>
                       <Check className="h-4 w-4" />
@@ -197,12 +196,12 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
             <>
               <DialogHeader>
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
-                    <Key className="h-5 w-5 text-white/70" />
+                  <div className="w-10 h-10 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                    <Key className="h-5 w-5 text-gray-600" />
                   </div>
                   <div>
-                    <DialogTitle>Create API Key</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="font-pixel text-xl uppercase">Create API Key</DialogTitle>
+                    <DialogDescription className="font-retro text-gray-600">
                       Create a new API key for programmatic access
                     </DialogDescription>
                   </div>
@@ -210,46 +209,46 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-sm font-medium">Name</Label>
+                  <Label htmlFor="name" className="text-sm font-retro font-bold uppercase">Name</Label>
                   <Input
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="My API Key"
-                    className="bg-white/[0.02] border-white/10 focus:border-white/30"
+                    className="bg-white border-2 border-gray-300 font-retro"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description" className="text-sm font-medium">Description (optional)</Label>
+                  <Label htmlFor="description" className="text-sm font-retro font-bold uppercase">Description (optional)</Label>
                   <Input
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Used for production integration"
-                    className="bg-white/[0.02] border-white/10 focus:border-white/30"
+                    className="bg-white border-2 border-gray-300 font-retro"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Scopes</Label>
+                  <Label className="text-sm font-retro font-bold uppercase">Scopes</Label>
                   <div className="grid grid-cols-2 gap-2 mt-2">
                     {AVAILABLE_SCOPES.map((scope) => (
                       <label
                         key={scope.value}
                         className={cn(
-                          'flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-all',
+                          'flex items-center gap-3 p-2.5 border-2 cursor-pointer transition-all',
                           scopes.includes(scope.value)
-                            ? 'bg-white/[0.04] border-white/20'
-                            : 'bg-white/[0.02] border-white/10 hover:border-white/15'
+                            ? 'bg-gray-50 border-black'
+                            : 'bg-white border-gray-200 hover:border-gray-400'
                         )}
                       >
                         <div className={cn(
-                          'w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0',
+                          'w-4 h-4 border-2 flex items-center justify-center transition-colors flex-shrink-0',
                           scopes.includes(scope.value)
-                            ? 'bg-white border-white'
-                            : 'border-white/30'
+                            ? 'bg-black border-black'
+                            : 'border-gray-300'
                         )}>
                           {scopes.includes(scope.value) && (
-                            <Check className="h-2.5 w-2.5 text-black" />
+                            <Check className="h-2.5 w-2.5 text-white" />
                           )}
                         </div>
                         <input
@@ -259,19 +258,19 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
                           className="sr-only"
                         />
                         <div className="min-w-0">
-                          <div className="text-sm font-medium truncate">{scope.label}</div>
+                          <div className="text-sm font-retro font-bold text-black truncate">{scope.label}</div>
                         </div>
                       </label>
                     ))}
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Expiration</Label>
+                  <Label className="text-sm font-retro font-bold uppercase">Expiration</Label>
                   <Select value={expiresInDays} onValueChange={setExpiresInDays}>
-                    <SelectTrigger className="bg-white/[0.02] border-white/10">
+                    <SelectTrigger className="bg-white border-2 border-gray-300 font-retro">
                       <SelectValue placeholder="Never expires" />
                     </SelectTrigger>
-                    <SelectContent className="bg-black border-white/10">
+                    <SelectContent className="bg-white border-2 border-gray-300">
                       <SelectItem value="">Never expires</SelectItem>
                       <SelectItem value="30">30 days</SelectItem>
                       <SelectItem value="90">90 days</SelectItem>
@@ -281,9 +280,9 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
                   </Select>
                 </div>
                 {error && (
-                  <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                    <AlertCircle className="h-4 w-4 text-red-400" />
-                    <p className="text-sm text-red-400">{error}</p>
+                  <div className="flex items-center gap-2 p-3 border-4 border-red-500 bg-red-50">
+                    <AlertCircle className="h-4 w-4 text-red-600" />
+                    <p className="text-sm font-retro text-red-700">{error}</p>
                   </div>
                 )}
               </div>
@@ -291,7 +290,7 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
                 <Button
                   onClick={handleCreate}
                   disabled={isCreating || !name || scopes.length === 0}
-                  className="w-full gap-2"
+                  className="w-full gap-2 bg-black text-white hover:bg-gray-800 font-retro uppercase"
                 >
                   {isCreating ? (
                     <>
@@ -314,48 +313,48 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
       {/* Keys List */}
       <div className="space-y-4 mt-6">
         {keys.length === 0 ? (
-          <Card className="overflow-hidden">
+          <div className="border-4 border-black bg-white">
             <EmptyState
               illustration="api-keys"
               title="No API keys yet"
               description="Create your first key to get started"
             />
-          </Card>
+          </div>
         ) : (
           keys.map((key) => (
-            <Card
+            <div
               key={key.id}
               className={cn(
-                'overflow-hidden transition-opacity',
+                'border-4 border-black bg-white transition-opacity',
                 !key.is_active && 'opacity-60'
               )}
             >
-              <CardHeader className="bg-white/[0.02] border-b border-white/5 pb-4">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
                 <div className="flex justify-between items-start gap-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <div className={cn(
-                        'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
-                        key.is_active ? 'bg-white/5' : 'bg-red-500/10'
+                        'w-8 h-8 border-2 flex items-center justify-center flex-shrink-0',
+                        key.is_active ? 'bg-gray-100 border-gray-300' : 'bg-red-100 border-red-300'
                       )}>
                         {key.is_active ? (
-                          <Key className="h-4 w-4 text-white/70" />
+                          <Key className="h-4 w-4 text-gray-600" />
                         ) : (
-                          <XCircle className="h-4 w-4 text-red-400" />
+                          <XCircle className="h-4 w-4 text-red-600" />
                         )}
                       </div>
-                      <CardTitle className="text-base flex items-center gap-2">
-                        {key.name}
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-retro font-bold text-black">{key.name}</h3>
                         {!key.is_active && (
-                          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">
+                          <span className="text-xs font-retro font-bold uppercase px-2 py-0.5 bg-red-100 text-red-700 border-2 border-red-300">
                             Revoked
                           </span>
                         )}
-                      </CardTitle>
+                      </div>
                     </div>
-                    <CardDescription className="font-mono text-xs ml-11">
+                    <p className="font-mono text-xs text-gray-500 ml-11">
                       agid_{key.key_prefix}_••••••••
-                    </CardDescription>
+                    </p>
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
                     {key.is_active && (
@@ -363,7 +362,7 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
                         variant="outline"
                         size="sm"
                         onClick={() => handleRevoke(key.id)}
-                        className="gap-1.5 border-white/10 hover:bg-white/[0.04]"
+                        className="gap-1.5 border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase"
                       >
                         <XCircle className="h-3.5 w-3.5" />
                         Revoke
@@ -373,42 +372,42 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
                       variant="outline"
                       size="sm"
                       onClick={() => handleDelete(key.id)}
-                      className="gap-1.5 border-red-500/20 text-red-400 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30"
+                      className="gap-1.5 border-2 border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 font-retro uppercase"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       Delete
                     </Button>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="pt-4">
+              </div>
+              <div className="p-4">
                 <div className="flex flex-wrap gap-4 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
+                  <div className="flex items-center gap-2 font-retro text-gray-600">
                     <Shield className="h-3.5 w-3.5" />
                     <span>Scopes: {key.scopes.join(', ')}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
+                  <div className="flex items-center gap-2 font-retro text-gray-600">
                     <Hash className="h-3.5 w-3.5" />
                     <span>Used {key.usage_count} times</span>
                   </div>
                   {key.last_used_at && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="flex items-center gap-2 font-retro text-gray-600">
                       <Activity className="h-3.5 w-3.5" />
                       <span>Last used: {new Date(key.last_used_at).toLocaleDateString()}</span>
                     </div>
                   )}
                   {key.expires_at && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="flex items-center gap-2 font-retro text-gray-600">
                       <Clock className="h-3.5 w-3.5" />
                       <span>Expires: {new Date(key.expires_at).toLocaleDateString()}</span>
                     </div>
                   )}
                 </div>
                 {key.description && (
-                  <p className="text-sm text-muted-foreground mt-3">{key.description}</p>
+                  <p className="text-sm font-retro text-gray-500 mt-3">{key.description}</p>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))
         )}
       </div>

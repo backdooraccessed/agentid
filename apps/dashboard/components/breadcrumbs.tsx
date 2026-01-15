@@ -24,7 +24,7 @@ export function Breadcrumbs() {
   // Don't show breadcrumbs on dashboard home
   if (segments.length === 0) {
     return (
-      <div className="text-sm text-muted-foreground">
+      <div className="text-sm font-retro text-gray-500 uppercase">
         Home
       </div>
     );
@@ -48,19 +48,19 @@ export function Breadcrumbs() {
   });
 
   return (
-    <nav className="text-sm flex items-center gap-2">
-      <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
+    <nav className="text-sm font-retro flex items-center gap-2">
+      <Link href="/" className="text-gray-500 hover:text-black transition-colors uppercase">
         Home
       </Link>
       {breadcrumbs.map((crumb, index) => (
         <span key={crumb.href} className="flex items-center gap-2">
-          <span className="text-muted-foreground">/</span>
+          <span className="text-gray-400">/</span>
           {crumb.isLast ? (
-            <span className="text-foreground font-medium">{crumb.label}</span>
+            <span className="text-black font-bold uppercase">{crumb.label}</span>
           ) : (
             <Link
               href={crumb.href}
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-gray-500 hover:text-black transition-colors uppercase"
             >
               {crumb.label}
             </Link>

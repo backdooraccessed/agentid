@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, TrendingUp, TrendingDown, Minus, AlertTriangle } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, AlertTriangle } from 'lucide-react';
 
 interface DataPoint {
   timestamp: string;
@@ -77,8 +75,8 @@ export default function TrendsPage() {
   const TrendIcon = data?.trend.direction === 'up' ? TrendingUp :
                     data?.trend.direction === 'down' ? TrendingDown : Minus;
 
-  const trendColor = data?.trend.direction === 'up' ? 'text-emerald-400' :
-                     data?.trend.direction === 'down' ? 'text-red-400' : 'text-white/60';
+  const trendColor = data?.trend.direction === 'up' ? 'text-emerald-600' :
+                     data?.trend.direction === 'down' ? 'text-red-600' : 'text-gray-600';
 
   const anomalyCount = data?.anomalies?.filter(a => a.is_anomaly).length || 0;
 
@@ -86,8 +84,8 @@ export default function TrendsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-white">Trend Analysis</h1>
-          <p className="text-white/60 mt-1">
+          <h1 className="font-pixel text-3xl text-black uppercase">Trend Analysis</h1>
+          <p className="font-retro text-gray-600 mt-1">
             Analyze trends, forecasts, and anomalies in your data
           </p>
         </div>
@@ -96,101 +94,109 @@ export default function TrendsPage() {
       {/* Filters */}
       <div className="flex items-center gap-4">
         <Select value={metric} onValueChange={setMetric}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[180px] border-2 border-gray-300 font-retro">
             <SelectValue placeholder="Select metric" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="verifications">Verifications</SelectItem>
-            <SelectItem value="trust_score">Trust Score</SelectItem>
-            <SelectItem value="credentials">Credentials Issued</SelectItem>
+          <SelectContent className="border-2 border-black bg-white">
+            <SelectItem value="verifications" className="font-retro">Verifications</SelectItem>
+            <SelectItem value="trust_score" className="font-retro">Trust Score</SelectItem>
+            <SelectItem value="credentials" className="font-retro">Credentials Issued</SelectItem>
           </SelectContent>
         </Select>
 
         <Select value={days} onValueChange={setDays}>
-          <SelectTrigger className="w-[140px]">
+          <SelectTrigger className="w-[140px] border-2 border-gray-300 font-retro">
             <SelectValue placeholder="Time range" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="7">Last 7 days</SelectItem>
-            <SelectItem value="30">Last 30 days</SelectItem>
-            <SelectItem value="90">Last 90 days</SelectItem>
-            <SelectItem value="365">Last year</SelectItem>
+          <SelectContent className="border-2 border-black bg-white">
+            <SelectItem value="7" className="font-retro">Last 7 days</SelectItem>
+            <SelectItem value="30" className="font-retro">Last 30 days</SelectItem>
+            <SelectItem value="90" className="font-retro">Last 90 days</SelectItem>
+            <SelectItem value="365" className="font-retro">Last year</SelectItem>
           </SelectContent>
         </Select>
 
         <Select value={period} onValueChange={setPeriod}>
-          <SelectTrigger className="w-[140px]">
+          <SelectTrigger className="w-[140px] border-2 border-gray-300 font-retro">
             <SelectValue placeholder="Group by" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="hour">Hourly</SelectItem>
-            <SelectItem value="day">Daily</SelectItem>
-            <SelectItem value="week">Weekly</SelectItem>
-            <SelectItem value="month">Monthly</SelectItem>
+          <SelectContent className="border-2 border-black bg-white">
+            <SelectItem value="hour" className="font-retro">Hourly</SelectItem>
+            <SelectItem value="day" className="font-retro">Daily</SelectItem>
+            <SelectItem value="week" className="font-retro">Weekly</SelectItem>
+            <SelectItem value="month" className="font-retro">Monthly</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-          <p className="text-red-400">{error}</p>
+        <div className="border-4 border-red-500 bg-red-50 p-4">
+          <p className="font-retro text-red-600">{error}</p>
         </div>
       )}
 
       {loading ? (
         <div className="flex items-center justify-center min-h-[300px]">
-          <Loader2 className="h-8 w-8 animate-spin text-white/50" />
+          <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
         </div>
       ) : data && (
         <>
           {/* Summary Cards */}
           <div className="grid gap-4 md:grid-cols-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardDescription>Trend</CardDescription>
-                <CardTitle className={`flex items-center gap-2 ${trendColor}`}>
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
+                <p className="font-retro text-sm text-gray-600 uppercase">Trend</p>
+              </div>
+              <div className="p-4">
+                <div className={`flex items-center gap-2 font-pixel text-xl ${trendColor}`}>
                   <TrendIcon className="h-5 w-5" />
                   {data.trend.change_percent > 0 ? '+' : ''}{data.trend.change_percent}%
-                </CardTitle>
-              </CardHeader>
-            </Card>
+                </div>
+              </div>
+            </div>
 
-            <Card>
-              <CardHeader className="pb-2">
-                <CardDescription>Average</CardDescription>
-                <CardTitle>{data.trend.average.toLocaleString()}</CardTitle>
-              </CardHeader>
-            </Card>
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
+                <p className="font-retro text-sm text-gray-600 uppercase">Average</p>
+              </div>
+              <div className="p-4">
+                <p className="font-pixel text-xl text-black">{data.trend.average.toLocaleString()}</p>
+              </div>
+            </div>
 
-            <Card>
-              <CardHeader className="pb-2">
-                <CardDescription>Min / Max</CardDescription>
-                <CardTitle>{data.trend.min} / {data.trend.max}</CardTitle>
-              </CardHeader>
-            </Card>
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
+                <p className="font-retro text-sm text-gray-600 uppercase">Min / Max</p>
+              </div>
+              <div className="p-4">
+                <p className="font-pixel text-xl text-black">{data.trend.min} / {data.trend.max}</p>
+              </div>
+            </div>
 
-            <Card>
-              <CardHeader className="pb-2">
-                <CardDescription>Anomalies</CardDescription>
-                <CardTitle className="flex items-center gap-2">
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
+                <p className="font-retro text-sm text-gray-600 uppercase">Anomalies</p>
+              </div>
+              <div className="p-4">
+                <div className="flex items-center gap-2 font-pixel text-xl text-black">
                   {anomalyCount > 0 && (
-                    <AlertTriangle className="h-4 w-4 text-yellow-400" />
+                    <AlertTriangle className="h-4 w-4 text-yellow-600" />
                   )}
                   {anomalyCount}
-                </CardTitle>
-              </CardHeader>
-            </Card>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Data Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Data Points</CardTitle>
-              <CardDescription>
+          <div className="border-4 border-black bg-white">
+            <div className="bg-gray-50 border-b-4 border-black p-4">
+              <h2 className="font-pixel text-lg text-black uppercase">Data Points</h2>
+              <p className="font-retro text-sm text-gray-600">
                 {data.data.length} data points over {data.days} days
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
+            </div>
+            <div className="p-4">
               <div className="space-y-2 max-h-[400px] overflow-y-auto">
                 {data.data.map((point, i) => {
                   const anomaly = data.anomalies?.find(
@@ -201,53 +207,53 @@ export default function TrendsPage() {
                   return (
                     <div
                       key={i}
-                      className={`flex items-center justify-between p-3 rounded-lg ${
-                        isAnomaly ? 'bg-yellow-500/10 border border-yellow-500/20' : 'bg-white/5'
+                      className={`flex items-center justify-between p-3 border-2 ${
+                        isAnomaly ? 'border-yellow-500 bg-yellow-50' : 'border-gray-200 bg-gray-50'
                       }`}
                     >
-                      <span className="text-white/60 text-sm">
+                      <span className="font-retro text-gray-600 text-sm">
                         {new Date(point.timestamp).toLocaleDateString()}
                       </span>
                       <div className="flex items-center gap-3">
-                        <span className="font-medium">{point.value}</span>
+                        <span className="font-retro font-bold text-black">{point.value}</span>
                         {isAnomaly && (
-                          <Badge variant="outline" className="text-yellow-400 border-yellow-400/30">
+                          <span className="font-retro text-xs uppercase px-2 py-1 bg-yellow-100 text-yellow-700 border-2 border-yellow-300">
                             Anomaly
-                          </Badge>
+                          </span>
                         )}
                       </div>
                     </div>
                   );
                 })}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Forecast */}
           {data.forecast && data.forecast.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Forecast</CardTitle>
-                <CardDescription>
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
+                <h2 className="font-pixel text-lg text-black uppercase">Forecast</h2>
+                <p className="font-retro text-sm text-gray-600">
                   Projected values for the next {data.forecast.length} periods
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+                </p>
+              </div>
+              <div className="p-4">
                 <div className="space-y-2">
                   {data.forecast.map((point, i) => (
                     <div
                       key={i}
-                      className="flex items-center justify-between p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg"
+                      className="flex items-center justify-between p-3 border-2 border-blue-300 bg-blue-50"
                     >
-                      <span className="text-white/60 text-sm">
+                      <span className="font-retro text-gray-600 text-sm">
                         {new Date(point.timestamp).toLocaleDateString()}
                       </span>
-                      <span className="font-medium text-blue-400">{point.value}</span>
+                      <span className="font-retro font-bold text-blue-600">{point.value}</span>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
         </>
       )}

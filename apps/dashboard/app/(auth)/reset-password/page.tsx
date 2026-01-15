@@ -1,21 +1,30 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
-import { AlertCircle, Loader2, Check, X, ArrowRight } from 'lucide-react';
+import { AlertCircle, Loader2, Check, X, ArrowRight, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export default function RegisterPage() {
-  const [email, setEmail] = useState('');
+export default function ResetPasswordPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isValidSession, setIsValidSession] = useState<boolean | null>(null);
   const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    // Check if user has a valid recovery session
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsValidSession(!!session);
+    };
+    checkSession();
+  }, [supabase.auth]);
 
   const passwordStrength = useMemo(() => {
     const checks = {
@@ -35,7 +44,7 @@ export default function RegisterPage() {
     return { text: 'STRONG', color: 'text-emerald-600' };
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -54,37 +63,70 @@ export default function RegisterPage() {
       return;
     }
 
-    const { error } = await supabase.auth.signUp({
-      email,
+    const { error } = await supabase.auth.updateUser({
       password,
     });
 
     if (error) {
       setError(error.message);
-      toast.error('Registration failed', { description: error.message });
+      toast.error('Failed to reset password', { description: error.message });
       setLoading(false);
       return;
     }
 
-    toast.success('Account created!', { description: 'Welcome to AgentID' });
+    toast.success('Password updated!', { description: 'You can now sign in with your new password' });
     router.push('/credentials');
     router.refresh();
   };
 
   const strengthLabel = getStrengthLabel(passwordStrength.passed);
 
+  // Loading state while checking session
+  if (isValidSession === null) {
+    return (
+      <div className="flex items-center justify-center min-h-[300px]">
+        <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // Invalid/expired session
+  if (!isValidSession) {
+    return (
+      <div className="space-y-8">
+        <div className="space-y-4 text-center lg:text-left">
+          <div className="w-16 h-16 bg-red-100 border-4 border-red-500 flex items-center justify-center mx-auto lg:mx-0">
+            <AlertCircle className="h-8 w-8 text-red-600" />
+          </div>
+          <h1 className="font-pixel text-3xl text-black uppercase">Link Expired</h1>
+          <p className="text-gray-600 font-retro text-sm">
+            This password reset link has expired or is invalid. Please request a new one.
+          </p>
+        </div>
+
+        <Link
+          href="/forgot-password"
+          className="w-full h-12 bg-black text-white font-retro font-bold uppercase text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+        >
+          Request new reset link
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="space-y-2 text-center lg:text-left">
-        <h1 className="font-pixel text-3xl text-black uppercase">Create Account</h1>
+        <h1 className="font-pixel text-3xl text-black uppercase">New Password</h1>
         <p className="text-gray-600 font-retro text-sm">
-          Start issuing verifiable credentials for your AI agents
+          Enter your new password below
         </p>
       </div>
 
       {/* Form */}
-      <form onSubmit={handleRegister} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
           <div className="border-4 border-red-500 bg-red-50 p-4 flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -92,25 +134,9 @@ export default function RegisterPage() {
           </div>
         )}
 
-        <div className="space-y-2">
-          <label htmlFor="email" className="font-retro text-sm font-bold uppercase block text-black">
-            Email address
-          </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete="email"
-            className="w-full h-12 px-4 bg-white border-2 border-gray-300 font-retro text-black focus:border-black focus:outline-none transition-colors"
-          />
-        </div>
-
         <div className="space-y-3">
           <label htmlFor="password" className="font-retro text-sm font-bold uppercase block text-black">
-            Password
+            New Password
           </label>
           <input
             id="password"
@@ -161,7 +187,7 @@ export default function RegisterPage() {
 
         <div className="space-y-2">
           <label htmlFor="confirmPassword" className="font-retro text-sm font-bold uppercase block text-black">
-            Confirm password
+            Confirm Password
           </label>
           <input
             id="confirmPassword"
@@ -198,51 +224,16 @@ export default function RegisterPage() {
           {loading ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              Creating account...
+              Updating password...
             </>
           ) : (
             <>
-              Create account
-              <ArrowRight className="h-4 w-4" />
+              <Lock className="h-4 w-4" />
+              Update password
             </>
           )}
         </button>
-
-        {/* Terms */}
-        <p className="font-retro text-xs text-gray-600 text-center">
-          By creating an account, you agree to our{' '}
-          <Link href="/terms" className="text-gray-700 hover:text-black underline-offset-4 hover:underline">
-            Terms
-          </Link>{' '}
-          and{' '}
-          <Link href="/privacy" className="text-gray-700 hover:text-black underline-offset-4 hover:underline">
-            Privacy Policy
-          </Link>
-        </p>
       </form>
-
-      {/* Divider */}
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t-2 border-gray-300" />
-        </div>
-        <div className="relative flex justify-center">
-          <span className="bg-white px-4 font-retro text-xs uppercase text-gray-600">
-            Already have an account?
-          </span>
-        </div>
-      </div>
-
-      {/* Login link */}
-      <div className="text-center">
-        <Link
-          href="/login"
-          className="inline-flex items-center gap-2 font-retro text-sm font-medium text-gray-600 hover:text-black transition-colors uppercase"
-        >
-          Sign in to your account
-          <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
-      </div>
     </div>
   );
 }

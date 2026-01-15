@@ -9,7 +9,7 @@ export default function NotFound() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
+    <div className="min-h-screen bg-white text-black flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
         {/* 404 Illustration */}
         <div className="mb-8">
@@ -19,7 +19,7 @@ export default function NotFound() {
             viewBox="0 0 200 160"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="mx-auto text-white/20"
+            className="mx-auto text-gray-300"
           >
             {/* Broken link illustration */}
             <circle cx="70" cy="80" r="30" stroke="currentColor" strokeWidth="2" />
@@ -35,9 +35,9 @@ export default function NotFound() {
         </div>
 
         {/* Error text */}
-        <h1 className="text-7xl font-bold text-white/10 mb-4">404</h1>
-        <h2 className="text-2xl font-semibold mb-2">Page not found</h2>
-        <p className="text-white/50 mb-8">
+        <h1 className="text-7xl font-bold text-gray-200 mb-4 font-pixel">404</h1>
+        <h2 className="text-2xl font-semibold mb-2 font-retro">Page not found</h2>
+        <p className="text-gray-600 mb-8 font-retro">
           The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </p>
 
@@ -45,14 +45,14 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Button
             variant="outline"
-            className="gap-2 border-white/20 hover:bg-white/5"
+            className="gap-2 border-gray-300 hover:bg-gray-100"
             onClick={() => router.back()}
           >
             <ArrowLeft className="w-4 h-4" />
             Go Back
           </Button>
           <Link href="/">
-            <Button className="gap-2 bg-white text-black hover:bg-white/90">
+            <Button className="gap-2 bg-black text-white hover:bg-gray-800">
               <Home className="w-4 h-4" />
               Home
             </Button>
@@ -60,17 +60,17 @@ export default function NotFound() {
         </div>
 
         {/* Helpful links */}
-        <div className="mt-12 pt-8 border-t border-white/10">
-          <p className="text-sm text-white/40 mb-4">Looking for something?</p>
+        <div className="mt-12 pt-8 border-t border-gray-300">
+          <p className="text-sm text-gray-500 mb-4 font-retro">Looking for something?</p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link href="/docs" className="text-sm text-white/60 hover:text-white transition-colors flex items-center gap-1">
+            <Link href="/docs" className="text-sm text-gray-600 hover:text-black transition-colors flex items-center gap-1 font-retro">
               <Search className="w-3 h-3" />
               Documentation
             </Link>
-            <Link href="/credentials" className="text-sm text-white/60 hover:text-white transition-colors">
+            <Link href="/credentials" className="text-sm text-gray-600 hover:text-black transition-colors font-retro">
               Credentials
             </Link>
-            <Link href="/directory" className="text-sm text-white/60 hover:text-white transition-colors">
+            <Link href="/directory" className="text-sm text-gray-600 hover:text-black transition-colors font-retro">
               Directory
             </Link>
           </div>

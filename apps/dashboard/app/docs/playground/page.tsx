@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -149,23 +148,23 @@ export default function PlaygroundPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-white font-retro">
       {/* Header */}
-      <header className="border-b border-white/10">
+      <header className="border-b-4 border-black bg-white">
         <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <Link href="/docs" className="text-white/60 hover:text-white">
+            <Link href="/docs" className="text-gray-600 hover:text-black">
               <ArrowLeft className="h-5 w-5" />
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black text-sm font-bold">
+              <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center text-white text-sm font-bold">
                 A
               </div>
-              <span className="text-xl font-bold text-white">API Playground</span>
+              <span className="text-xl font-pixel font-bold text-black">API Playground</span>
             </div>
           </div>
           <Link href="/docs">
-            <Button variant="outline" size="sm" className="border-white/10">
+            <Button variant="outline" size="sm" className="border-2 border-gray-300 hover:border-gray-400">
               <Code2 className="h-4 w-4 mr-2" />
               Back to Docs
             </Button>
@@ -177,7 +176,7 @@ export default function PlaygroundPage() {
         <div className="grid lg:grid-cols-[300px_1fr] gap-6">
           {/* Sidebar - Endpoint Selection */}
           <div className="space-y-4">
-            <h2 className="text-sm font-medium text-white/60 uppercase tracking-wide">
+            <h2 className="text-sm font-medium text-gray-600 uppercase tracking-wide">
               Endpoints
             </h2>
             <div className="space-y-2">
@@ -186,29 +185,29 @@ export default function PlaygroundPage() {
                   key={ep.id}
                   onClick={() => handleEndpointChange(ep.id)}
                   className={cn(
-                    'w-full text-left p-3 rounded-lg border transition-all',
+                    'w-full text-left p-3 rounded-lg border-2 transition-all',
                     selectedEndpoint === ep.id
-                      ? 'bg-white/10 border-white/20'
-                      : 'bg-white/[0.02] border-white/5 hover:border-white/10'
+                      ? 'bg-gray-100 border-gray-300'
+                      : 'bg-white border-gray-200 hover:border-gray-400'
                   )}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <span className={cn(
                       'px-2 py-0.5 rounded text-xs font-mono font-medium',
-                      ep.method === 'GET' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'
+                      ep.method === 'GET' ? 'bg-emerald-100 text-emerald-600' : 'bg-blue-100 text-blue-600'
                     )}>
                       {ep.method}
                     </span>
-                    <span className="text-sm font-medium text-white">{ep.name}</span>
+                    <span className="text-sm font-medium text-black">{ep.name}</span>
                   </div>
-                  <p className="text-xs text-white/50">{ep.description}</p>
+                  <p className="text-xs text-gray-600">{ep.description}</p>
                 </button>
               ))}
             </div>
 
             {/* Quick Actions */}
-            <div className="pt-4 border-t border-white/10">
-              <h2 className="text-sm font-medium text-white/60 uppercase tracking-wide mb-3">
+            <div className="pt-4 border-t border-gray-300">
+              <h2 className="text-sm font-medium text-gray-600 uppercase tracking-wide mb-3">
                 Sample Credentials
               </h2>
               <div className="space-y-2 text-xs">
@@ -217,7 +216,7 @@ export default function PlaygroundPage() {
                     handleEndpointChange('verify');
                     setRequestBody('{\n  "credential_id": "afe6bcc1-0ec5-42fd-ab88-67187b9c9be0"\n}');
                   }}
-                  className="w-full text-left p-2 rounded bg-white/5 hover:bg-white/10 text-white/70 hover:text-white"
+                  className="w-full text-left p-2 rounded bg-gray-50 hover:bg-gray-100 text-gray-700 hover:text-black"
                 >
                   Support Bot Alpha
                 </button>
@@ -226,7 +225,7 @@ export default function PlaygroundPage() {
                     handleEndpointChange('verify');
                     setRequestBody('{\n  "credential_id": "ec17bb55-f76d-4595-8120-ca7c58c9d18d"\n}');
                   }}
-                  className="w-full text-left p-2 rounded bg-white/5 hover:bg-white/10 text-white/70 hover:text-white"
+                  className="w-full text-left p-2 rounded bg-gray-50 hover:bg-gray-100 text-gray-700 hover:text-black"
                 >
                   Data Analyst Pro
                 </button>
@@ -235,7 +234,7 @@ export default function PlaygroundPage() {
                     handleEndpointChange('verify');
                     setRequestBody('{\n  "agent_id": "support-bot-alpha"\n}');
                   }}
-                  className="w-full text-left p-2 rounded bg-white/5 hover:bg-white/10 text-white/70 hover:text-white"
+                  className="w-full text-left p-2 rounded bg-gray-50 hover:bg-gray-100 text-gray-700 hover:text-black"
                 >
                   By Agent ID
                 </button>
@@ -246,17 +245,17 @@ export default function PlaygroundPage() {
           {/* Main Content */}
           <div className="space-y-6">
             {/* Request Card */}
-            <Card>
-              <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className={cn(
                       'px-2 py-1 rounded text-sm font-mono font-medium',
-                      endpoint.method === 'GET' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'
+                      endpoint.method === 'GET' ? 'bg-emerald-100 text-emerald-600' : 'bg-blue-100 text-blue-600'
                     )}>
                       {endpoint.method}
                     </span>
-                    <code className="text-sm text-white/70">{endpoint.path}</code>
+                    <code className="text-sm text-gray-700">{endpoint.path}</code>
                   </div>
                   <Button onClick={handleRun} disabled={loading} className="gap-2">
                     {loading ? (
@@ -267,80 +266,80 @@ export default function PlaygroundPage() {
                     Run
                   </Button>
                 </div>
-              </CardHeader>
-              <CardContent className="pt-4 space-y-4">
+              </div>
+              <div className="p-4 space-y-4">
                 {endpoint.method === 'POST' ? (
                   <div>
-                    <Label className="text-white/60 mb-2 block">Request Body</Label>
+                    <Label className="text-gray-600 mb-2 block">Request Body</Label>
                     <textarea
                       value={requestBody}
                       onChange={(e) => setRequestBody(e.target.value)}
-                      className="w-full h-40 bg-white/[0.02] border border-white/10 rounded-lg p-4 font-mono text-sm text-white resize-none focus:outline-none focus:border-white/30"
+                      className="w-full h-40 bg-gray-50 border-2 border-gray-300 rounded-lg p-4 font-mono text-sm text-black resize-none focus:outline-none focus:border-black"
                       spellCheck={false}
                     />
                   </div>
                 ) : (
                   <div>
-                    <Label className="text-white/60 mb-2 block">Query Parameters</Label>
+                    <Label className="text-gray-600 mb-2 block">Query Parameters</Label>
                     <Input
                       value={queryParams}
                       onChange={(e) => setQueryParams(e.target.value)}
                       placeholder="query=search&limit=10"
-                      className="bg-white/[0.02] border-white/10 font-mono"
+                      className="bg-gray-50 border-2 border-gray-300 text-black focus:border-black font-mono"
                     />
                   </div>
                 )}
 
                 {/* cURL command */}
                 <div>
-                  <Label className="text-white/60 mb-2 block flex items-center gap-2">
+                  <Label className="text-gray-600 mb-2 block flex items-center gap-2">
                     <Terminal className="h-4 w-4" />
                     cURL
                   </Label>
-                  <pre className="bg-white/[0.02] border border-white/10 rounded-lg p-4 text-xs text-white/70 overflow-x-auto">
+                  <pre className="bg-gray-100 border-2 border-gray-300 rounded-lg p-4 text-xs text-gray-700 overflow-x-auto">
                     {generateCurl()}
                   </pre>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Response Card */}
-            <Card>
-              <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base flex items-center gap-2">
+                  <h3 className="font-retro font-bold text-black text-base flex items-center gap-2">
                     <Zap className="h-4 w-4" />
                     Response
                     {responseTime !== null && (
-                      <span className="text-xs text-white/50 font-normal">
+                      <span className="text-xs text-gray-600 font-normal">
                         {responseTime}ms
                       </span>
                     )}
-                  </CardTitle>
+                  </h3>
                   {response && (
                     <Button variant="ghost" size="sm" onClick={handleCopy}>
                       {copied ? (
-                        <Check className="h-4 w-4 text-emerald-400" />
+                        <Check className="h-4 w-4 text-emerald-600" />
                       ) : (
                         <Copy className="h-4 w-4" />
                       )}
                     </Button>
                   )}
                 </div>
-              </CardHeader>
-              <CardContent className="pt-4">
+              </div>
+              <div className="p-4">
                 {response ? (
-                  <pre className="bg-white/[0.02] border border-white/10 rounded-lg p-4 text-sm text-white/80 overflow-x-auto max-h-96">
+                  <pre className="bg-gray-100 border-2 border-gray-300 rounded-lg p-4 text-sm text-gray-800 overflow-x-auto max-h-96">
                     {response}
                   </pre>
                 ) : (
-                  <div className="text-center py-12 text-white/40">
+                  <div className="text-center py-12 text-gray-500">
                     <Shield className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>Run a request to see the response</p>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </main>

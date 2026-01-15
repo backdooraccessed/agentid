@@ -1,5 +1,4 @@
 import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 export default function CredentialDetailLoading() {
   return (
@@ -7,7 +6,7 @@ export default function CredentialDetailLoading() {
       {/* Header skeleton */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Skeleton className="w-14 h-14 rounded-xl" />
+          <Skeleton className="w-14 h-14 border-4 border-gray-200" />
           <div className="space-y-2">
             <Skeleton className="h-8 w-56" />
             <Skeleton className="h-4 w-40" />
@@ -22,67 +21,67 @@ export default function CredentialDetailLoading() {
       {/* Stats grid skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[...Array(3)].map((_, i) => (
-          <Card key={i} className="overflow-hidden">
-            <CardHeader className="bg-white/[0.02] border-b border-white/5 pb-3">
+          <div key={i} className="border-4 border-black bg-white">
+            <div className="bg-gray-50 border-b-4 border-black p-4">
               <div className="flex items-center gap-3">
-                <Skeleton className="w-8 h-8 rounded-lg" />
+                <Skeleton className="w-8 h-8 border-2 border-gray-200" />
                 <Skeleton className="h-4 w-24" />
               </div>
-            </CardHeader>
-            <CardContent className="pt-4">
+            </div>
+            <div className="p-4">
               <Skeleton className="h-8 w-20 mb-2" />
               <Skeleton className="h-3 w-32" />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
 
       {/* Details cards skeleton */}
       <div className="grid lg:grid-cols-2 gap-6">
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-white/[0.02] border-b border-white/5">
+        <div className="border-4 border-black bg-white">
+          <div className="bg-gray-50 border-b-4 border-black p-4">
             <div className="flex items-center gap-3">
-              <Skeleton className="w-8 h-8 rounded-lg" />
+              <Skeleton className="w-8 h-8 border-2 border-gray-200" />
               <Skeleton className="h-5 w-32" />
             </div>
-          </CardHeader>
-          <CardContent className="pt-4 space-y-4">
+          </div>
+          <div className="p-4 space-y-4">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="flex justify-between">
                 <Skeleton className="h-4 w-24" />
                 <Skeleton className="h-4 w-40" />
               </div>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-white/[0.02] border-b border-white/5">
+        <div className="border-4 border-black bg-white">
+          <div className="bg-gray-50 border-b-4 border-black p-4">
             <div className="flex items-center gap-3">
-              <Skeleton className="w-8 h-8 rounded-lg" />
+              <Skeleton className="w-8 h-8 border-2 border-gray-200" />
               <Skeleton className="h-5 w-32" />
             </div>
-          </CardHeader>
-          <CardContent className="pt-4 space-y-4">
+          </div>
+          <div className="p-4 space-y-4">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="flex justify-between">
                 <Skeleton className="h-4 w-24" />
                 <Skeleton className="h-4 w-40" />
               </div>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Activity skeleton */}
-      <Card className="overflow-hidden">
-        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+      <div className="border-4 border-black bg-white">
+        <div className="bg-gray-50 border-b-4 border-black p-4">
           <div className="flex items-center gap-3">
-            <Skeleton className="w-8 h-8 rounded-lg" />
+            <Skeleton className="w-8 h-8 border-2 border-gray-200" />
             <Skeleton className="h-5 w-40" />
           </div>
-        </CardHeader>
-        <CardContent className="pt-4 space-y-3">
+        </div>
+        <div className="p-4 space-y-3">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex items-center gap-3">
               <Skeleton className="w-2 h-2 rounded-full" />
@@ -90,8 +89,8 @@ export default function CredentialDetailLoading() {
               <Skeleton className="h-4 w-24" />
             </div>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

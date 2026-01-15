@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { TemplatesClient } from './templates-client';
 import { FileText, ArrowUpRight } from 'lucide-react';
 
@@ -24,30 +23,30 @@ export default async function TemplatesPage() {
   if (!issuer) {
     return (
       <div className="max-w-2xl mx-auto">
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-white/[0.02] border-b border-white/5">
+        <div className="border-4 border-black bg-white">
+          <div className="bg-gray-50 border-b-4 border-black px-4 py-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
-                <FileText className="h-5 w-5 text-white/70" />
+              <div className="w-10 h-10 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                <FileText className="h-5 w-5 text-gray-600" />
               </div>
               <div>
-                <CardTitle>Complete Your Setup</CardTitle>
-                <CardDescription>
+                <h2 className="font-retro font-bold uppercase">Complete Your Setup</h2>
+                <p className="text-xs font-retro text-gray-500">
                   Create your issuer profile to manage templates
-                </CardDescription>
+                </p>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="pt-6">
+          </div>
+          <div className="p-6">
             <a
               href="/settings"
-              className="inline-flex items-center gap-2 text-white hover:text-white/80 transition-colors"
+              className="inline-flex items-center gap-2 font-retro text-black hover:text-gray-600 transition-colors underline underline-offset-2"
             >
               Create Issuer Profile
               <ArrowUpRight className="h-4 w-4" />
             </a>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
@@ -63,12 +62,12 @@ export default async function TemplatesPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-          <FileText className="h-7 w-7 text-white/70" />
+        <div className="w-14 h-14 bg-gray-100 border-4 border-black flex items-center justify-center">
+          <FileText className="h-7 w-7 text-gray-600" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Templates</h1>
-          <p className="text-muted-foreground">
+          <h1 className="font-pixel text-3xl uppercase">Templates</h1>
+          <p className="font-retro text-gray-600">
             Create reusable templates for issuing credentials faster
           </p>
         </div>

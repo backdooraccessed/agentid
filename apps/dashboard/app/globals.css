@@ -46,6 +46,7 @@
     --revoked-foreground: 0 0% 98%;
   }
 
+  html.light,
   .light {
     --background: 0 0% 100%;
     --background-secondary: 0 0% 98%;
@@ -90,10 +91,45 @@
     color-scheme: dark;
   }
 
-  body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Satoshi', system-ui, sans-serif;
+  html.light {
+    color-scheme: light;
   }
+
+  body {
+    @apply text-foreground antialiased;
+    font-family: 'Satoshi', system-ui, sans-serif;
+    /* Note: background is NOT applied here - each page/layout handles its own background */
+  }
+
+}
+
+/* CRITICAL: Force light theme overrides - must be outside @layer for highest specificity */
+html.light {
+  --background: 0 0% 100% !important;
+  --foreground: 0 0% 4% !important;
+}
+
+html.light body {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+html.light .bg-background {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+html.light .text-foreground {
+  color: #000000 !important;
+}
+
+/* Override any potential dark mode body styles */
+body.light-theme,
+.light body,
+html.light body.font-sans {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
 }
 
 /* Typography */

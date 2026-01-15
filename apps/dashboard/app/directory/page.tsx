@@ -2,9 +2,6 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Search,
   Shield,
@@ -18,9 +15,8 @@ import {
   Loader2,
   ArrowRight,
   Sparkles,
-  SlidersHorizontal,
-  ArrowUpDown,
   Filter,
+  Github,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -88,6 +84,25 @@ export default function DirectoryPage() {
   const [typeFilter, setTypeFilter] = useState<IssuerType>('all');
   const [sortBy, setSortBy] = useState<SortOption>('trust_score');
   const [showFilters, setShowFilters] = useState(false);
+
+  // Switch to light theme
+  useEffect(() => {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+    document.body.classList.add('light-theme');
+    document.body.style.setProperty('background-color', '#ffffff', 'important');
+    document.body.style.setProperty('background', '#ffffff', 'important');
+    document.body.style.setProperty('color', '#000000', 'important');
+
+    return () => {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+      document.body.classList.remove('light-theme');
+      document.body.style.removeProperty('background-color');
+      document.body.style.removeProperty('background');
+      document.body.style.removeProperty('color');
+    };
+  }, []);
 
   // Debounce search input
   const debouncedSearch = useDebounce(search, 300);
@@ -161,157 +176,164 @@ export default function DirectoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-white text-black font-retro">
+      {/* Dotted Background Pattern */}
+      <div className="fixed inset-0 dot-pattern pointer-events-none" />
+
       {/* Header */}
-      <header className="border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-xl font-bold flex items-center gap-3">
-            <span className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black text-sm font-bold">
-              A
-            </span>
-            <span className="text-white">AgentID Directory</span>
+      <header className="relative z-50 border-b-4 border-black bg-white">
+        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-black flex items-center justify-center block-shadow-sm group-hover:animate-block-wiggle">
+              <Shield className="w-5 h-5 text-white" />
+            </div>
+            <span className="font-retro font-bold text-xl uppercase tracking-tight">AgentID</span>
           </Link>
-          <Link href="/login">
-            <Button variant="outline" className="border-white/10 hover:bg-white/[0.04]">
-              Sign In
-            </Button>
-          </Link>
+
+          <nav className="hidden md:flex items-center gap-8 font-retro text-sm uppercase tracking-wider">
+            <Link href="/#features" className="hover:underline underline-offset-4 decoration-2">Features</Link>
+            <Link href="/marketplace" className="hover:underline underline-offset-4 decoration-2">Marketplace</Link>
+            <Link href="/directory" className="underline underline-offset-4 decoration-2">Directory</Link>
+            <Link href="/docs" className="hover:underline underline-offset-4 decoration-2">Docs</Link>
+            <Link href="https://github.com/agentid" className="hover:underline underline-offset-4 decoration-2">
+              <Github className="w-5 h-5" />
+            </Link>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <Link href="/login">
+              <button className="font-retro font-bold text-sm uppercase px-4 py-2 hover:bg-gray-100 border-2 border-black">
+                Sign In
+              </button>
+            </Link>
+            <Link href="/register">
+              <button className="font-retro font-bold text-sm uppercase px-4 py-2 bg-black text-white btn-retro">
+                Get Started
+              </button>
+            </Link>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-12 space-y-10">
+      <main className="relative max-w-6xl mx-auto px-4 py-12 space-y-10">
         {/* Hero */}
         <div className="text-center space-y-4">
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-              <Shield className="h-8 w-8 text-white/70" />
-            </div>
+          <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-black bg-white block-shadow-sm mb-6">
+            <Shield className="w-4 h-4" />
+            <span className="font-retro text-sm uppercase tracking-wider">Issuer Directory</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Issuer Directory</h1>
-          <p className="text-xl text-white/60 max-w-2xl mx-auto">
+          <h1 className="font-pixel text-5xl md:text-6xl uppercase">
+            Trusted Issuers
+          </h1>
+          <p className="font-retro text-lg text-gray-600 max-w-2xl mx-auto">
             Discover verified organizations that issue credentials to AI agents.
             Find trusted issuers for your verification needs.
           </p>
         </div>
 
         {/* Search & Filters */}
-        <Card className="overflow-hidden">
-          <CardContent className="pt-6 space-y-4">
-            {/* Search Row */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
-                <Input
-                  placeholder="Search issuers by name..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-10 bg-white/[0.02] border-white/10 focus:border-white/30"
-                />
-                {search && (
-                  <button
-                    onClick={() => setSearch('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
-                  >
-                    &times;
-                  </button>
-                )}
-              </div>
-              <Button
+        <div className="border-4 border-black bg-white p-6 block-shadow">
+          {/* Search Row */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1 relative border-4 border-black">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search issuers by name..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-12 pr-4 h-12 bg-transparent text-black placeholder:text-gray-400 font-retro focus:outline-none"
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch('')}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black text-xl"
+                >
+                  &times;
+                </button>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowFilters(!showFilters)}
+              className={cn(
+                'px-6 py-3 font-retro font-bold uppercase text-sm flex items-center gap-2 border-4 border-black transition-colors',
+                showFilters || activeFilterCount > 0
+                  ? 'bg-black text-white'
+                  : 'bg-white text-black hover:bg-gray-100'
+              )}
+            >
+              <Filter className="h-4 w-4" />
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="ml-1 px-2 py-0.5 bg-white text-black text-xs font-bold">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Expandable Filters */}
+          {showFilters && (
+            <div className="flex flex-wrap gap-3 pt-6 mt-6 border-t-2 border-black">
+              {/* Verified Filter */}
+              <button
                 type="button"
-                variant="outline"
-                onClick={() => setShowFilters(!showFilters)}
+                onClick={() => setVerifiedOnly(!verifiedOnly)}
                 className={cn(
-                  'gap-2 transition-all',
-                  showFilters || activeFilterCount > 0
-                    ? 'bg-white/10 border-white/20'
-                    : 'border-white/10 hover:bg-white/[0.04]'
+                  'px-4 py-2 font-retro text-sm uppercase flex items-center gap-2 border-2 border-black transition-colors',
+                  verifiedOnly
+                    ? 'bg-black text-white'
+                    : 'bg-white text-black hover:bg-gray-100'
                 )}
               >
-                <SlidersHorizontal className="h-4 w-4" />
-                Filters
-                {activeFilterCount > 0 && (
-                  <span className="ml-1 px-1.5 py-0.5 rounded-full bg-white text-black text-xs font-medium">
-                    {activeFilterCount}
-                  </span>
-                )}
-              </Button>
-            </div>
+                <CheckCircle className="h-4 w-4" />
+                Verified Only
+              </button>
 
-            {/* Expandable Filters */}
-            {showFilters && (
-              <div className="flex flex-wrap gap-3 pt-2 border-t border-white/10">
-                {/* Verified Filter */}
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setVerifiedOnly(!verifiedOnly)}
-                  className={cn(
-                    'gap-2 transition-all',
-                    verifiedOnly
-                      ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/30'
-                      : 'border-white/10 hover:bg-white/[0.04]'
-                  )}
-                >
-                  <CheckCircle className="h-3.5 w-3.5" />
-                  Verified Only
-                </Button>
-
-                {/* Type Filter */}
-                <div className="flex items-center gap-1">
-                  <span className="text-sm text-white/50 mr-1">Type:</span>
-                  {(['all', 'individual', 'organization', 'platform'] as const).map((type) => (
-                    <Button
-                      key={type}
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setTypeFilter(type)}
-                      className={cn(
-                        'gap-1.5 transition-all capitalize',
-                        typeFilter === type
-                          ? 'bg-white/10 border-white/30'
-                          : 'border-white/10 hover:bg-white/[0.04]'
-                      )}
-                    >
-                      {type !== 'all' && ISSUER_TYPE_ICONS[type]}
-                      {type === 'all' ? 'All Types' : ISSUER_TYPE_LABELS[type]}
-                    </Button>
-                  ))}
-                </div>
-
-                {/* Sort */}
-                <div className="flex items-center gap-1 ml-auto">
-                  <span className="text-sm text-white/50 mr-1">Sort:</span>
-                  <div className="flex gap-1">
-                    {SORT_OPTIONS.map((option) => (
-                      <Button
-                        key={option.value}
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSortBy(option.value)}
-                        className={cn(
-                          'gap-1.5 transition-all',
-                          sortBy === option.value
-                            ? 'bg-white/10 border-white/30'
-                            : 'border-white/10 hover:bg-white/[0.04]'
-                        )}
-                      >
-                        <ArrowUpDown className="h-3 w-3" />
-                        {option.label}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
+              {/* Type Filter */}
+              <div className="flex items-center gap-2">
+                <span className="font-retro text-sm text-gray-600 uppercase">Type:</span>
+                {(['all', 'individual', 'organization', 'platform'] as const).map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setTypeFilter(type)}
+                    className={cn(
+                      'px-3 py-2 font-retro text-sm uppercase flex items-center gap-1.5 border-2 border-black transition-colors',
+                      typeFilter === type
+                        ? 'bg-black text-white'
+                        : 'bg-white text-black hover:bg-gray-100'
+                    )}
+                  >
+                    {type !== 'all' && ISSUER_TYPE_ICONS[type]}
+                    {type === 'all' ? 'All' : ISSUER_TYPE_LABELS[type]}
+                  </button>
+                ))}
               </div>
-            )}
-          </CardContent>
-        </Card>
+
+              {/* Sort */}
+              <div className="flex items-center gap-2 ml-auto">
+                <span className="font-retro text-sm text-gray-600 uppercase">Sort:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOption)}
+                  className="px-4 py-2 font-retro text-sm uppercase border-2 border-black bg-white focus:outline-none"
+                >
+                  {SORT_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Stats */}
         {pagination && (
-          <div className="flex items-center justify-between text-sm text-white/50">
+          <div className="flex items-center justify-between font-retro text-sm text-gray-600">
             <span>
               {filteredIssuers.length} of {pagination.total} issuer{pagination.total !== 1 ? 's' : ''}
               {typeFilter !== 'all' && ` (${ISSUER_TYPE_LABELS[typeFilter]})`}
@@ -323,7 +345,7 @@ export default function DirectoryPage() {
                   setTypeFilter('all');
                   setVerifiedOnly(false);
                 }}
-                className="text-white/50 hover:text-white transition-colors"
+                className="text-gray-600 hover:text-black transition-colors uppercase"
               >
                 Clear filters
               </button>
@@ -333,108 +355,107 @@ export default function DirectoryPage() {
 
         {/* Results */}
         {loading && filteredIssuers.length === 0 ? (
-          <div className="text-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-white/30 mx-auto mb-4" />
-            <p className="text-white/50">Loading directory...</p>
+          <div className="text-center py-12 border-4 border-black bg-gray-50 block-shadow">
+            <Loader2 className="h-8 w-8 animate-spin text-gray-400 mx-auto mb-4" />
+            <p className="font-retro text-gray-600">Loading directory...</p>
           </div>
         ) : filteredIssuers.length === 0 ? (
-          <Card className="overflow-hidden">
-            <CardContent className="py-12 text-center">
-              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
-                <Building2 className="h-6 w-6 text-white/30" />
-              </div>
-              <p className="text-white/50 mb-4">No issuers found matching your criteria.</p>
-              {(search || typeFilter !== 'all' || verifiedOnly) && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setSearch('');
-                    setTypeFilter('all');
-                    setVerifiedOnly(false);
-                  }}
-                  className="border-white/10 hover:bg-white/[0.04]"
-                >
-                  Clear filters
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid md:grid-cols-2 gap-4">
-            {filteredIssuers.map((issuer) => (
-              <Card
-                key={issuer.id}
-                className="overflow-hidden hover:bg-white/[0.02] transition-colors"
+          <div className="text-center py-12 border-4 border-black bg-gray-50 block-shadow">
+            <div className="w-16 h-16 bg-gray-200 border-2 border-black flex items-center justify-center mx-auto mb-4">
+              <Building2 className="h-8 w-8 text-gray-400" />
+            </div>
+            <p className="font-retro text-gray-600 mb-4">No issuers found matching your criteria.</p>
+            {(search || typeFilter !== 'all' || verifiedOnly) && (
+              <button
+                onClick={() => {
+                  setSearch('');
+                  setTypeFilter('all');
+                  setVerifiedOnly(false);
+                }}
+                className="px-6 py-3 font-retro font-bold uppercase text-sm border-4 border-black hover:bg-gray-100 transition-colors"
               >
-                <CardHeader className="bg-white/[0.02] border-b border-white/5 pb-4">
+                Clear filters
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-6">
+            {filteredIssuers.map((issuer) => (
+              <div
+                key={issuer.id}
+                className="border-4 border-black bg-white block-shadow block-hover transition-all"
+              >
+                {/* Header */}
+                <div className="p-4 border-b-2 border-black bg-gray-50">
                   <div className="flex justify-between items-start">
                     <div className="flex items-start gap-3">
                       <div className={cn(
-                        'w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0',
-                        issuer.verified ? 'bg-emerald-500/10' : 'bg-white/5'
+                        'w-12 h-12 border-2 border-black flex items-center justify-center flex-shrink-0',
+                        issuer.verified ? 'bg-black text-white' : 'bg-gray-100'
                       )}>
                         {issuer.verified ? (
-                          <CheckCircle className="h-5 w-5 text-emerald-400" />
+                          <CheckCircle className="h-6 w-6" />
                         ) : (
-                          ISSUER_TYPE_ICONS[issuer.type] || <Building2 className="h-5 w-5 text-white/70" />
+                          ISSUER_TYPE_ICONS[issuer.type] || <Building2 className="h-6 w-6" />
                         )}
                       </div>
                       <div>
-                        <CardTitle className="text-base flex items-center gap-2">
+                        <h3 className="font-retro font-bold uppercase flex items-center gap-2">
                           {issuer.name}
                           {issuer.verified && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                              Verified
+                            <span className="px-2 py-0.5 text-xs font-bold bg-black text-white">
+                              VERIFIED
                             </span>
                           )}
-                        </CardTitle>
-                        <CardDescription className="flex items-center gap-1.5 mt-1">
+                        </h3>
+                        <p className="font-retro text-sm text-gray-600 flex items-center gap-1.5 mt-1">
                           {ISSUER_TYPE_ICONS[issuer.type]}
                           {ISSUER_TYPE_LABELS[issuer.type] || issuer.type}
                           {issuer.domain && (
                             <>
-                              <span className="text-white/20">·</span>
+                              <span className="text-gray-400">·</span>
                               <Globe className="h-3.5 w-3.5" />
                               {issuer.domain}
                             </>
                           )}
-                        </CardDescription>
+                        </p>
                       </div>
                     </div>
                     {issuer.stats && (
                       <div className="text-right flex-shrink-0">
-                        <div className="flex items-center gap-1 text-2xl font-bold">
-                          <Star className="h-5 w-5 text-amber-400" />
+                        <div className="flex items-center gap-1 font-pixel text-3xl">
+                          <Star className="h-6 w-6 fill-current" />
                           {issuer.stats.trust_score}
                         </div>
-                        <div className="text-xs text-white/50">
+                        <div className="font-retro text-xs text-gray-600 uppercase">
                           Trust Score
                         </div>
                       </div>
                     )}
                   </div>
-                </CardHeader>
-                <CardContent className="pt-4">
+                </div>
+
+                {/* Content */}
+                <div className="p-4">
                   {issuer.description && (
-                    <p className="text-sm text-white/60 mb-4 line-clamp-2">
+                    <p className="font-retro text-sm text-gray-600 mb-4 line-clamp-2">
                       {issuer.description}
                     </p>
                   )}
-                  <div className="flex justify-between text-sm">
-                    <span className="flex items-center gap-1.5 text-white/50">
+                  <div className="flex justify-between font-retro text-xs text-gray-600 uppercase">
+                    <span className="flex items-center gap-1.5">
                       <Calendar className="h-3.5 w-3.5" />
                       Joined {new Date(issuer.joined).toLocaleDateString()}
                     </span>
                     {issuer.stats && (
-                      <span className="flex items-center gap-1.5 text-white/50">
+                      <span className="flex items-center gap-1.5">
                         <Shield className="h-3.5 w-3.5" />
-                        {issuer.stats.active_credentials} active credential{issuer.stats.active_credentials !== 1 ? 's' : ''}
+                        {issuer.stats.active_credentials} credential{issuer.stats.active_credentials !== 1 ? 's' : ''}
                       </span>
                     )}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -442,11 +463,10 @@ export default function DirectoryPage() {
         {/* Load More */}
         {pagination?.has_more && (
           <div className="text-center">
-            <Button
-              variant="outline"
+            <button
               onClick={loadMore}
               disabled={loading}
-              className="gap-2 border-white/10 hover:bg-white/[0.04]"
+              className="px-8 py-4 font-retro font-bold uppercase text-sm border-4 border-black hover:bg-gray-100 transition-colors flex items-center gap-2 mx-auto disabled:opacity-50"
             >
               {loading ? (
                 <>
@@ -459,39 +479,76 @@ export default function DirectoryPage() {
                   Load More
                 </>
               )}
-            </Button>
+            </button>
           </div>
         )}
 
         {/* CTA */}
-        <Card className="overflow-hidden bg-white/[0.02]">
-          <CardContent className="py-10 text-center space-y-6">
-            <div className="flex justify-center">
-              <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                <Sparkles className="h-7 w-7 text-white/70" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold">Become a Verified Issuer</h2>
-              <p className="text-white/60 max-w-xl mx-auto">
-                Issue credentials to your AI agents and build trust with verification services.
-                Get started for free.
-              </p>
-            </div>
-            <Link href="/register">
-              <Button size="lg" className="gap-2">
-                Get Started
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="border-4 border-black bg-gray-50 p-12 block-shadow text-center space-y-6">
+          <div className="w-16 h-16 bg-black text-white flex items-center justify-center mx-auto">
+            <Sparkles className="h-8 w-8" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="font-pixel text-3xl uppercase">Become a Verified Issuer</h2>
+            <p className="font-retro text-gray-600 max-w-xl mx-auto">
+              Issue credentials to your AI agents and build trust with verification services.
+              Get started for free.
+            </p>
+          </div>
+          <Link href="/register">
+            <button className="inline-flex items-center gap-2 px-8 py-4 bg-black text-white font-retro font-bold uppercase btn-retro">
+              Get Started
+              <ArrowRight className="h-5 w-5" />
+            </button>
+          </Link>
+        </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 mt-12">
-        <div className="max-w-6xl mx-auto px-4 py-8 text-center text-sm text-white/40">
-          <p>AgentID - Credential Infrastructure for AI Agents</p>
+      <footer className="relative border-t-4 border-black py-12 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-black flex items-center justify-center">
+                  <Shield className="w-4 h-4 text-white" />
+                </div>
+                <span className="font-retro font-bold uppercase">AgentID</span>
+              </div>
+              <p className="font-retro text-sm text-gray-600">
+                Trust infrastructure for autonomous AI agents.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-retro font-bold uppercase mb-4">Product</h4>
+              <ul className="space-y-2 font-retro text-sm text-gray-600">
+                <li><Link href="/docs" className="hover:underline">Documentation</Link></li>
+                <li><Link href="/pricing" className="hover:underline">Pricing</Link></li>
+                <li><Link href="/marketplace" className="hover:underline">Marketplace</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-retro font-bold uppercase mb-4">Company</h4>
+              <ul className="space-y-2 font-retro text-sm text-gray-600">
+                <li><Link href="/terms" className="hover:underline">Terms</Link></li>
+                <li><Link href="/privacy" className="hover:underline">Privacy</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-retro font-bold uppercase mb-4">Connect</h4>
+              <ul className="space-y-2 font-retro text-sm text-gray-600">
+                <li><a href="https://github.com/agentid" className="hover:underline">GitHub</a></li>
+                <li><a href="https://twitter.com/agentid" className="hover:underline">Twitter</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-12 pt-8 border-t-2 border-black text-center font-retro text-sm text-gray-600">
+            <span className="font-pixel">&copy; 2024 AgentID</span> — Identity for autonomous AI agents
+          </div>
         </div>
       </footer>
     </div>

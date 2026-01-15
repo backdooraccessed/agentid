@@ -12,6 +12,7 @@ import {
   Trash2,
   Globe,
   EyeOff,
+  AppWindow,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -108,28 +109,28 @@ export default function MyAppsPage() {
     switch (status) {
       case 'live':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded-full">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-100 text-emerald-700 border-2 border-emerald-300 text-xs font-retro font-bold uppercase">
             <Globe className="h-3 w-3" />
             Live
           </span>
         );
       case 'draft':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded-full">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-amber-100 text-amber-700 border-2 border-amber-300 text-xs font-retro font-bold uppercase">
             <Edit className="h-3 w-3" />
             Draft
           </span>
         );
       case 'unlisted':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-500/20 text-gray-400 text-xs rounded-full">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 border-2 border-gray-300 text-xs font-retro font-bold uppercase">
             <EyeOff className="h-3 w-3" />
             Unlisted
           </span>
         );
       default:
         return (
-          <span className="px-2 py-1 bg-gray-500/20 text-gray-400 text-xs rounded-full">
+          <span className="px-2 py-1 bg-gray-100 text-gray-700 border-2 border-gray-300 text-xs font-retro font-bold uppercase">
             {status}
           </span>
         );
@@ -137,16 +138,22 @@ export default function MyAppsPage() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">My Apps</h1>
-          <p className="text-muted-foreground">
-            Manage your AI applications in the marketplace
-          </p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-gray-100 border-4 border-black flex items-center justify-center">
+            <AppWindow className="h-7 w-7 text-black" />
+          </div>
+          <div>
+            <h1 className="font-pixel text-3xl text-black uppercase">My Apps</h1>
+            <p className="font-retro text-gray-600">
+              Manage your AI applications in the marketplace
+            </p>
+          </div>
         </div>
         <Link href="/apps/new">
-          <Button className="gap-2">
+          <Button className="gap-2 bg-black text-white hover:bg-gray-800 font-retro uppercase block-shadow-sm">
             <Plus className="h-4 w-4" />
             Submit New App
           </Button>
@@ -158,29 +165,31 @@ export default function MyAppsPage() {
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="bg-card border rounded-lg p-6 animate-pulse"
+              className="border-4 border-black bg-white p-6 animate-pulse"
             >
               <div className="flex items-start gap-4">
-                <div className="w-16 h-16 bg-muted rounded-xl" />
+                <div className="w-16 h-16 bg-gray-200 border-2 border-gray-300" />
                 <div className="flex-1">
-                  <div className="h-5 bg-muted rounded w-32 mb-2" />
-                  <div className="h-4 bg-muted rounded w-full" />
+                  <div className="h-5 bg-gray-200 w-32 mb-2" />
+                  <div className="h-4 bg-gray-200 w-full" />
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : apps.length === 0 ? (
-        <div className="text-center py-16 border border-dashed rounded-lg">
-          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-            <Plus className="h-8 w-8 text-muted-foreground" />
+        <div className="border-4 border-black bg-white p-16 text-center">
+          <div className="w-16 h-16 bg-gray-100 border-4 border-black flex items-center justify-center mx-auto mb-4">
+            <Plus className="h-8 w-8 text-gray-600" />
           </div>
-          <h3 className="text-lg font-semibold mb-2">No apps yet</h3>
-          <p className="text-muted-foreground mb-4">
+          <h3 className="font-pixel text-xl text-black uppercase mb-2">No apps yet</h3>
+          <p className="font-retro text-gray-600 mb-4">
             Submit your first AI app to the marketplace
           </p>
           <Link href="/apps/new">
-            <Button>Submit Your First App</Button>
+            <Button className="bg-black text-white hover:bg-gray-800 font-retro uppercase">
+              Submit Your First App
+            </Button>
           </Link>
         </div>
       ) : (
@@ -188,89 +197,91 @@ export default function MyAppsPage() {
           {apps.map((app) => (
             <div
               key={app.id}
-              className="bg-card border rounded-lg p-6 hover:border-primary/50 transition-colors"
+              className="border-4 border-black bg-white hover:block-shadow transition-all"
             >
-              <div className="flex items-start gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-blue-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                  {app.icon_url ? (
-                    <img
-                      src={app.icon_url}
-                      alt={app.name}
-                      className="w-12 h-12 rounded-lg object-cover"
-                    />
-                  ) : (
-                    <span className="text-2xl font-bold text-muted-foreground">
-                      {app.name.charAt(0)}
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-1">
-                    <h3 className="font-semibold truncate">{app.name}</h3>
-                    {getStatusBadge(app.status)}
-                  </div>
-                  <p className="text-sm text-muted-foreground line-clamp-1 mb-3">
-                    {app.tagline}
-                  </p>
-
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Eye className="h-4 w-4" />
-                      {app.view_count.toLocaleString()} views
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MousePointer className="h-4 w-4" />
-                      {app.click_count.toLocaleString()} clicks
-                    </span>
-                    {app.categories.length > 0 && (
-                      <span>{app.categories.map(c => c.name).join(', ')}</span>
+              <div className="bg-gray-50 border-b-4 border-black p-4">
+                <div className="flex items-start gap-4">
+                  <div className="w-16 h-16 bg-gray-100 border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
+                    {app.icon_url ? (
+                      <img
+                        src={app.icon_url}
+                        alt={app.name}
+                        className="w-12 h-12 object-cover"
+                      />
+                    ) : (
+                      <span className="text-2xl font-pixel text-gray-600">
+                        {app.name.charAt(0)}
+                      </span>
                     )}
                   </div>
-                </div>
 
-                <div className="flex items-center gap-2">
-                  {app.status === 'live' && (
-                    <Link href={`/marketplace/${app.slug}`} target="_blank">
-                      <Button variant="outline" size="sm" className="gap-1">
-                        <ExternalLink className="h-4 w-4" />
-                        View
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-1">
+                      <h3 className="font-retro font-bold text-black truncate">{app.name}</h3>
+                      {getStatusBadge(app.status)}
+                    </div>
+                    <p className="text-sm font-retro text-gray-600 line-clamp-1 mb-3">
+                      {app.tagline}
+                    </p>
+
+                    <div className="flex items-center gap-4 text-sm font-retro text-gray-500">
+                      <span className="flex items-center gap-1">
+                        <Eye className="h-4 w-4" />
+                        {app.view_count.toLocaleString()} views
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <MousePointer className="h-4 w-4" />
+                        {app.click_count.toLocaleString()} clicks
+                      </span>
+                      {app.categories.length > 0 && (
+                        <span>{app.categories.map(c => c.name).join(', ')}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {app.status === 'live' && (
+                      <Link href={`/marketplace/${app.slug}`} target="_blank">
+                        <Button variant="outline" size="sm" className="gap-1 border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase">
+                          <ExternalLink className="h-4 w-4" />
+                          View
+                        </Button>
+                      </Link>
+                    )}
+                    <Link href={`/apps/${app.id}/edit`}>
+                      <Button variant="outline" size="sm" className="gap-1 border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase">
+                        <Edit className="h-4 w-4" />
+                        Edit
                       </Button>
                     </Link>
-                  )}
-                  <Link href={`/apps/${app.id}/edit`}>
-                    <Button variant="outline" size="sm" className="gap-1">
-                      <Edit className="h-4 w-4" />
-                      Edit
-                    </Button>
-                  </Link>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {app.status !== 'live' ? (
-                        <DropdownMenuItem onClick={() => handlePublish(app.id)}>
-                          <Globe className="h-4 w-4 mr-2" />
-                          Publish
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="hover:bg-gray-100">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="border-2 border-black bg-white">
+                        {app.status !== 'live' ? (
+                          <DropdownMenuItem onClick={() => handlePublish(app.id)} className="font-retro">
+                            <Globe className="h-4 w-4 mr-2" />
+                            Publish
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem onClick={() => handleUnpublish(app.id)} className="font-retro">
+                            <EyeOff className="h-4 w-4 mr-2" />
+                            Unpublish
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem
+                          onClick={() => handleDelete(app.id)}
+                          className="text-red-600 font-retro"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
                         </DropdownMenuItem>
-                      ) : (
-                        <DropdownMenuItem onClick={() => handleUnpublish(app.id)}>
-                          <EyeOff className="h-4 w-4 mr-2" />
-                          Unpublish
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem
-                        onClick={() => handleDelete(app.id)}
-                        className="text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
               </div>
             </div>

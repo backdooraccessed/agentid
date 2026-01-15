@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+// Card components replaced with retro-styled divs
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -87,51 +87,51 @@ export default function AgentProfilePage({ params }: { params: Promise<{ id: str
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-white/30" />
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
       </div>
     );
   }
 
   if (error || !agent) {
     return (
-      <div className="min-h-screen bg-black">
-        <header className="border-b border-white/10">
+      <div className="min-h-screen bg-white text-black">
+        <header className="border-b-4 border-black">
           <div className="max-w-4xl mx-auto px-4 py-4">
-            <Link href="/agents" className="text-white/60 hover:text-white flex items-center gap-2">
+            <Link href="/agents" className="text-gray-600 hover:text-black flex items-center gap-2 font-retro">
               <ArrowLeft className="h-4 w-4" />
               Back to Registry
             </Link>
           </div>
         </header>
         <main className="max-w-4xl mx-auto px-4 py-12">
-          <Card>
-            <CardContent className="py-12 text-center">
-              <Bot className="h-12 w-12 text-white/30 mx-auto mb-4" />
-              <p className="text-white/50">{error || 'Agent not found'}</p>
+          <div className="border-4 border-black bg-white">
+            <div className="p-4 py-12 text-center">
+              <Bot className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 font-retro">{error || 'Agent not found'}</p>
               <Link href="/agents">
-                <Button variant="outline" className="mt-4">
+                <Button variant="outline" className="mt-4 border-2 border-black font-retro">
                   Browse Agents
                 </Button>
               </Link>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-white text-black">
       {/* Header */}
-      <header className="border-b border-white/10">
+      <header className="border-b-4 border-black">
         <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/agents" className="text-white/60 hover:text-white flex items-center gap-2">
+          <Link href="/agents" className="text-gray-600 hover:text-black flex items-center gap-2 font-retro">
             <ArrowLeft className="h-4 w-4" />
             Back to Registry
           </Link>
           <Link href="/login">
-            <Button variant="outline" size="sm" className="border-white/10">
+            <Button variant="outline" size="sm" className="border-2 border-black font-retro">
               Sign In
             </Button>
           </Link>
@@ -140,14 +140,14 @@ export default function AgentProfilePage({ params }: { params: Promise<{ id: str
 
       <main className="max-w-4xl mx-auto px-4 py-12 space-y-8">
         {/* Profile Header */}
-        <Card className="overflow-hidden">
-          <CardContent className="pt-6">
+        <div className="border-4 border-black bg-white overflow-hidden">
+          <div className="p-4 pt-6">
             <div className="flex flex-col md:flex-row gap-6">
               {/* Avatar */}
               <div
                 className={cn(
                   'w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0',
-                  agent.is_verified ? 'bg-emerald-500/10' : 'bg-white/5'
+                  agent.is_verified ? 'bg-emerald-100' : 'bg-gray-50'
                 )}
               >
                 {agent.logo_url ? (
@@ -157,63 +157,63 @@ export default function AgentProfilePage({ params }: { params: Promise<{ id: str
                     className="w-full h-full rounded-2xl object-cover"
                   />
                 ) : agent.is_verified ? (
-                  <CheckCircle className="h-10 w-10 text-emerald-400" />
+                  <CheckCircle className="h-10 w-10 text-emerald-600" />
                 ) : (
-                  <Bot className="h-10 w-10 text-white/70" />
+                  <Bot className="h-10 w-10 text-gray-700" />
                 )}
               </div>
 
               {/* Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <h1 className="text-2xl font-bold">{agent.display_name}</h1>
+                  <h1 className="text-2xl font-pixel">{agent.display_name}</h1>
                   {agent.is_featured && (
-                    <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20">
+                    <Badge className="bg-amber-100 text-amber-600 border-amber-300">
                       Featured
                     </Badge>
                   )}
                   {agent.is_verified && (
-                    <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                    <Badge className="bg-emerald-100 text-emerald-600 border-emerald-300">
                       Verified
                     </Badge>
                   )}
                 </div>
 
-                <p className="text-white/60 mb-4">
+                <p className="text-gray-600 mb-4 font-retro">
                   {agent.short_description || agent.description?.slice(0, 160)}
                 </p>
 
-                <div className="flex flex-wrap items-center gap-4 text-sm">
-                  <div className="flex items-center gap-1.5 text-white/50">
+                <div className="flex flex-wrap items-center gap-4 text-sm font-retro">
+                  <div className="flex items-center gap-1.5 text-gray-600">
                     <Building2 className="h-4 w-4" />
                     <span>{agent.issuer_name}</span>
                     {agent.issuer_verified && (
-                      <CheckCircle className="h-3.5 w-3.5 text-emerald-400" />
+                      <CheckCircle className="h-3.5 w-3.5 text-emerald-600" />
                     )}
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Star className="h-4 w-4 text-amber-400" />
+                    <Star className="h-4 w-4 text-amber-600" />
                     <span className="font-semibold">{agent.trust_score}</span>
-                    <span className="text-white/50">Trust Score</span>
+                    <span className="text-gray-600">Trust Score</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-white/50">
+                  <div className="flex items-center gap-1.5 text-gray-600">
                     <Activity className="h-4 w-4" />
                     <span>{agent.verification_count.toLocaleString()} verifications</span>
                   </div>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Credential ID */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Credential ID</CardTitle>
-            <CardDescription>Use this ID to verify this agent</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2 p-3 bg-white/5 rounded-lg font-mono text-sm">
+        <div className="border-4 border-black bg-white">
+          <div className="bg-gray-50 border-b-4 border-black p-4">
+            <h2 className="font-retro font-bold text-base">Credential ID</h2>
+            <p className="font-retro text-gray-600 text-sm">Use this ID to verify this agent</p>
+          </div>
+          <div className="p-4">
+            <div className="flex items-center gap-2 p-3 bg-gray-100 rounded-lg font-mono text-sm">
               <code className="flex-1 truncate">{agent.credential_id}</code>
               <Button
                 variant="ghost"
@@ -222,107 +222,107 @@ export default function AgentProfilePage({ params }: { params: Promise<{ id: str
                 className="flex-shrink-0"
               >
                 {copied ? (
-                  <Check className="h-4 w-4 text-emerald-400" />
+                  <Check className="h-4 w-4 text-emerald-600" />
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Description */}
         {agent.description && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">About</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-white/70 whitespace-pre-wrap">{agent.description}</p>
-            </CardContent>
-          </Card>
+          <div className="border-4 border-black bg-white">
+            <div className="bg-gray-50 border-b-4 border-black p-4">
+              <h2 className="font-retro font-bold text-base">About</h2>
+            </div>
+            <div className="p-4">
+              <p className="text-gray-700 whitespace-pre-wrap font-retro">{agent.description}</p>
+            </div>
+          </div>
         )}
 
         {/* Categories & Capabilities */}
         <div className="grid md:grid-cols-2 gap-4">
           {agent.categories.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Categories</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
+                <h2 className="font-retro font-bold text-base">Categories</h2>
+              </div>
+              <div className="p-4">
                 <div className="flex flex-wrap gap-2">
                   {agent.categories.map((cat) => (
-                    <Badge key={cat} variant="outline" className="border-white/10">
+                    <Badge key={cat} variant="outline" className="border-gray-300 font-retro">
                       {cat.replace('-', ' ')}
                     </Badge>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
           {agent.capabilities.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Capabilities</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
+                <h2 className="font-retro font-bold text-base">Capabilities</h2>
+              </div>
+              <div className="p-4">
                 <div className="flex flex-wrap gap-2">
                   {agent.capabilities.map((cap) => (
                     <Badge
                       key={cap}
                       variant="outline"
-                      className="border-white/10 bg-white/5"
+                      className="border-gray-300 bg-gray-50 font-retro"
                     >
                       <Zap className="h-3 w-3 mr-1" />
                       {cap.replace('-', ' ')}
                     </Badge>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
         </div>
 
         {/* Tags */}
         {agent.tags.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Tags</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="border-4 border-black bg-white">
+            <div className="bg-gray-50 border-b-4 border-black p-4">
+              <h2 className="font-retro font-bold text-base">Tags</h2>
+            </div>
+            <div className="p-4">
               <div className="flex flex-wrap gap-2">
                 {agent.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="bg-white/5">
+                  <Badge key={tag} variant="secondary" className="bg-gray-50 font-retro">
                     {tag}
                   </Badge>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {/* Links & Contact */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Links & Contact</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="border-4 border-black bg-white">
+          <div className="bg-gray-50 border-b-4 border-black p-4">
+            <h2 className="font-retro font-bold text-base">Links & Contact</h2>
+          </div>
+          <div className="p-4">
             <div className="grid sm:grid-cols-2 gap-4">
               {agent.endpoint_url && (
                 <a
                   href={agent.endpoint_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
-                  <Globe className="h-5 w-5 text-white/50" />
+                  <Globe className="h-5 w-5 text-gray-600" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">API Endpoint</p>
-                    <p className="text-xs text-white/50 truncate">{agent.endpoint_url}</p>
+                    <p className="text-sm font-medium font-retro">API Endpoint</p>
+                    <p className="text-xs text-gray-600 truncate font-retro">{agent.endpoint_url}</p>
                   </div>
-                  <ExternalLink className="h-4 w-4 text-white/30" />
+                  <ExternalLink className="h-4 w-4 text-gray-400" />
                 </a>
               )}
 
@@ -331,14 +331,14 @@ export default function AgentProfilePage({ params }: { params: Promise<{ id: str
                   href={agent.documentation_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
-                  <FileText className="h-5 w-5 text-white/50" />
+                  <FileText className="h-5 w-5 text-gray-600" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">Documentation</p>
-                    <p className="text-xs text-white/50 truncate">{agent.documentation_url}</p>
+                    <p className="text-sm font-medium font-retro">Documentation</p>
+                    <p className="text-xs text-gray-600 truncate font-retro">{agent.documentation_url}</p>
                   </div>
-                  <ExternalLink className="h-4 w-4 text-white/30" />
+                  <ExternalLink className="h-4 w-4 text-gray-400" />
                 </a>
               )}
 
@@ -347,26 +347,26 @@ export default function AgentProfilePage({ params }: { params: Promise<{ id: str
                   href={agent.api_spec_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
-                  <Shield className="h-5 w-5 text-white/50" />
+                  <Shield className="h-5 w-5 text-gray-600" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">API Spec (OpenAPI)</p>
-                    <p className="text-xs text-white/50 truncate">{agent.api_spec_url}</p>
+                    <p className="text-sm font-medium font-retro">API Spec (OpenAPI)</p>
+                    <p className="text-xs text-gray-600 truncate font-retro">{agent.api_spec_url}</p>
                   </div>
-                  <ExternalLink className="h-4 w-4 text-white/30" />
+                  <ExternalLink className="h-4 w-4 text-gray-400" />
                 </a>
               )}
 
               {agent.support_email && (
                 <a
                   href={`mailto:${agent.support_email}`}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
-                  <Mail className="h-5 w-5 text-white/50" />
+                  <Mail className="h-5 w-5 text-gray-600" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">Support Email</p>
-                    <p className="text-xs text-white/50 truncate">{agent.support_email}</p>
+                    <p className="text-sm font-medium font-retro">Support Email</p>
+                    <p className="text-xs text-gray-600 truncate font-retro">{agent.support_email}</p>
                   </div>
                 </a>
               )}
@@ -376,41 +376,41 @@ export default function AgentProfilePage({ params }: { params: Promise<{ id: str
                   href={agent.support_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
-                  <Globe className="h-5 w-5 text-white/50" />
+                  <Globe className="h-5 w-5 text-gray-600" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">Support Page</p>
-                    <p className="text-xs text-white/50 truncate">{agent.support_url}</p>
+                    <p className="text-sm font-medium font-retro">Support Page</p>
+                    <p className="text-xs text-gray-600 truncate font-retro">{agent.support_url}</p>
                   </div>
-                  <ExternalLink className="h-4 w-4 text-white/30" />
+                  <ExternalLink className="h-4 w-4 text-gray-400" />
                 </a>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Verification Example */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Verify This Agent</CardTitle>
-            <CardDescription>Use the AgentID API to verify this agent</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <pre className="p-4 bg-white/5 rounded-lg overflow-x-auto text-sm">
-              <code className="text-emerald-400">
+        <div className="border-4 border-black bg-white">
+          <div className="bg-gray-50 border-b-4 border-black p-4">
+            <h2 className="font-retro font-bold text-base">Verify This Agent</h2>
+            <p className="font-retro text-gray-600 text-sm">Use the AgentID API to verify this agent</p>
+          </div>
+          <div className="p-4">
+            <pre className="p-4 bg-gray-100 rounded-lg overflow-x-auto text-sm">
+              <code className="text-emerald-600">
 {`curl -X POST https://agentid.dev/api/verify \\
   -H "Content-Type: application/json" \\
   -d '{"credential_id": "${agent.credential_id}"}'`}
               </code>
             </pre>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 mt-12">
-        <div className="max-w-4xl mx-auto px-4 py-8 text-center text-sm text-white/40">
+      <footer className="border-t-4 border-black mt-12">
+        <div className="max-w-4xl mx-auto px-4 py-8 text-center text-sm text-gray-500 font-retro">
           <p>AgentID - Credential Infrastructure for AI Agents</p>
         </div>
       </footer>

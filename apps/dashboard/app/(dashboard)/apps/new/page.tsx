@@ -18,6 +18,7 @@ import {
   Terminal,
   Grid,
   Loader2,
+  AlertCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -170,40 +171,42 @@ export default function SubmitAppPage() {
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+    <div className="space-y-8">
       <Link
         href="/apps"
-        className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
+        className="inline-flex items-center gap-2 font-retro text-gray-600 hover:text-black"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to My Apps
       </Link>
 
-      <h1 className="text-2xl font-bold mb-2">Submit Your App</h1>
-      <p className="text-muted-foreground mb-8">
-        Share your AI application with the AgentID community
-      </p>
+      <div>
+        <h1 className="font-pixel text-3xl text-black uppercase mb-2">Submit Your App</h1>
+        <p className="font-retro text-gray-600">
+          Share your AI application with the AgentID community
+        </p>
+      </div>
 
       {/* Progress Steps */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between">
         {STEPS.map((s, i) => (
           <div key={s.id} className="flex items-center">
             <div
               className={cn(
-                'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+                'w-8 h-8 border-2 flex items-center justify-center text-sm font-retro font-bold',
                 i < step
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-black border-black text-white'
                   : i === step
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground'
+                  ? 'bg-black border-black text-white'
+                  : 'bg-white border-gray-300 text-gray-500'
               )}
             >
               {i < step ? <Check className="h-4 w-4" /> : i + 1}
             </div>
             <span
               className={cn(
-                'ml-2 text-sm hidden sm:inline',
-                i <= step ? 'text-foreground' : 'text-muted-foreground'
+                'ml-2 text-sm hidden sm:inline font-retro',
+                i <= step ? 'text-black' : 'text-gray-500'
               )}
             >
               {s.label}
@@ -211,8 +214,8 @@ export default function SubmitAppPage() {
             {i < STEPS.length - 1 && (
               <div
                 className={cn(
-                  'w-12 sm:w-24 h-0.5 mx-2',
-                  i < step ? 'bg-primary' : 'bg-muted'
+                  'w-12 sm:w-24 h-1 mx-2',
+                  i < step ? 'bg-black' : 'bg-gray-200'
                 )}
               />
             )}
@@ -221,37 +224,37 @@ export default function SubmitAppPage() {
       </div>
 
       {/* Step Content */}
-      <div className="bg-card border rounded-lg p-6">
+      <div className="border-4 border-black bg-white p-6">
         {step === 0 && (
           <div className="space-y-6">
             <div>
-              <Label htmlFor="name">App Name *</Label>
+              <Label htmlFor="name" className="text-sm font-retro font-bold uppercase">App Name *</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="My Awesome AI App"
-                className="mt-1"
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
               />
             </div>
 
             <div>
-              <Label htmlFor="tagline">Tagline *</Label>
+              <Label htmlFor="tagline" className="text-sm font-retro font-bold uppercase">Tagline *</Label>
               <Input
                 id="tagline"
                 value={tagline}
                 onChange={(e) => setTagline(e.target.value)}
                 placeholder="A short description of what your app does"
                 maxLength={100}
-                className="mt-1"
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
               />
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs font-retro text-gray-500 mt-1">
                 {tagline.length}/100 characters
               </p>
             </div>
 
             <div>
-              <Label>Categories * (select up to 3)</Label>
+              <Label className="text-sm font-retro font-bold uppercase">Categories * (select up to 3)</Label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
                 {categories.map((cat) => (
                   <button
@@ -259,10 +262,10 @@ export default function SubmitAppPage() {
                     type="button"
                     onClick={() => toggleCategory(cat.id)}
                     className={cn(
-                      'flex items-center gap-2 p-3 rounded-lg border text-left transition-colors',
+                      'flex items-center gap-2 p-3 border-2 text-left transition-colors font-retro',
                       selectedCategories.includes(cat.id)
-                        ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-border hover:border-primary/50'
+                        ? 'border-black bg-gray-50 text-black'
+                        : 'border-gray-200 hover:border-gray-400 text-gray-600'
                     )}
                   >
                     {ICON_MAP[cat.icon] || <Grid className="h-4 w-4" />}
@@ -277,39 +280,39 @@ export default function SubmitAppPage() {
         {step === 1 && (
           <div className="space-y-6">
             <div>
-              <Label htmlFor="description">Description *</Label>
+              <Label htmlFor="description" className="text-sm font-retro font-bold uppercase">Description *</Label>
               <textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe what your app does, its features, and why users should try it..."
                 rows={6}
-                className="w-full mt-1 px-3 py-2 border rounded-md bg-background resize-none"
+                className="w-full mt-1 px-3 py-2 border-2 border-gray-300 bg-white font-retro resize-none"
               />
             </div>
 
             <div>
-              <Label htmlFor="iconUrl">Icon URL</Label>
+              <Label htmlFor="iconUrl" className="text-sm font-retro font-bold uppercase">Icon URL</Label>
               <Input
                 id="iconUrl"
                 value={iconUrl}
                 onChange={(e) => setIconUrl(e.target.value)}
                 placeholder="https://example.com/icon.png"
-                className="mt-1"
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
               />
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs font-retro text-gray-500 mt-1">
                 Recommended: 256x256px PNG or JPG
               </p>
             </div>
 
             <div>
-              <Label htmlFor="tags">Tags</Label>
+              <Label htmlFor="tags" className="text-sm font-retro font-bold uppercase">Tags</Label>
               <Input
                 id="tags"
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="ai, chatbot, automation (comma separated)"
-                className="mt-1"
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
               />
             </div>
           </div>
@@ -318,51 +321,51 @@ export default function SubmitAppPage() {
         {step === 2 && (
           <div className="space-y-6">
             <div>
-              <Label htmlFor="appUrl">App URL *</Label>
+              <Label htmlFor="appUrl" className="text-sm font-retro font-bold uppercase">App URL *</Label>
               <Input
                 id="appUrl"
                 value={appUrl}
                 onChange={(e) => setAppUrl(e.target.value)}
                 placeholder="https://myapp.com"
-                className="mt-1"
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
               />
             </div>
 
             <div>
-              <Label htmlFor="demoUrl">Demo URL</Label>
+              <Label htmlFor="demoUrl" className="text-sm font-retro font-bold uppercase">Demo URL</Label>
               <Input
                 id="demoUrl"
                 value={demoUrl}
                 onChange={(e) => setDemoUrl(e.target.value)}
                 placeholder="https://myapp.com/demo"
-                className="mt-1"
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
               />
             </div>
 
             <div>
-              <Label htmlFor="githubUrl">GitHub URL</Label>
+              <Label htmlFor="githubUrl" className="text-sm font-retro font-bold uppercase">GitHub URL</Label>
               <Input
                 id="githubUrl"
                 value={githubUrl}
                 onChange={(e) => setGithubUrl(e.target.value)}
                 placeholder="https://github.com/username/repo"
-                className="mt-1"
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
               />
             </div>
 
             <div>
-              <Label htmlFor="docsUrl">Documentation URL</Label>
+              <Label htmlFor="docsUrl" className="text-sm font-retro font-bold uppercase">Documentation URL</Label>
               <Input
                 id="docsUrl"
                 value={docsUrl}
                 onChange={(e) => setDocsUrl(e.target.value)}
                 placeholder="https://docs.myapp.com"
-                className="mt-1"
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
               />
             </div>
 
             <div>
-              <Label>Pricing</Label>
+              <Label className="text-sm font-retro font-bold uppercase">Pricing</Label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
                 {(['free', 'freemium', 'paid', 'contact'] as PricingType[]).map((type) => (
                   <button
@@ -370,10 +373,10 @@ export default function SubmitAppPage() {
                     type="button"
                     onClick={() => setPricingType(type)}
                     className={cn(
-                      'p-3 rounded-lg border text-center capitalize transition-colors',
+                      'p-3 border-2 text-center capitalize transition-colors font-retro',
                       pricingType === type
-                        ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-border hover:border-primary/50'
+                        ? 'border-black bg-gray-50 text-black'
+                        : 'border-gray-200 hover:border-gray-400 text-gray-600'
                     )}
                   >
                     {type}
@@ -382,14 +385,14 @@ export default function SubmitAppPage() {
               </div>
               {pricingType === 'paid' && (
                 <div className="mt-3">
-                  <Label htmlFor="pricingAmount">Price (USD/month)</Label>
+                  <Label htmlFor="pricingAmount" className="text-sm font-retro font-bold uppercase">Price (USD/month)</Label>
                   <Input
                     id="pricingAmount"
                     type="number"
                     value={pricingAmount}
                     onChange={(e) => setPricingAmount(e.target.value)}
                     placeholder="9.99"
-                    className="mt-1"
+                    className="mt-1 bg-white border-2 border-gray-300 font-retro"
                   />
                 </div>
               )}
@@ -397,12 +400,12 @@ export default function SubmitAppPage() {
 
             {credentials.length > 0 && (
               <div>
-                <Label htmlFor="credentialId">Link Credential (optional)</Label>
+                <Label htmlFor="credentialId" className="text-sm font-retro font-bold uppercase">Link Credential (optional)</Label>
                 <select
                   id="credentialId"
                   value={credentialId}
                   onChange={(e) => setCredentialId(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 border rounded-md bg-background"
+                  className="w-full mt-1 px-3 py-2 border-2 border-gray-300 bg-white font-retro"
                 >
                   <option value="">No credential</option>
                   {credentials.map((cred) => (
@@ -411,7 +414,7 @@ export default function SubmitAppPage() {
                     </option>
                   ))}
                 </select>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs font-retro text-gray-500 mt-1">
                   Link a credential to show trust score on your app listing
                 </p>
               </div>
@@ -421,33 +424,33 @@ export default function SubmitAppPage() {
 
         {step === 3 && (
           <div className="space-y-6">
-            <h3 className="font-semibold">Review Your Submission</h3>
+            <h3 className="font-retro font-bold text-black uppercase">Review Your Submission</h3>
 
             <div className="space-y-4">
-              <div className="flex items-start gap-4 p-4 bg-muted/50 rounded-lg">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-blue-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+              <div className="flex items-start gap-4 p-4 bg-gray-50 border-2 border-gray-200">
+                <div className="w-16 h-16 bg-gray-100 border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
                   {iconUrl ? (
                     <img
                       src={iconUrl}
                       alt={name}
-                      className="w-12 h-12 rounded-lg object-cover"
+                      className="w-12 h-12 object-cover"
                     />
                   ) : (
-                    <span className="text-2xl font-bold text-muted-foreground">
+                    <span className="text-2xl font-pixel text-gray-600">
                       {name.charAt(0)}
                     </span>
                   )}
                 </div>
                 <div>
-                  <h4 className="font-semibold">{name}</h4>
-                  <p className="text-sm text-muted-foreground">{tagline}</p>
+                  <h4 className="font-retro font-bold text-black">{name}</h4>
+                  <p className="text-sm font-retro text-gray-600">{tagline}</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-4 text-sm font-retro">
                 <div>
-                  <span className="text-muted-foreground">Categories:</span>
-                  <p>
+                  <span className="text-gray-500">Categories:</span>
+                  <p className="text-black">
                     {selectedCategories
                       .map((id) => categories.find((c) => c.id === id)?.name)
                       .filter(Boolean)
@@ -455,33 +458,34 @@ export default function SubmitAppPage() {
                   </p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Pricing:</span>
-                  <p className="capitalize">
+                  <span className="text-gray-500">Pricing:</span>
+                  <p className="capitalize text-black">
                     {pricingType}
                     {pricingType === 'paid' && ` - $${pricingAmount}/mo`}
                   </p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">App URL:</span>
-                  <p className="truncate">{appUrl}</p>
+                  <span className="text-gray-500">App URL:</span>
+                  <p className="truncate text-black">{appUrl}</p>
                 </div>
                 {demoUrl && (
                   <div>
-                    <span className="text-muted-foreground">Demo:</span>
-                    <p className="truncate">{demoUrl}</p>
+                    <span className="text-gray-500">Demo:</span>
+                    <p className="truncate text-black">{demoUrl}</p>
                   </div>
                 )}
               </div>
 
               <div>
-                <span className="text-muted-foreground text-sm">Description:</span>
-                <p className="text-sm mt-1 whitespace-pre-wrap">{description}</p>
+                <span className="text-gray-500 text-sm font-retro">Description:</span>
+                <p className="text-sm mt-1 whitespace-pre-wrap font-retro text-black">{description}</p>
               </div>
             </div>
 
             {error && (
-              <div className="p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
-                {error}
+              <div className="flex items-center gap-2 p-3 border-4 border-red-500 bg-red-50">
+                <AlertCircle className="h-4 w-4 text-red-600" />
+                <p className="text-sm font-retro text-red-700">{error}</p>
               </div>
             )}
           </div>
@@ -489,18 +493,23 @@ export default function SubmitAppPage() {
       </div>
 
       {/* Navigation */}
-      <div className="flex items-center justify-between mt-6">
+      <div className="flex items-center justify-between">
         <Button
           variant="outline"
           onClick={() => setStep((s) => s - 1)}
           disabled={step === 0}
+          className="border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back
         </Button>
 
         {step < STEPS.length - 1 ? (
-          <Button onClick={() => setStep((s) => s + 1)} disabled={!canProceed()}>
+          <Button
+            onClick={() => setStep((s) => s + 1)}
+            disabled={!canProceed()}
+            className="bg-black text-white hover:bg-gray-800 font-retro uppercase"
+          >
             Continue
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
@@ -510,6 +519,7 @@ export default function SubmitAppPage() {
               variant="outline"
               onClick={() => handleSubmit(false)}
               disabled={submitting}
+              className="border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase"
             >
               {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Save as Draft
@@ -517,6 +527,7 @@ export default function SubmitAppPage() {
             <Button
               onClick={() => handleSubmit(true)}
               disabled={submitting}
+              className="bg-black text-white hover:bg-gray-800 font-retro uppercase"
             >
               {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Publish App

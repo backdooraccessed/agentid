@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Download, FileJson, FileSpreadsheet, Calendar, ScrollText, Shield, Key, Webhook, FileText, Users, Settings, AlertCircle, Loader2, ChevronDown, Plus, Trash2, RefreshCw } from 'lucide-react';
@@ -57,15 +56,15 @@ const ACTION_ICONS: Record<string, React.ReactNode> = {
 
 const getActionStyle = (action: string) => {
   if (action.includes('deleted') || action.includes('revoked') || action.includes('removed')) {
-    return 'bg-red-500/10 text-red-400 border-red-500/20';
+    return 'bg-red-100 text-red-700 border-red-300';
   }
   if (action.includes('created') || action.includes('issued') || action.includes('added')) {
-    return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+    return 'bg-emerald-100 text-emerald-700 border-emerald-300';
   }
   if (action.includes('renewed') || action.includes('updated')) {
-    return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+    return 'bg-amber-100 text-amber-700 border-amber-300';
   }
-  return 'bg-white/5 text-white/70 border-white/10';
+  return 'bg-gray-100 text-gray-600 border-gray-300';
 };
 
 export default function AuditLogsPage() {
@@ -193,7 +192,7 @@ export default function AuditLogsPage() {
   if (loading && logs.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="flex items-center gap-3 text-muted-foreground">
+        <div className="flex items-center gap-3 font-retro text-gray-600">
           <Loader2 className="h-5 w-5 animate-spin" />
           Loading audit logs...
         </div>
@@ -205,54 +204,54 @@ export default function AuditLogsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-          <ScrollText className="h-7 w-7 text-white/70" />
+        <div className="w-14 h-14 bg-gray-100 border-4 border-black flex items-center justify-center">
+          <ScrollText className="h-7 w-7 text-gray-600" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Audit Logs</h1>
-          <p className="text-muted-foreground">
+          <h1 className="font-pixel text-3xl uppercase">Audit Logs</h1>
+          <p className="font-retro text-gray-600">
             Track all actions and changes in your organization
           </p>
         </div>
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-          <AlertCircle className="h-4 w-4 text-red-400" />
-          <p className="text-sm text-red-400">{error}</p>
+        <div className="flex items-center gap-2 p-3 border-4 border-red-500 bg-red-50">
+          <AlertCircle className="h-4 w-4 text-red-600" />
+          <p className="text-sm font-retro text-red-700">{error}</p>
         </div>
       )}
 
       {/* Compliance Export */}
-      <Card className="overflow-hidden">
-        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+      <div className="border-4 border-black bg-white">
+        <div className="bg-gray-50 border-b-4 border-black px-4 py-3">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-              <Download className="h-4 w-4 text-white/70" />
+            <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+              <Download className="h-4 w-4 text-gray-600" />
             </div>
             <div>
-              <CardTitle className="text-base">Compliance Export</CardTitle>
-              <CardDescription>
+              <h2 className="font-retro font-bold uppercase">Compliance Export</h2>
+              <p className="text-xs font-retro text-gray-500">
                 Export audit data for compliance and reporting
-              </CardDescription>
+              </p>
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="pt-6">
+        </div>
+        <div className="p-6">
           <div className="flex flex-wrap items-center gap-4">
             {/* Date Range Selector */}
             <div className="flex items-center gap-3">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <Calendar className="h-4 w-4 text-gray-500" />
               <div className="flex gap-1">
                 {(['7d', '30d', '90d', '1y'] as const).map((range) => (
                   <button
                     key={range}
                     onClick={() => setDateRange(range)}
                     className={cn(
-                      'px-3 py-1.5 text-xs font-medium rounded-lg transition-all',
+                      'px-3 py-1.5 text-xs font-retro font-bold uppercase border-2 transition-all',
                       dateRange === range
-                        ? 'bg-white text-black'
-                        : 'bg-white/5 text-white/70 hover:bg-white/10'
+                        ? 'bg-black text-white border-black'
+                        : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'
                     )}
                   >
                     {range === '7d' && '7 days'}
@@ -271,7 +270,7 @@ export default function AuditLogsPage() {
                 size="sm"
                 onClick={() => handleExport('json')}
                 disabled={exporting}
-                className="gap-2 border-white/10 hover:bg-white/[0.04]"
+                className="gap-2 border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase"
               >
                 <FileJson className="h-4 w-4" />
                 Export JSON
@@ -281,38 +280,38 @@ export default function AuditLogsPage() {
                 size="sm"
                 onClick={() => handleExport('csv')}
                 disabled={exporting}
-                className="gap-2 border-white/10 hover:bg-white/[0.04]"
+                className="gap-2 border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase"
               >
                 <FileSpreadsheet className="h-4 w-4" />
                 Export CSV
               </Button>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground mt-4">
+          <p className="text-xs font-retro text-gray-500 mt-4">
             Includes credentials, verification events, and audit logs for the selected period.
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Filters */}
-      <Card className="overflow-hidden">
-        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+      <div className="border-4 border-black bg-white">
+        <div className="bg-gray-50 border-b-4 border-black px-4 py-3">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-              <Shield className="h-4 w-4 text-white/70" />
+            <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+              <Shield className="h-4 w-4 text-gray-600" />
             </div>
-            <CardTitle className="text-base">Filter by Action</CardTitle>
+            <h2 className="font-retro font-bold uppercase">Filter by Action</h2>
           </div>
-        </CardHeader>
-        <CardContent className="pt-6">
+        </div>
+        <div className="p-6">
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setFilter('')}
               className={cn(
-                'px-3 py-1.5 text-xs font-medium rounded-lg transition-all',
+                'px-3 py-1.5 text-xs font-retro font-bold uppercase border-2 transition-all',
                 filter === ''
-                  ? 'bg-white text-black'
-                  : 'bg-white/5 text-white/70 hover:bg-white/10'
+                  ? 'bg-black text-white border-black'
+                  : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'
               )}
             >
               All
@@ -322,35 +321,35 @@ export default function AuditLogsPage() {
                 key={key}
                 onClick={() => setFilter(key)}
                 className={cn(
-                  'px-3 py-1.5 text-xs font-medium rounded-lg transition-all',
+                  'px-3 py-1.5 text-xs font-retro font-bold uppercase border-2 transition-all',
                   filter === key
-                    ? 'bg-white text-black'
-                    : 'bg-white/5 text-white/70 hover:bg-white/10'
+                    ? 'bg-black text-white border-black'
+                    : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'
                 )}
               >
                 {label}
               </button>
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Logs List */}
-      <Card className="overflow-hidden">
-        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+      <div className="border-4 border-black bg-white">
+        <div className="bg-gray-50 border-b-4 border-black px-4 py-3">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-              <ScrollText className="h-4 w-4 text-white/70" />
+            <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+              <ScrollText className="h-4 w-4 text-gray-600" />
             </div>
             <div>
-              <CardTitle className="text-base">Activity Log</CardTitle>
-              <CardDescription>
+              <h2 className="font-retro font-bold uppercase">Activity Log</h2>
+              <p className="text-xs font-retro text-gray-500">
                 {pagination?.total || 0} total events
-              </CardDescription>
+              </p>
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="pt-6">
+        </div>
+        <div className="p-6">
           {logs.length === 0 ? (
             <EmptyState
               illustration="audit-logs"
@@ -363,37 +362,37 @@ export default function AuditLogsPage() {
               {logs.map((log) => (
                 <div
                   key={log.id}
-                  className="flex items-start justify-between p-3 rounded-lg bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors"
+                  className="flex items-start justify-between p-3 bg-gray-50 border-2 border-gray-200 hover:border-gray-400 transition-colors"
                 >
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
                       <span
                         className={cn(
-                          'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium border',
+                          'inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-retro font-bold uppercase border-2',
                           getActionStyle(log.action)
                         )}
                       >
                         {ACTION_ICONS[log.action] || <Shield className="h-3.5 w-3.5" />}
                         {ACTION_LABELS[log.action] || log.action}
                       </span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs font-retro text-gray-500">
                         {log.resource_type}
                       </span>
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-sm font-retro text-gray-600">
                       {formatDetails(log.details)}
                     </div>
                     {log.resource_id && (
-                      <div className="text-xs font-mono text-white/40">
+                      <div className="text-xs font-mono text-gray-400">
                         ID: {log.resource_id.slice(0, 8)}...
                       </div>
                     )}
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <div className="text-sm">
+                    <div className="text-sm font-retro text-black">
                       {new Date(log.created_at).toLocaleDateString()}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs font-retro text-gray-500">
                       {new Date(log.created_at).toLocaleTimeString()}
                     </div>
                   </div>
@@ -408,7 +407,7 @@ export default function AuditLogsPage() {
                 variant="outline"
                 onClick={loadMore}
                 disabled={loading}
-                className="gap-2 border-white/10 hover:bg-white/[0.04]"
+                className="gap-2 border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase"
               >
                 {loading ? (
                   <>
@@ -424,8 +423,8 @@ export default function AuditLogsPage() {
               </Button>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

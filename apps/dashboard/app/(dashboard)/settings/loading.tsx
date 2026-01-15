@@ -1,12 +1,11 @@
 import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 export default function SettingsLoading() {
   return (
     <div className="space-y-8">
       {/* Header skeleton */}
       <div className="flex items-center gap-4">
-        <Skeleton className="w-14 h-14 rounded-xl" />
+        <Skeleton className="w-14 h-14 border-4 border-gray-200" />
         <div className="space-y-2">
           <Skeleton className="h-8 w-32" />
           <Skeleton className="h-4 w-56" />
@@ -14,14 +13,14 @@ export default function SettingsLoading() {
       </div>
 
       {/* Profile card skeleton */}
-      <Card className="overflow-hidden">
-        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+      <div className="border-4 border-black bg-white">
+        <div className="bg-gray-50 border-b-4 border-black p-4">
           <div className="flex items-center gap-3">
-            <Skeleton className="w-8 h-8 rounded-lg" />
+            <Skeleton className="w-8 h-8 border-2 border-gray-200" />
             <Skeleton className="h-5 w-32" />
           </div>
-        </CardHeader>
-        <CardContent className="pt-6 space-y-6">
+        </div>
+        <div className="p-6 space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Skeleton className="h-4 w-24" />
@@ -41,39 +40,39 @@ export default function SettingsLoading() {
             <Skeleton className="h-24 w-full" />
           </div>
           <Skeleton className="h-10 w-32" />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Domain verification skeleton */}
-      <Card className="overflow-hidden">
-        <CardHeader className="bg-white/[0.02] border-b border-white/5">
+      <div className="border-4 border-black bg-white">
+        <div className="bg-gray-50 border-b-4 border-black p-4">
           <div className="flex items-center gap-3">
-            <Skeleton className="w-8 h-8 rounded-lg" />
+            <Skeleton className="w-8 h-8 border-2 border-gray-200" />
             <Skeleton className="h-5 w-40" />
           </div>
-        </CardHeader>
-        <CardContent className="pt-6 space-y-4">
+        </div>
+        <div className="p-6 space-y-4">
           <Skeleton className="h-4 w-3/4" />
           <div className="flex gap-4">
             <Skeleton className="h-10 flex-1" />
             <Skeleton className="h-10 w-24" />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Danger zone skeleton */}
-      <Card className="overflow-hidden border-red-500/20">
-        <CardHeader className="bg-red-500/5 border-b border-red-500/10">
+      <div className="border-4 border-red-500 bg-white">
+        <div className="bg-red-50 border-b-4 border-red-500 p-4">
           <div className="flex items-center gap-3">
-            <Skeleton className="w-8 h-8 rounded-lg" />
+            <Skeleton className="w-8 h-8 border-2 border-red-200" />
             <Skeleton className="h-5 w-32" />
           </div>
-        </CardHeader>
-        <CardContent className="pt-6">
+        </div>
+        <div className="p-6">
           <Skeleton className="h-4 w-2/3 mb-4" />
           <Skeleton className="h-10 w-32" />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

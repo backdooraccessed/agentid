@@ -41,8 +41,8 @@ export default function LoginPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="space-y-2 text-center lg:text-left">
-        <h1 className="font-mono text-3xl font-bold tracking-tight uppercase">Welcome Back</h1>
-        <p className="text-muted-foreground font-mono text-sm">
+        <h1 className="font-pixel text-3xl text-black uppercase">Welcome Back</h1>
+        <p className="text-gray-600 font-retro text-sm">
           Sign in to your account to manage your credentials
         </p>
       </div>
@@ -50,14 +50,14 @@ export default function LoginPage() {
       {/* Form */}
       <form onSubmit={handleLogin} className="space-y-5">
         {error && (
-          <div className="border-2 border-red-500/30 bg-red-500/5 p-4 flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
-            <p className="text-red-200 font-mono text-sm">{error}</p>
+          <div className="border-4 border-red-500 bg-red-50 p-4 flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <p className="text-red-600 font-retro text-sm">{error}</p>
           </div>
         )}
 
         <div className="space-y-2">
-          <label htmlFor="email" className="font-mono text-sm font-bold uppercase block">
+          <label htmlFor="email" className="font-retro text-sm font-bold uppercase block text-black">
             Email address
           </label>
           <input
@@ -68,18 +68,18 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="email"
-            className="w-full h-12 px-4 bg-white/[0.02] border-2 border-white/10 font-mono focus:border-white/30 focus:outline-none transition-colors"
+            className="w-full h-12 px-4 bg-white border-2 border-gray-300 font-retro text-black focus:border-black focus:outline-none transition-colors"
           />
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label htmlFor="password" className="font-mono text-sm font-bold uppercase block">
+            <label htmlFor="password" className="font-retro text-sm font-bold uppercase block text-black">
               Password
             </label>
             <Link
               href="/forgot-password"
-              className="font-mono text-xs text-white/70 hover:text-white transition-colors uppercase"
+              className="font-retro text-xs text-gray-600 hover:text-black transition-colors uppercase"
             >
               Forgot password?
             </Link>
@@ -92,13 +92,13 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
-            className="w-full h-12 px-4 bg-white/[0.02] border-2 border-white/10 font-mono focus:border-white/30 focus:outline-none transition-colors"
+            className="w-full h-12 px-4 bg-white border-2 border-gray-300 font-retro text-black focus:border-black focus:outline-none transition-colors"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full h-12 bg-white text-black font-mono font-bold uppercase text-sm hover:bg-white/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full h-12 bg-black text-white font-retro font-bold uppercase text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={loading}
         >
           {loading ? (
@@ -118,10 +118,10 @@ export default function LoginPage() {
       {/* Divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t-2 border-white/10" />
+          <div className="w-full border-t-2 border-gray-300" />
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-background px-4 font-mono text-xs uppercase text-muted-foreground">
+          <span className="bg-white px-4 font-retro text-xs uppercase text-gray-600">
             New to AgentID?
           </span>
         </div>
@@ -131,7 +131,7 @@ export default function LoginPage() {
       <div className="text-center">
         <Link
           href="/register"
-          className="inline-flex items-center gap-2 font-mono text-sm font-medium text-white/70 hover:text-white transition-colors uppercase"
+          className="inline-flex items-center gap-2 font-retro text-sm font-medium text-gray-600 hover:text-black transition-colors uppercase"
         >
           Create a free account
           <ArrowRight className="h-3.5 w-3.5" />

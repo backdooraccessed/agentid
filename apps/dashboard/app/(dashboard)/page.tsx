@@ -49,69 +49,63 @@ export default async function DashboardPage() {
           <div className="flex justify-center">
             <LogoIcon size="xl" className="animate-float" />
           </div>
-          <h1 className="font-display text-3xl font-bold">
+          <h1 className="font-pixel text-3xl uppercase">
             Welcome to AgentID
           </h1>
-          <p className="text-muted-foreground max-w-md mx-auto">
+          <p className="font-retro text-gray-600 max-w-md mx-auto">
             Get started by creating your issuer profile to begin issuing verifiable credentials to your AI agents.
           </p>
         </div>
 
-        <Card className="border-white/10 bg-white/[0.02]">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-white/70" />
-              Create Your Issuer Profile
-            </CardTitle>
-            <CardDescription>
-              Before you can issue credentials to AI agents, you need to set up your issuer profile.
-              This establishes your identity and generates your cryptographic signing keys.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/settings">
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                Create Issuer Profile
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">What is AgentID?</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm text-muted-foreground">
-            <p>
-              AgentID enables organizations to issue verifiable credentials to their AI agents,
-              allowing services to verify agent identity, permissions, and trustworthiness.
-            </p>
-            <div className="grid md:grid-cols-3 gap-4 pt-2">
-              <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-                  <Shield className="h-5 w-5 text-white/70" />
-                </div>
-                <div className="font-medium text-foreground">Issue Credentials</div>
-                <p className="text-xs">Create cryptographically signed credentials for your AI agents</p>
-              </div>
-              <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-                  <CheckCircle className="h-5 w-5 text-emerald-400" />
-                </div>
-                <div className="font-medium text-foreground">Verify Identity</div>
-                <p className="text-xs">Allow services to verify your agents via simple API</p>
-              </div>
-              <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-                  <Sparkles className="h-5 w-5 text-white/70" />
-                </div>
-                <div className="font-medium text-foreground">Build Trust</div>
-                <p className="text-xs">Establish reputation through verification history</p>
-              </div>
+        <div className="border-4 border-black bg-white p-6 block-shadow">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-black flex items-center justify-center">
+              <Shield className="h-5 w-5 text-white" />
             </div>
-          </CardContent>
-        </Card>
+            <h2 className="font-retro font-bold uppercase">Create Your Issuer Profile</h2>
+          </div>
+          <p className="font-retro text-gray-600 text-sm mb-4">
+            Before you can issue credentials to AI agents, you need to set up your issuer profile.
+            This establishes your identity and generates your cryptographic signing keys.
+          </p>
+          <Link href="/settings">
+            <button className="px-6 py-3 bg-black text-white font-retro font-bold uppercase text-sm btn-retro flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Create Issuer Profile
+            </button>
+          </Link>
+        </div>
+
+        <div className="border-4 border-black bg-white p-6 block-shadow">
+          <h2 className="font-retro font-bold uppercase mb-4">What is AgentID?</h2>
+          <p className="font-retro text-gray-600 text-sm mb-4">
+            AgentID enables organizations to issue verifiable credentials to their AI agents,
+            allowing services to verify agent identity, permissions, and trustworthiness.
+          </p>
+          <div className="grid md:grid-cols-3 gap-4 pt-2">
+            <div className="p-4 border-2 border-black space-y-2">
+              <div className="w-10 h-10 bg-black flex items-center justify-center">
+                <Shield className="h-5 w-5 text-white" />
+              </div>
+              <div className="font-retro font-bold text-black uppercase text-sm">Issue Credentials</div>
+              <p className="font-retro text-xs text-gray-600">Create cryptographically signed credentials for your AI agents</p>
+            </div>
+            <div className="p-4 border-2 border-black space-y-2">
+              <div className="w-10 h-10 bg-black flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 text-white" />
+              </div>
+              <div className="font-retro font-bold text-black uppercase text-sm">Verify Identity</div>
+              <p className="font-retro text-xs text-gray-600">Allow services to verify your agents via simple API</p>
+            </div>
+            <div className="p-4 border-2 border-black space-y-2">
+              <div className="w-10 h-10 bg-black flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-white" />
+              </div>
+              <div className="font-retro font-bold text-black uppercase text-sm">Build Trust</div>
+              <p className="font-retro text-xs text-gray-600">Establish reputation through verification history</p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -172,191 +166,190 @@ export default async function DashboardPage() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div className="space-y-1">
-          <h1 className="font-display text-3xl font-bold tracking-tight">Dashboard</h1>
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <h1 className="font-pixel text-3xl uppercase">Dashboard</h1>
+          <div className="flex items-center gap-2 font-retro text-gray-600">
             <span>Welcome back, {issuer.name}</span>
             {issuer.is_verified && (
-              <Badge className="gap-1 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+              <span className="px-2 py-1 bg-black text-white text-xs font-retro uppercase flex items-center gap-1">
                 <ShieldCheck className="h-3 w-3" />
                 Verified
-              </Badge>
+              </span>
             )}
           </div>
         </div>
         <Link href="/credentials/new">
-          <Button className="gap-2 btn-glow">
+          <button className="px-6 py-3 bg-black text-white font-retro font-bold uppercase text-sm btn-retro flex items-center gap-2">
             <Plus className="h-4 w-4" />
             Issue Credential
-          </Button>
+          </button>
         </Link>
       </div>
 
       {/* Alert for expiring credentials */}
       {expiringCredentials > 0 && (
-        <Alert className="border-amber-500/20 bg-amber-500/5">
-          <AlertTriangle className="h-4 w-4 text-amber-400" />
-          <AlertDescription className="flex items-center justify-between">
-            <span className="text-amber-200">
+        <div className="border-4 border-black bg-yellow-50 p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="h-5 w-5 text-yellow-600" />
+            <span className="font-retro text-yellow-800">
               {expiringCredentials} credential{expiringCredentials > 1 ? 's' : ''} expiring within 7 days
             </span>
-            <Link href="/credentials?status=expiring" className="text-amber-400 hover:text-amber-300 font-medium flex items-center gap-1">
-              Review now
-              <ArrowRight className="h-3 w-3" />
-            </Link>
-          </AlertDescription>
-        </Alert>
+          </div>
+          <Link href="/credentials?status=expiring" className="font-retro text-sm uppercase font-bold text-yellow-800 hover:underline flex items-center gap-1">
+            Review now
+            <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
       )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Link href="/credentials" className="block">
-          <StatCard
-            title="Active Credentials"
-            value={activeCredentials}
-            icon={Shield}
-            description={`${credentials.length} total`}
-          />
+          <div className="border-4 border-black bg-white p-4 block-shadow block-hover">
+            <div className="flex items-center gap-2 mb-2">
+              <Shield className="h-4 w-4 text-black" />
+              <span className="font-retro text-xs uppercase text-gray-500">Active Credentials</span>
+            </div>
+            <div className="font-pixel text-3xl text-black">{activeCredentials}</div>
+            <div className="font-retro text-xs text-gray-500">{credentials.length} total</div>
+          </div>
         </Link>
         <Link href="/analytics" className="block">
-          <StatCard
-            title="Verifications (30d)"
-            value={verifications.length}
-            icon={Activity}
-            description={`${verificationRate}% success rate`}
-            trend={verifications.length > 0 ? { value: verificationRate, isPositive: verificationRate >= 90 } : undefined}
-          />
+          <div className="border-4 border-black bg-white p-4 block-shadow block-hover">
+            <div className="flex items-center gap-2 mb-2">
+              <Activity className="h-4 w-4 text-black" />
+              <span className="font-retro text-xs uppercase text-gray-500">Verifications (30d)</span>
+            </div>
+            <div className="font-pixel text-3xl text-black">{verifications.length}</div>
+            <div className="font-retro text-xs text-gray-500">{verificationRate}% success rate</div>
+          </div>
         </Link>
         <Link href="/webhooks" className="block">
-          <StatCard
-            title="Active Webhooks"
-            value={webhooks.filter(w => w.is_active).length}
-            icon={Webhook}
-            description={`${webhooks.length} configured`}
-          />
+          <div className="border-4 border-black bg-white p-4 block-shadow block-hover">
+            <div className="flex items-center gap-2 mb-2">
+              <Webhook className="h-4 w-4 text-black" />
+              <span className="font-retro text-xs uppercase text-gray-500">Active Webhooks</span>
+            </div>
+            <div className="font-pixel text-3xl text-black">{webhooks.filter(w => w.is_active).length}</div>
+            <div className="font-retro text-xs text-gray-500">{webhooks.length} configured</div>
+          </div>
         </Link>
         <Link href="/api-keys" className="block">
-          <StatCard
-            title="API Keys"
-            value={apiKeys.filter(k => k.is_active).length}
-            icon={Key}
-            description={`${apiKeys.length} total`}
-          />
+          <div className="border-4 border-black bg-white p-4 block-shadow block-hover">
+            <div className="flex items-center gap-2 mb-2">
+              <Key className="h-4 w-4 text-black" />
+              <span className="font-retro text-xs uppercase text-gray-500">API Keys</span>
+            </div>
+            <div className="font-pixel text-3xl text-black">{apiKeys.filter(k => k.is_active).length}</div>
+            <div className="font-retro text-xs text-gray-500">{apiKeys.length} total</div>
+          </div>
         </Link>
       </div>
 
       {/* Quick Actions & Recent Activity */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Quick Actions */}
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-white/[0.02] border-b border-white/5">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                <Zap className="h-4 w-4 text-white/70" />
+        <div className="border-4 border-black bg-white block-shadow">
+          <div className="border-b-4 border-black p-4 bg-gray-50">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-black flex items-center justify-center">
+                <Zap className="h-4 w-4 text-white" />
               </div>
-              Quick Actions
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-2">
+              <h2 className="font-retro font-bold uppercase">Quick Actions</h2>
+            </div>
+          </div>
+          <div className="p-4 space-y-2">
             <Link href="/credentials/new" className="block group">
-              <div className="p-3 rounded-lg border border-transparent hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                  <Plus className="h-5 w-5 text-white/70" />
+              <div className="p-3 border-2 border-black hover:bg-gray-50 transition-all flex items-center gap-3">
+                <div className="w-10 h-10 bg-gray-100 border-2 border-black flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+                  <Plus className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
-                  <div className="font-medium text-sm">Issue New Credential</div>
-                  <p className="text-xs text-muted-foreground">
-                    Create a credential for an AI agent
-                  </p>
+                  <div className="font-retro font-bold text-sm uppercase text-black">Issue New Credential</div>
+                  <p className="font-retro text-xs text-gray-500">Create a credential for an AI agent</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-black group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
             <Link href="/templates" className="block group">
-              <div className="p-3 rounded-lg border border-transparent hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                  <FileText className="h-5 w-5 text-white/70" />
+              <div className="p-3 border-2 border-black hover:bg-gray-50 transition-all flex items-center gap-3">
+                <div className="w-10 h-10 bg-gray-100 border-2 border-black flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+                  <FileText className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
-                  <div className="font-medium text-sm">Manage Templates</div>
-                  <p className="text-xs text-muted-foreground">
-                    Create reusable credential templates
-                  </p>
+                  <div className="font-retro font-bold text-sm uppercase text-black">Manage Templates</div>
+                  <p className="font-retro text-xs text-gray-500">Create reusable credential templates</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-black group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
             <Link href="/api-keys" className="block group">
-              <div className="p-3 rounded-lg border border-transparent hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                  <Key className="h-5 w-5 text-white/70" />
+              <div className="p-3 border-2 border-black hover:bg-gray-50 transition-all flex items-center gap-3">
+                <div className="w-10 h-10 bg-gray-100 border-2 border-black flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+                  <Key className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
-                  <div className="font-medium text-sm">Create API Key</div>
-                  <p className="text-xs text-muted-foreground">
-                    Generate keys for programmatic access
-                  </p>
+                  <div className="font-retro font-bold text-sm uppercase text-black">Create API Key</div>
+                  <p className="font-retro text-xs text-gray-500">Generate keys for programmatic access</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-black group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
             <Link href="/analytics" className="block group">
-              <div className="p-3 rounded-lg border border-transparent hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                  <BarChart3 className="h-5 w-5 text-white/70" />
+              <div className="p-3 border-2 border-black hover:bg-gray-50 transition-all flex items-center gap-3">
+                <div className="w-10 h-10 bg-gray-100 border-2 border-black flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+                  <BarChart3 className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
-                  <div className="font-medium text-sm">View Analytics</div>
-                  <p className="text-xs text-muted-foreground">
-                    Detailed usage metrics and statistics
-                  </p>
+                  <div className="font-retro font-bold text-sm uppercase text-black">View Analytics</div>
+                  <p className="font-retro text-xs text-gray-500">Detailed usage metrics and statistics</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-black group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
             <Link href="/guide" className="block group">
-              <div className="p-3 rounded-lg border border-transparent hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                  <BookOpen className="h-5 w-5 text-white/70" />
+              <div className="p-3 border-2 border-black hover:bg-gray-50 transition-all flex items-center gap-3">
+                <div className="w-10 h-10 bg-gray-100 border-2 border-black flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+                  <BookOpen className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
-                  <div className="font-medium text-sm">Getting Started Guide</div>
-                  <p className="text-xs text-muted-foreground">
-                    Learn how to use AgentID
-                  </p>
+                  <div className="font-retro font-bold text-sm uppercase text-black">Getting Started Guide</div>
+                  <p className="font-retro text-xs text-gray-500">Learn how to use AgentID</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-black group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Recent Activity */}
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-white/[0.02] border-b border-white/5">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                <Activity className="h-4 w-4 text-white/70" />
+        <div className="border-4 border-black bg-white block-shadow">
+          <div className="border-b-4 border-black p-4 bg-gray-50">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-black flex items-center justify-center">
+                <Activity className="h-4 w-4 text-white" />
               </div>
-              Recent Activity
-            </CardTitle>
-            <CardDescription>Last 7 days of activity</CardDescription>
-          </CardHeader>
-          <CardContent className="p-4">
+              <div>
+                <h2 className="font-retro font-bold uppercase">Recent Activity</h2>
+                <p className="font-retro text-xs text-gray-500">Last 7 days of activity</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-4">
             {recentAnalytics.length === 0 ? (
               <div className="text-center py-8">
-                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-                  <Activity className="h-8 w-8 text-muted-foreground/30" />
+                <div className="w-16 h-16 bg-gray-100 border-2 border-black flex items-center justify-center mx-auto mb-4">
+                  <Activity className="h-8 w-8 text-gray-400" />
                 </div>
-                <p className="text-muted-foreground text-sm font-medium">No activity recorded yet</p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="font-retro text-sm text-black font-bold uppercase">No activity recorded yet</p>
+                <p className="font-retro text-xs text-gray-500 mt-1">
                   Activity will appear here as you use AgentID
                 </p>
               </div>
             ) : (
               <div className="space-y-2">
                 {recentAnalytics.slice(0, 5).map((day) => (
-                  <div key={day.date} className="flex justify-between items-center p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
-                    <span className="text-sm font-medium">
+                  <div key={day.date} className="flex justify-between items-center p-3 border-2 border-black hover:bg-gray-50 transition-colors">
+                    <span className="font-retro text-sm font-bold text-black">
                       {new Date(day.date).toLocaleDateString('en-US', {
                         weekday: 'short',
                         month: 'short',
@@ -365,89 +358,87 @@ export default async function DashboardPage() {
                     </span>
                     <div className="flex gap-2">
                       {day.verifications_total > 0 && (
-                        <span className="px-2 py-1 text-xs rounded-full bg-white/5 text-white/70">
+                        <span className="px-2 py-1 text-xs font-retro bg-gray-100 text-black border border-black">
                           {day.verifications_total} verifications
                         </span>
                       )}
                       {day.credentials_issued > 0 && (
-                        <span className="px-2 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-400">
+                        <span className="px-2 py-1 text-xs font-retro bg-green-100 text-green-800 border border-green-800">
                           +{day.credentials_issued} issued
                         </span>
                       )}
                       {day.credentials_revoked > 0 && (
-                        <span className="px-2 py-1 text-xs rounded-full bg-red-500/10 text-red-400">
+                        <span className="px-2 py-1 text-xs font-retro bg-red-100 text-red-800 border border-red-800">
                           -{day.credentials_revoked} revoked
                         </span>
                       )}
                       {day.verifications_total === 0 && day.credentials_issued === 0 && day.credentials_revoked === 0 && (
-                        <span className="px-2 py-1 text-xs rounded-full bg-white/5 text-muted-foreground">No activity</span>
+                        <span className="px-2 py-1 text-xs font-retro bg-gray-100 text-gray-500">No activity</span>
                       )}
                     </div>
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Getting Started Guide for new issuers */}
       {credentials.length === 0 && (
-        <Card className="border-white/10 bg-white/[0.02] overflow-hidden">
-          <CardHeader className="bg-white/[0.02] border-b border-white/5">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                <Sparkles className="h-4 w-4 text-white/70" />
+        <div className="border-4 border-black bg-white block-shadow">
+          <div className="border-b-4 border-black p-4 bg-gray-50">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-black flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-white" />
               </div>
-              Getting Started
-            </CardTitle>
-            <CardDescription>
-              Complete these steps to start using AgentID
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                  <CheckCircle className="h-5 w-5 text-emerald-400" />
-                </div>
-                <div className="flex-1">
-                  <span className="line-through text-muted-foreground">Create issuer profile</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center font-semibold text-sm">
-                  2
-                </div>
-                <div className="flex-1">
-                  <Link href="/credentials/new" className="font-medium hover:text-white/80 transition-colors flex items-center gap-2">
-                    Issue your first credential
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  <p className="text-xs text-muted-foreground mt-0.5">Create a credential for an AI agent</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center font-semibold text-sm">
-                  3
-                </div>
-                <div className="flex-1">
-                  <span className="text-muted-foreground">Set up webhooks for notifications</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">Get notified when credentials are verified</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center font-semibold text-sm">
-                  4
-                </div>
-                <div className="flex-1">
-                  <span className="text-muted-foreground">Create API keys for integration</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">Programmatically manage credentials</p>
-                </div>
+              <div>
+                <h2 className="font-retro font-bold uppercase">Getting Started</h2>
+                <p className="font-retro text-xs text-gray-500">Complete these steps to start using AgentID</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-8 bg-green-100 border-2 border-green-800 flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 text-green-800" />
+              </div>
+              <div className="flex-1">
+                <span className="line-through text-gray-400 font-retro">Create issuer profile</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-8 bg-black text-white flex items-center justify-center font-pixel text-lg">
+                2
+              </div>
+              <div className="flex-1">
+                <Link href="/credentials/new" className="font-retro font-bold uppercase text-black hover:underline flex items-center gap-2">
+                  Issue your first credential
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <p className="font-retro text-xs text-gray-500 mt-0.5">Create a credential for an AI agent</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-8 bg-gray-100 border-2 border-black text-gray-500 flex items-center justify-center font-pixel text-lg">
+                3
+              </div>
+              <div className="flex-1">
+                <span className="font-retro text-gray-500">Set up webhooks for notifications</span>
+                <p className="font-retro text-xs text-gray-400 mt-0.5">Get notified when credentials are verified</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-8 bg-gray-100 border-2 border-black text-gray-500 flex items-center justify-center font-pixel text-lg">
+                4
+              </div>
+              <div className="flex-1">
+                <span className="font-retro text-gray-500">Create API keys for integration</span>
+                <p className="font-retro text-xs text-gray-400 mt-0.5">Programmatically manage credentials</p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

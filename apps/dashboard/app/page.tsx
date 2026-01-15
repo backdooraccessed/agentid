@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Shield, Zap, Lock, Eye, RefreshCw, Code2, ArrowRight, Github, Check, Terminal, Box, Store, Bot, Cpu, Network, FileCheck } from 'lucide-react';
 import { AgentVerificationIllustration, AgentIconSmall, VerificationGatewayIcon, CredentialCardIcon, TrustScoreMeter } from '@/components/illustrations/agent-verification';
+import { LightThemeWrapper } from '@/components/theme-wrapper';
 
 // Retro Terminal Window
 function TerminalWindow({ children, title }: { children: React.ReactNode; title: string }) {
@@ -126,18 +127,10 @@ export default function RetroLandingPage() {
 
   useEffect(() => {
     setMounted(true);
-    // Add light class to html element for this page
-    document.documentElement.classList.remove('dark');
-    document.documentElement.classList.add('light');
-
-    return () => {
-      // Cleanup when leaving the page
-      document.documentElement.classList.remove('light');
-      document.documentElement.classList.add('dark');
-    };
   }, []);
 
   return (
+    <LightThemeWrapper>
     <div className="min-h-screen bg-white text-black font-retro">
       {/* Dotted Background Pattern */}
       <div className="fixed inset-0 dot-pattern pointer-events-none" />
@@ -520,5 +513,6 @@ export default function RetroLandingPage() {
         </div>
       </footer>
     </div>
+    </LightThemeWrapper>
   );
 }

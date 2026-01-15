@@ -7,9 +7,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { DomainVerification } from '@/components/settings/domain-verification';
 import { ISSUER_TYPES, ISSUER_TYPE_LABELS } from '@agentid/shared';
 import type { Issuer, IssuerType } from '@agentid/shared';
@@ -148,7 +146,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
       </div>
     );
   }
@@ -157,23 +155,23 @@ export default function SettingsPage() {
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-          <Settings className="h-6 w-6 text-white/70" />
+        <div className="w-12 h-12 bg-gray-100 border-4 border-black flex items-center justify-center">
+          <Settings className="h-6 w-6 text-gray-600" />
         </div>
         <div>
-          <h1 className="font-display text-3xl font-bold tracking-tight">Settings</h1>
-          <p className="text-muted-foreground">
+          <h1 className="font-pixel text-3xl uppercase">Settings</h1>
+          <p className="font-retro text-gray-600">
             {issuer ? 'Manage your issuer profile and verification' : 'Create your issuer profile to get started'}
           </p>
         </div>
       </div>
 
       {/* Quick Settings Links */}
-      <Card className="overflow-hidden">
-        <CardHeader className="bg-white/[0.02] border-b border-white/5 pb-3">
-          <CardTitle className="text-sm font-medium text-white/60">Quick Settings</CardTitle>
-        </CardHeader>
-        <CardContent className="p-2">
+      <div className="border-4 border-black bg-white">
+        <div className="bg-gray-50 border-b-4 border-black px-4 py-2">
+          <h2 className="font-retro text-sm font-bold text-gray-600 uppercase">Quick Settings</h2>
+        </div>
+        <div className="p-2">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-1">
             {settingsLinks.map((link) => {
               const Icon = link.icon;
@@ -181,66 +179,68 @@ export default function SettingsPage() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/[0.04] transition-colors group"
+                  className="flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors group"
                 >
-                  <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
-                    <Icon className="h-4 w-4 text-white/60 group-hover:text-white transition-colors" />
+                  <div className="w-9 h-9 bg-gray-100 border-2 border-gray-300 flex items-center justify-center shrink-0">
+                    <Icon className="h-4 w-4 text-gray-500 group-hover:text-black transition-colors" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium group-hover:text-white transition-colors">{link.label}</span>
+                      <span className="text-sm font-retro font-bold text-black">{link.label}</span>
                       {link.badge && (
-                        <Badge variant="outline" className="text-[10px] py-0 px-1.5 text-amber-400 border-amber-500/30">
+                        <Badge className="text-[10px] py-0 px-1.5 bg-amber-100 text-amber-700 border-amber-300 border">
                           {link.badge}
                         </Badge>
                       )}
                     </div>
-                    <p className="text-xs text-white/40 truncate">{link.description}</p>
+                    <p className="text-xs font-retro text-gray-500 truncate">{link.description}</p>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-white/20 group-hover:text-white/40 transition-colors" />
+                  <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-black transition-colors" />
                 </Link>
               );
             })}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Alerts */}
       {error && (
-        <Alert className="border-red-500/20 bg-red-500/5">
-          <AlertCircle className="h-4 w-4 text-red-400" />
-          <AlertDescription className="text-red-200">{error}</AlertDescription>
-        </Alert>
+        <div className="flex items-center gap-2 p-3 border-4 border-red-500 bg-red-50">
+          <AlertCircle className="h-4 w-4 text-red-600" />
+          <p className="text-sm font-retro text-red-700">{error}</p>
+        </div>
       )}
 
       {success && (
-        <Alert className="border-emerald-500/20 bg-emerald-500/5">
-          <CheckCircle className="h-4 w-4 text-emerald-400" />
-          <AlertDescription className="text-emerald-200">
+        <div className="flex items-center gap-2 p-3 border-4 border-emerald-500 bg-emerald-50">
+          <CheckCircle className="h-4 w-4 text-emerald-600" />
+          <p className="text-sm font-retro text-emerald-700">
             Profile saved successfully!
-          </AlertDescription>
-        </Alert>
+          </p>
+        </div>
       )}
 
       {/* Issuer Profile Form */}
-      <Card className="overflow-hidden">
-        <CardHeader className="bg-white/[0.02] border-b border-white/5">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-              <User className="h-4 w-4 text-white/70" />
+      <div className="border-4 border-black bg-white">
+        <div className="bg-gray-50 border-b-4 border-black px-4 py-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+              <User className="h-4 w-4 text-gray-600" />
             </div>
-            Issuer Profile
-          </CardTitle>
-          <CardDescription>
-            {issuer
-              ? 'Your issuer profile identifies you when issuing credentials'
-              : 'Create your issuer profile to start issuing credentials'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-6">
+            <div>
+              <h2 className="font-retro font-bold uppercase">Issuer Profile</h2>
+              <p className="text-xs font-retro text-gray-500">
+                {issuer
+                  ? 'Your issuer profile identifies you when issuing credentials'
+                  : 'Create your issuer profile to start issuing credentials'}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="p-6">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-medium">
+              <Label htmlFor="name" className="text-sm font-retro font-bold uppercase">
                 Organization / Individual Name
               </Label>
               <Input
@@ -252,12 +252,12 @@ export default function SettingsPage() {
                 placeholder="Acme Corp"
                 required
                 disabled={!!issuer}
-                className="h-11 bg-white/[0.02] border-white/10"
+                className="h-11 bg-white border-2 border-gray-300 font-retro"
               />
             </div>
 
             <div className="space-y-3">
-              <Label className="text-sm font-medium">Issuer Type</Label>
+              <Label className="text-sm font-retro font-bold uppercase">Issuer Type</Label>
               <div className="grid grid-cols-3 gap-3">
                 {ISSUER_TYPES.map((type) => {
                   const Icon = issuerTypeIcons[type];
@@ -271,10 +271,10 @@ export default function SettingsPage() {
                       }
                       disabled={!!issuer}
                       className={cn(
-                        'p-4 rounded-xl border-2 text-left transition-all',
+                        'p-4 border-4 text-left transition-all',
                         isSelected
-                          ? 'border-white/30 bg-white/[0.04]'
-                          : 'border-white/10 hover:border-white/20 hover:bg-white/[0.02]',
+                          ? 'border-black bg-gray-50 block-shadow'
+                          : 'border-gray-200 hover:border-gray-400 bg-white',
                         issuer && 'cursor-not-allowed opacity-60'
                       )}
                     >
@@ -282,14 +282,14 @@ export default function SettingsPage() {
                         className={cn(
                           'h-5 w-5 mb-2',
                           isSelected
-                            ? 'text-white'
-                            : 'text-muted-foreground'
+                            ? 'text-black'
+                            : 'text-gray-500'
                         )}
                       />
                       <div
                         className={cn(
-                          'font-medium text-sm',
-                          isSelected && 'text-white'
+                          'font-retro text-sm uppercase',
+                          isSelected ? 'font-bold text-black' : 'text-gray-600'
                         )}
                       >
                         {ISSUER_TYPE_LABELS[type]}
@@ -301,8 +301,8 @@ export default function SettingsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="domain" className="text-sm font-medium">
-                Domain <span className="text-muted-foreground font-normal">(optional)</span>
+              <Label htmlFor="domain" className="text-sm font-retro font-bold uppercase">
+                Domain <span className="text-gray-500 font-normal">(optional)</span>
               </Label>
               <Input
                 id="domain"
@@ -312,16 +312,16 @@ export default function SettingsPage() {
                 }
                 placeholder="acme.com"
                 disabled={!!issuer}
-                className="h-11 bg-white/[0.02] border-white/10"
+                className="h-11 bg-white border-2 border-gray-300 font-retro"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs font-retro text-gray-500">
                 Your organization&apos;s domain for verification
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description" className="text-sm font-medium">
-                Description <span className="text-muted-foreground font-normal">(optional)</span>
+              <Label htmlFor="description" className="text-sm font-retro font-bold uppercase">
+                Description <span className="text-gray-500 font-normal">(optional)</span>
               </Label>
               <Input
                 id="description"
@@ -331,7 +331,7 @@ export default function SettingsPage() {
                 }
                 placeholder="AI automation company specializing in..."
                 disabled={!!issuer}
-                className="h-11 bg-white/[0.02] border-white/10"
+                className="h-11 bg-white border-2 border-gray-300 font-retro"
               />
             </div>
 
@@ -339,7 +339,7 @@ export default function SettingsPage() {
               <Button
                 type="submit"
                 disabled={saving}
-                className="h-11 px-6 btn-glow"
+                className="h-11 px-6 bg-black text-white hover:bg-gray-800 font-retro uppercase block-shadow-sm"
               >
                 {saving ? (
                   <>
@@ -355,39 +355,41 @@ export default function SettingsPage() {
               </Button>
             )}
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Domain Verification */}
       {issuer && <DomainVerification domain={issuer.domain || null} />}
 
       {/* Public Key Display */}
       {issuer && (
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-white/[0.02] border-b border-white/5">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                <Key className="h-4 w-4 text-white/70" />
+        <div className="border-4 border-black bg-white">
+          <div className="bg-gray-50 border-b-4 border-black px-4 py-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                <Key className="h-4 w-4 text-gray-600" />
               </div>
-              Public Key
-            </CardTitle>
-            <CardDescription>
-              Services use this key to verify credentials you issue
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6 space-y-4">
+              <div>
+                <h2 className="font-retro font-bold uppercase">Public Key</h2>
+                <p className="text-xs font-retro text-gray-500">
+                  Services use this key to verify credentials you issue
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="p-6 space-y-4">
             <div className="space-y-2">
-              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <Label className="text-xs font-retro font-bold text-gray-500 uppercase tracking-wider">
                 Key ID
               </Label>
               <div className="flex items-center gap-2">
-                <div className="font-mono text-sm bg-white/[0.02] border border-white/10 p-3 rounded-lg flex-1">
+                <div className="font-mono text-sm bg-gray-50 border-2 border-gray-300 p-3 flex-1 text-black">
                   {issuer.key_id}
                 </div>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-11 w-11 shrink-0 border-white/10 hover:bg-white/[0.04]"
+                  className="h-11 w-11 shrink-0 border-2 border-gray-300 hover:bg-gray-50"
                   onClick={() => {
                     navigator.clipboard.writeText(issuer.key_id);
                     toast.success('Key ID copied');
@@ -398,17 +400,17 @@ export default function SettingsPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <Label className="text-xs font-retro font-bold text-gray-500 uppercase tracking-wider">
                 Public Key (Base64)
               </Label>
               <div className="flex items-center gap-2">
-                <div className="font-mono text-xs bg-white/[0.02] border border-white/10 p-3 rounded-lg flex-1 break-all">
+                <div className="font-mono text-xs bg-gray-50 border-2 border-gray-300 p-3 flex-1 break-all text-black">
                   {issuer.public_key}
                 </div>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-11 w-11 shrink-0 border-white/10 hover:bg-white/[0.04]"
+                  className="h-11 w-11 shrink-0 border-2 border-gray-300 hover:bg-gray-50"
                   onClick={() => {
                     navigator.clipboard.writeText(issuer.public_key);
                     toast.success('Public key copied');
@@ -418,73 +420,75 @@ export default function SettingsPage() {
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Admin Verification Status */}
       {issuer && (
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-white/[0.02] border-b border-white/5">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                <ShieldCheck className="h-4 w-4 text-white/70" />
+        <div className="border-4 border-black bg-white">
+          <div className="bg-gray-50 border-b-4 border-black px-4 py-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                <ShieldCheck className="h-4 w-4 text-gray-600" />
               </div>
-              Verification Status
-            </CardTitle>
-            <CardDescription>
-              Additional verification by the AgentID team
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
+              <div>
+                <h2 className="font-retro font-bold uppercase">Verification Status</h2>
+                <p className="text-xs font-retro text-gray-500">
+                  Additional verification by the AgentID team
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="p-6">
             {issuer.is_verified ? (
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-                <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-emerald-400" />
+              <div className="flex items-center gap-4 p-4 bg-emerald-50 border-4 border-emerald-500">
+                <div className="w-12 h-12 bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-emerald-600" />
                 </div>
                 <div className="flex-1">
-                  <div className="font-semibold text-emerald-300">
+                  <div className="font-retro font-bold text-emerald-700 uppercase">
                     Verified Issuer
                   </div>
-                  <p className="text-sm text-emerald-200/70">
+                  <p className="text-sm font-retro text-emerald-600">
                     Your organization has been verified by AgentID
                   </p>
                 </div>
-                <Badge className="gap-1 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                <Badge className="gap-1 bg-emerald-100 text-emerald-700 border-2 border-emerald-300 font-retro uppercase">
                   <ShieldCheck className="h-3 w-3" />
                   Verified
                 </Badge>
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="flex items-center gap-4 p-4 rounded-xl bg-amber-500/5 border border-amber-500/20">
-                  <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center">
-                    <AlertCircle className="h-6 w-6 text-amber-400" />
+                <div className="flex items-center gap-4 p-4 bg-amber-50 border-4 border-amber-500">
+                  <div className="w-12 h-12 bg-amber-100 border-2 border-amber-300 flex items-center justify-center">
+                    <AlertCircle className="h-6 w-6 text-amber-600" />
                   </div>
                   <div className="flex-1">
-                    <div className="font-semibold text-amber-300">
+                    <div className="font-retro font-bold text-amber-700 uppercase">
                       Not Yet Verified
                     </div>
-                    <p className="text-sm text-amber-200/70">
+                    <p className="text-sm font-retro text-amber-600">
                       Complete domain verification or contact support for organization verification
                     </p>
                   </div>
-                  <Badge className="gap-1 bg-amber-500/10 text-amber-400 border-amber-500/20">
+                  <Badge className="gap-1 bg-amber-100 text-amber-700 border-2 border-amber-300 font-retro uppercase">
                     Pending
                   </Badge>
                 </div>
-                <div className="text-sm text-muted-foreground bg-white/[0.02] border border-white/5 p-4 rounded-lg">
-                  <p className="font-medium mb-2">How to get verified:</p>
-                  <ul className="list-disc list-inside space-y-1 text-xs">
+                <div className="text-sm font-retro text-gray-600 bg-gray-50 border-2 border-gray-300 p-4">
+                  <p className="font-bold mb-2 uppercase">How to get verified:</p>
+                  <ul className="list-disc list-inside space-y-1 text-xs text-gray-600">
                     <li>Complete DNS domain verification above</li>
-                    <li>Contact <span className="font-mono text-white">support@agentid.dev</span> for organization verification</li>
+                    <li>Contact <span className="font-mono text-black">support@agentid.dev</span> for organization verification</li>
                     <li>Verified issuers receive higher trust scores</li>
                   </ul>
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -19,6 +19,7 @@ import {
   Save,
   Globe,
   EyeOff,
+  AlertCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -244,18 +245,18 @@ export default function EditAppPage() {
 
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="flex items-center justify-center py-16">
+        <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
         <Link
           href="/apps"
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
+          className="inline-flex items-center gap-2 font-retro text-gray-600 hover:text-black"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to My Apps
@@ -263,12 +264,22 @@ export default function EditAppPage() {
 
         <div className="flex gap-2">
           {status !== 'live' ? (
-            <Button variant="outline" onClick={handlePublish} disabled={saving}>
+            <Button
+              variant="outline"
+              onClick={handlePublish}
+              disabled={saving}
+              className="border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase"
+            >
               <Globe className="h-4 w-4 mr-2" />
               Publish
             </Button>
           ) : (
-            <Button variant="outline" onClick={handleUnpublish} disabled={saving}>
+            <Button
+              variant="outline"
+              onClick={handleUnpublish}
+              disabled={saving}
+              className="border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase"
+            >
               <EyeOff className="h-4 w-4 mr-2" />
               Unpublish
             </Button>
@@ -276,207 +287,226 @@ export default function EditAppPage() {
         </div>
       </div>
 
-      <h1 className="text-2xl font-bold mb-8">Edit App</h1>
+      <h1 className="font-pixel text-3xl text-black uppercase">Edit App</h1>
 
       <div className="space-y-8">
         {/* Basic Info */}
-        <div className="bg-card border rounded-lg p-6 space-y-4">
-          <h2 className="font-semibold">Basic Info</h2>
-
-          <div>
-            <Label htmlFor="name">App Name *</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-1"
-            />
+        <div className="border-4 border-black bg-white">
+          <div className="bg-gray-50 border-b-4 border-black p-4">
+            <h2 className="font-retro font-bold text-black uppercase">Basic Info</h2>
           </div>
+          <div className="p-6 space-y-4">
+            <div>
+              <Label htmlFor="name" className="text-sm font-retro font-bold uppercase">App Name *</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="tagline">Tagline *</Label>
-            <Input
-              id="tagline"
-              value={tagline}
-              onChange={(e) => setTagline(e.target.value)}
-              maxLength={100}
-              className="mt-1"
-            />
-          </div>
+            <div>
+              <Label htmlFor="tagline" className="text-sm font-retro font-bold uppercase">Tagline *</Label>
+              <Input
+                id="tagline"
+                value={tagline}
+                onChange={(e) => setTagline(e.target.value)}
+                maxLength={100}
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="description">Description *</Label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={5}
-              className="w-full mt-1 px-3 py-2 border rounded-md bg-background resize-none"
-            />
-          </div>
+            <div>
+              <Label htmlFor="description" className="text-sm font-retro font-bold uppercase">Description *</Label>
+              <textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={5}
+                className="w-full mt-1 px-3 py-2 border-2 border-gray-300 bg-white font-retro resize-none"
+              />
+            </div>
 
-          <div>
-            <Label>Categories (up to 3)</Label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => toggleCategory(cat.id)}
-                  className={cn(
-                    'flex items-center gap-2 p-3 rounded-lg border text-left transition-colors',
-                    selectedCategories.includes(cat.id)
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border hover:border-primary/50'
-                  )}
-                >
-                  {ICON_MAP[cat.icon] || <Grid className="h-4 w-4" />}
-                  <span className="text-sm">{cat.name}</span>
-                </button>
-              ))}
+            <div>
+              <Label className="text-sm font-retro font-bold uppercase">Categories (up to 3)</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => toggleCategory(cat.id)}
+                    className={cn(
+                      'flex items-center gap-2 p-3 border-2 text-left transition-colors font-retro',
+                      selectedCategories.includes(cat.id)
+                        ? 'border-black bg-gray-50 text-black'
+                        : 'border-gray-200 hover:border-gray-400 text-gray-600'
+                    )}
+                  >
+                    {ICON_MAP[cat.icon] || <Grid className="h-4 w-4" />}
+                    <span className="text-sm">{cat.name}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Links */}
-        <div className="bg-card border rounded-lg p-6 space-y-4">
-          <h2 className="font-semibold">Links</h2>
-
-          <div>
-            <Label htmlFor="appUrl">App URL *</Label>
-            <Input
-              id="appUrl"
-              value={appUrl}
-              onChange={(e) => setAppUrl(e.target.value)}
-              className="mt-1"
-            />
+        <div className="border-4 border-black bg-white">
+          <div className="bg-gray-50 border-b-4 border-black p-4">
+            <h2 className="font-retro font-bold text-black uppercase">Links</h2>
           </div>
+          <div className="p-6 space-y-4">
+            <div>
+              <Label htmlFor="appUrl" className="text-sm font-retro font-bold uppercase">App URL *</Label>
+              <Input
+                id="appUrl"
+                value={appUrl}
+                onChange={(e) => setAppUrl(e.target.value)}
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="demoUrl">Demo URL</Label>
-            <Input
-              id="demoUrl"
-              value={demoUrl}
-              onChange={(e) => setDemoUrl(e.target.value)}
-              className="mt-1"
-            />
-          </div>
+            <div>
+              <Label htmlFor="demoUrl" className="text-sm font-retro font-bold uppercase">Demo URL</Label>
+              <Input
+                id="demoUrl"
+                value={demoUrl}
+                onChange={(e) => setDemoUrl(e.target.value)}
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="githubUrl">GitHub URL</Label>
-            <Input
-              id="githubUrl"
-              value={githubUrl}
-              onChange={(e) => setGithubUrl(e.target.value)}
-              className="mt-1"
-            />
-          </div>
+            <div>
+              <Label htmlFor="githubUrl" className="text-sm font-retro font-bold uppercase">GitHub URL</Label>
+              <Input
+                id="githubUrl"
+                value={githubUrl}
+                onChange={(e) => setGithubUrl(e.target.value)}
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="docsUrl">Documentation URL</Label>
-            <Input
-              id="docsUrl"
-              value={docsUrl}
-              onChange={(e) => setDocsUrl(e.target.value)}
-              className="mt-1"
-            />
-          </div>
+            <div>
+              <Label htmlFor="docsUrl" className="text-sm font-retro font-bold uppercase">Documentation URL</Label>
+              <Input
+                id="docsUrl"
+                value={docsUrl}
+                onChange={(e) => setDocsUrl(e.target.value)}
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="iconUrl">Icon URL</Label>
-            <Input
-              id="iconUrl"
-              value={iconUrl}
-              onChange={(e) => setIconUrl(e.target.value)}
-              className="mt-1"
-            />
+            <div>
+              <Label htmlFor="iconUrl" className="text-sm font-retro font-bold uppercase">Icon URL</Label>
+              <Input
+                id="iconUrl"
+                value={iconUrl}
+                onChange={(e) => setIconUrl(e.target.value)}
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
+              />
+            </div>
           </div>
         </div>
 
         {/* Pricing */}
-        <div className="bg-card border rounded-lg p-6 space-y-4">
-          <h2 className="font-semibold">Pricing</h2>
+        <div className="border-4 border-black bg-white">
+          <div className="bg-gray-50 border-b-4 border-black p-4">
+            <h2 className="font-retro font-bold text-black uppercase">Pricing</h2>
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {(['free', 'freemium', 'paid', 'contact'] as PricingType[]).map(
+                (type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setPricingType(type)}
+                    className={cn(
+                      'p-3 border-2 text-center capitalize transition-colors font-retro',
+                      pricingType === type
+                        ? 'border-black bg-gray-50 text-black'
+                        : 'border-gray-200 hover:border-gray-400 text-gray-600'
+                    )}
+                  >
+                    {type}
+                  </button>
+                )
+              )}
+            </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {(['free', 'freemium', 'paid', 'contact'] as PricingType[]).map(
-              (type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setPricingType(type)}
-                  className={cn(
-                    'p-3 rounded-lg border text-center capitalize transition-colors',
-                    pricingType === type
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border hover:border-primary/50'
-                  )}
-                >
-                  {type}
-                </button>
-              )
+            {pricingType === 'paid' && (
+              <div>
+                <Label htmlFor="pricingAmount" className="text-sm font-retro font-bold uppercase">Price (USD/month)</Label>
+                <Input
+                  id="pricingAmount"
+                  type="number"
+                  value={pricingAmount}
+                  onChange={(e) => setPricingAmount(e.target.value)}
+                  className="mt-1 bg-white border-2 border-gray-300 font-retro"
+                />
+              </div>
             )}
           </div>
-
-          {pricingType === 'paid' && (
-            <div>
-              <Label htmlFor="pricingAmount">Price (USD/month)</Label>
-              <Input
-                id="pricingAmount"
-                type="number"
-                value={pricingAmount}
-                onChange={(e) => setPricingAmount(e.target.value)}
-                className="mt-1"
-              />
-            </div>
-          )}
         </div>
 
         {/* Additional */}
-        <div className="bg-card border rounded-lg p-6 space-y-4">
-          <h2 className="font-semibold">Additional</h2>
-
-          <div>
-            <Label htmlFor="tags">Tags</Label>
-            <Input
-              id="tags"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              placeholder="ai, chatbot, automation (comma separated)"
-              className="mt-1"
-            />
+        <div className="border-4 border-black bg-white">
+          <div className="bg-gray-50 border-b-4 border-black p-4">
+            <h2 className="font-retro font-bold text-black uppercase">Additional</h2>
           </div>
-
-          {credentials.length > 0 && (
+          <div className="p-6 space-y-4">
             <div>
-              <Label htmlFor="credentialId">Linked Credential</Label>
-              <select
-                id="credentialId"
-                value={credentialId}
-                onChange={(e) => setCredentialId(e.target.value)}
-                className="w-full mt-1 px-3 py-2 border rounded-md bg-background"
-              >
-                <option value="">No credential</option>
-                {credentials.map((cred) => (
-                  <option key={cred.id} value={cred.id}>
-                    {cred.agent_name} ({cred.agent_id})
-                  </option>
-                ))}
-              </select>
+              <Label htmlFor="tags" className="text-sm font-retro font-bold uppercase">Tags</Label>
+              <Input
+                id="tags"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="ai, chatbot, automation (comma separated)"
+                className="mt-1 bg-white border-2 border-gray-300 font-retro"
+              />
             </div>
-          )}
+
+            {credentials.length > 0 && (
+              <div>
+                <Label htmlFor="credentialId" className="text-sm font-retro font-bold uppercase">Linked Credential</Label>
+                <select
+                  id="credentialId"
+                  value={credentialId}
+                  onChange={(e) => setCredentialId(e.target.value)}
+                  className="w-full mt-1 px-3 py-2 border-2 border-gray-300 bg-white font-retro"
+                >
+                  <option value="">No credential</option>
+                  {credentials.map((cred) => (
+                    <option key={cred.id} value={cred.id}>
+                      {cred.agent_name} ({cred.agent_id})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
         </div>
 
         {error && (
-          <div className="p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
-            {error}
+          <div className="flex items-center gap-2 p-3 border-4 border-red-500 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <p className="text-sm font-retro text-red-700">{error}</p>
           </div>
         )}
 
         <div className="flex justify-end gap-3">
           <Link href="/apps">
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline" className="border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase">
+              Cancel
+            </Button>
           </Link>
-          <Button onClick={handleSave} disabled={saving}>
+          <Button
+            onClick={handleSave}
+            disabled={saving}
+            className="bg-black text-white hover:bg-gray-800 font-retro uppercase"
+          >
             {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
             <Save className="h-4 w-4 mr-2" />
             Save Changes

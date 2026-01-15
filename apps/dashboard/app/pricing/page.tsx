@@ -1,5 +1,7 @@
+'use client';
+
+import { useEffect } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import {
   Check,
   X,
@@ -13,6 +15,7 @@ import {
   Headphones,
   Sparkles,
   CreditCard,
+  Github,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -94,60 +97,83 @@ const enterpriseFeatures = [
 ];
 
 export default function PricingPage() {
+  // Switch to light theme
+  useEffect(() => {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+    document.body.classList.add('light-theme');
+    document.body.style.setProperty('background-color', '#ffffff', 'important');
+    document.body.style.setProperty('background', '#ffffff', 'important');
+    document.body.style.setProperty('color', '#000000', 'important');
+
+    return () => {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+      document.body.classList.remove('light-theme');
+      document.body.style.removeProperty('background-color');
+      document.body.style.removeProperty('background');
+      document.body.style.removeProperty('color');
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-white text-black font-retro">
+      {/* Dotted Background Pattern */}
+      <div className="fixed inset-0 dot-pattern pointer-events-none" />
+
       {/* Header */}
-      <header className="border-b border-white/10 sticky top-0 bg-black z-50">
+      <header className="relative z-50 border-b-4 border-black bg-white">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 font-bold text-xl">
-            <span className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black text-sm font-bold">
-              A
-            </span>
-            <span className="text-white">AgentID</span>
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-black flex items-center justify-center block-shadow-sm group-hover:animate-block-wiggle">
+              <Shield className="w-5 h-5 text-white" />
+            </div>
+            <span className="font-retro font-bold text-xl uppercase tracking-tight">AgentID</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm">
-            <Link href="/docs" className="text-white/60 hover:text-white transition-colors">
-              Docs
-            </Link>
-            <Link href="/directory" className="text-white/60 hover:text-white transition-colors">
-              Directory
+
+          <nav className="hidden md:flex items-center gap-8 font-retro text-sm uppercase tracking-wider">
+            <Link href="/#features" className="hover:underline underline-offset-4 decoration-2">Features</Link>
+            <Link href="/marketplace" className="hover:underline underline-offset-4 decoration-2">Marketplace</Link>
+            <Link href="/docs" className="hover:underline underline-offset-4 decoration-2">Docs</Link>
+            <Link href="/pricing" className="underline underline-offset-4 decoration-2">Pricing</Link>
+            <Link href="https://github.com/agentid" className="hover:underline underline-offset-4 decoration-2">
+              <Github className="w-5 h-5" />
             </Link>
           </nav>
+
           <div className="flex items-center gap-3">
             <Link href="/login">
-              <Button variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/[0.04]">
+              <button className="font-retro font-bold text-sm uppercase px-4 py-2 hover:bg-gray-100 border-2 border-black">
                 Sign In
-              </Button>
+              </button>
             </Link>
             <Link href="/register">
-              <Button size="sm">Get Started</Button>
+              <button className="font-retro font-bold text-sm uppercase px-4 py-2 bg-black text-white btn-retro">
+                Get Started
+              </button>
             </Link>
           </div>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="py-16 md:py-24">
+      <section className="relative py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-              <CreditCard className="h-8 w-8 text-white/70" />
-            </div>
+          <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-black bg-white block-shadow-sm mb-6">
+            <CreditCard className="w-4 h-4" />
+            <span className="font-retro text-sm uppercase tracking-wider">Simple Pricing</span>
           </div>
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-white/70 border border-white/10 mb-4">
-            Simple, Transparent Pricing
-          </span>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-            Start free, scale as you grow
+          <h1 className="font-pixel text-5xl md:text-6xl uppercase mb-4">
+            Start Free, Scale Up
           </h1>
-          <p className="text-xl text-white/60 max-w-2xl mx-auto">
+          <p className="font-retro text-lg text-gray-600 max-w-2xl mx-auto">
             All plans include our public verification API. Only pay for what you need.
           </p>
         </div>
       </section>
 
       {/* Pricing Cards */}
-      <section className="pb-24">
+      <section className="relative pb-24">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-6">
             {plans.map((plan) => {
@@ -156,58 +182,59 @@ export default function PricingPage() {
                 <div
                   key={plan.name}
                   className={cn(
-                    'relative rounded-2xl border p-8 transition-all',
+                    'relative border-4 border-black p-8 transition-all',
                     plan.highlight
-                      ? 'border-white/30 bg-white/[0.04] scale-105'
-                      : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+                      ? 'bg-gray-50 block-shadow-lg scale-105'
+                      : 'bg-white block-shadow block-hover'
                   )}
                 >
                   {plan.badge && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white text-black">
+                    <span className="absolute -top-4 left-1/2 -translate-x-1/2 inline-flex items-center px-4 py-1 bg-black text-white font-retro text-xs uppercase">
                       {plan.badge}
                     </span>
                   )}
 
                   <div className="flex items-center gap-3 mb-4">
                     <div className={cn(
-                      'w-10 h-10 rounded-lg flex items-center justify-center',
-                      plan.highlight ? 'bg-white text-black' : 'bg-white/5'
+                      'w-12 h-12 border-2 border-black flex items-center justify-center',
+                      plan.highlight ? 'bg-black text-white' : 'bg-gray-100'
                     )}>
-                      <Icon className={cn('h-5 w-5', !plan.highlight && 'text-white/70')} />
+                      <Icon className="h-6 w-6" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-lg">{plan.name}</h3>
-                      <p className="text-sm text-white/50">{plan.description}</p>
+                      <h3 className="font-retro font-bold text-lg uppercase">{plan.name}</h3>
+                      <p className="font-retro text-sm text-gray-600">{plan.description}</p>
                     </div>
                   </div>
 
                   <div className="mb-6">
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    <span className="text-white/50">{plan.period}</span>
+                    <span className="font-pixel text-5xl">{plan.price}</span>
+                    <span className="font-retro text-gray-600">{plan.period}</span>
                   </div>
 
                   <Link href={plan.ctaLink}>
-                    <Button
+                    <button
                       className={cn(
-                        'w-full mb-6 gap-2',
-                        !plan.highlight && 'border-white/10 hover:bg-white/[0.04]'
+                        'w-full px-6 py-4 font-retro font-bold uppercase text-sm flex items-center justify-center gap-2 mb-6 border-4 border-black transition-colors',
+                        plan.highlight
+                          ? 'bg-black text-white btn-retro'
+                          : 'bg-white text-black hover:bg-gray-100'
                       )}
-                      variant={plan.highlight ? 'default' : 'outline'}
                     >
                       {plan.cta}
                       <ArrowRight className="h-4 w-4" />
-                    </Button>
+                    </button>
                   </Link>
 
                   <ul className="space-y-3">
                     {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-3 text-sm">
+                      <li key={index} className="flex items-center gap-3 font-retro text-sm">
                         {feature.included ? (
-                          <Check className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                          <Check className="h-4 w-4 flex-shrink-0" />
                         ) : (
-                          <X className="h-4 w-4 text-white/20 flex-shrink-0" />
+                          <X className="h-4 w-4 text-gray-300 flex-shrink-0" />
                         )}
-                        <span className={feature.included ? 'text-white/70' : 'text-white/30'}>
+                        <span className={feature.included ? 'text-gray-700' : 'text-gray-400'}>
                           {feature.text}
                         </span>
                       </li>
@@ -221,32 +248,32 @@ export default function PricingPage() {
       </section>
 
       {/* Enterprise */}
-      <section className="py-16 bg-white/[0.02]">
+      <section className="relative py-16 bg-gray-50 border-y-4 border-black">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Need more?</h2>
-            <p className="text-white/60">
+            <h2 className="font-pixel text-4xl uppercase mb-4">Need More?</h2>
+            <p className="font-retro text-gray-600">
               Enterprise plans for large-scale deployments
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 md:p-12">
+          <div className="border-4 border-black bg-white p-8 md:p-12 block-shadow">
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-white/70 border border-white/10 mb-4">
+                <span className="inline-flex items-center px-3 py-1 border-2 border-black font-retro text-xs uppercase mb-4">
                   Enterprise
                 </span>
-                <h3 className="text-2xl font-bold mb-4">
-                  Custom solutions for your organization
+                <h3 className="font-retro font-bold text-2xl uppercase mb-4">
+                  Custom Solutions for Your Organization
                 </h3>
-                <p className="text-white/60 mb-6">
+                <p className="font-retro text-gray-600 mb-6">
                   Get custom limits, dedicated support, SLA guarantees, and enterprise-grade features.
                 </p>
                 <Link href="mailto:enterprise@agentid.dev">
-                  <Button size="lg" className="gap-2">
+                  <button className="inline-flex items-center gap-2 px-8 py-4 bg-black text-white font-retro font-bold uppercase btn-retro">
                     Contact Sales
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
+                    <ArrowRight className="h-5 w-5" />
+                  </button>
                 </Link>
               </div>
 
@@ -254,9 +281,9 @@ export default function PricingPage() {
                 {enterpriseFeatures.map((feature, index) => {
                   const FeatureIcon = feature.icon;
                   return (
-                    <div key={index} className="flex items-center gap-3 p-4 rounded-lg bg-white/5 border border-white/10">
-                      <FeatureIcon className="h-5 w-5 text-white/70" />
-                      <span className="text-sm font-medium text-white/80">{feature.text}</span>
+                    <div key={index} className="flex items-center gap-3 p-4 border-2 border-black bg-gray-50">
+                      <FeatureIcon className="h-5 w-5" />
+                      <span className="font-retro text-sm">{feature.text}</span>
                     </div>
                   );
                 })}
@@ -267,9 +294,9 @@ export default function PricingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-16">
+      <section className="relative py-16">
         <div className="max-w-3xl mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+          <h2 className="font-pixel text-3xl uppercase text-center mb-12">FAQ</h2>
 
           <div className="space-y-6">
             <FaqItem
@@ -297,30 +324,69 @@ export default function PricingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-white/[0.02]">
+      <section className="relative py-16 bg-gray-50 border-t-4 border-black">
         <div className="max-w-4xl mx-auto px-4 text-center space-y-6">
-          <div className="flex justify-center">
-            <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-              <Sparkles className="h-7 w-7 text-white/70" />
-            </div>
+          <div className="w-16 h-16 bg-black text-white flex items-center justify-center mx-auto">
+            <Sparkles className="h-8 w-8" />
           </div>
-          <h2 className="text-3xl font-bold">Ready to get started?</h2>
-          <p className="text-white/60">
+          <h2 className="font-pixel text-4xl uppercase">Ready to Get Started?</h2>
+          <p className="font-retro text-gray-600">
             Start with our free plan and upgrade when you need more.
           </p>
           <Link href="/register">
-            <Button size="lg" className="gap-2">
+            <button className="inline-flex items-center gap-2 px-10 py-5 bg-black text-white font-retro font-bold text-lg uppercase btn-retro">
               Create Free Account
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+              <ArrowRight className="h-5 w-5" />
+            </button>
           </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-8">
-        <div className="max-w-6xl mx-auto px-4 text-center text-sm text-white/40">
-          <p>&copy; {new Date().getFullYear()} AgentID. All rights reserved.</p>
+      <footer className="relative border-t-4 border-black py-12 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-black flex items-center justify-center">
+                  <Shield className="w-4 h-4 text-white" />
+                </div>
+                <span className="font-retro font-bold uppercase">AgentID</span>
+              </div>
+              <p className="font-retro text-sm text-gray-600">
+                Trust infrastructure for autonomous AI agents.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-retro font-bold uppercase mb-4">Product</h4>
+              <ul className="space-y-2 font-retro text-sm text-gray-600">
+                <li><Link href="/docs" className="hover:underline">Documentation</Link></li>
+                <li><Link href="/pricing" className="hover:underline">Pricing</Link></li>
+                <li><Link href="/marketplace" className="hover:underline">Marketplace</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-retro font-bold uppercase mb-4">Company</h4>
+              <ul className="space-y-2 font-retro text-sm text-gray-600">
+                <li><Link href="/terms" className="hover:underline">Terms</Link></li>
+                <li><Link href="/privacy" className="hover:underline">Privacy</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-retro font-bold uppercase mb-4">Connect</h4>
+              <ul className="space-y-2 font-retro text-sm text-gray-600">
+                <li><a href="https://github.com/agentid" className="hover:underline">GitHub</a></li>
+                <li><a href="https://twitter.com/agentid" className="hover:underline">Twitter</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-12 pt-8 border-t-2 border-black text-center font-retro text-sm text-gray-600">
+            <span className="font-pixel">&copy; 2024 AgentID</span> — Identity for autonomous AI agents
+          </div>
         </div>
       </footer>
     </div>
@@ -329,9 +395,9 @@ export default function PricingPage() {
 
 function FaqItem({ question, answer }: { question: string; answer: string }) {
   return (
-    <div className="border-b border-white/10 pb-6">
-      <h3 className="font-semibold mb-2 text-white">{question}</h3>
-      <p className="text-white/60">{answer}</p>
+    <div className="border-b-2 border-black pb-6">
+      <h3 className="font-retro font-bold uppercase mb-2">{question}</h3>
+      <p className="font-retro text-gray-600">{answer}</p>
     </div>
   );
 }

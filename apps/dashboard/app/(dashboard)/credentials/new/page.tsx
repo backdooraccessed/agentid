@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProfileSelector, ProfileBadge } from '@/components/credentials/profile-selector';
 import { ProfileFields, CustomMetadata } from '@/components/credentials/profile-fields';
 import {
@@ -191,12 +190,12 @@ export default function NewCredentialPage() {
     <div className="max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
-        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center">
-          <Plus className="h-7 w-7 text-white/70" />
+        <div className="w-14 h-14 bg-gray-100 border-4 border-black flex items-center justify-center">
+          <Plus className="h-7 w-7 text-gray-600" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Issue New Credential</h1>
-          <p className="text-muted-foreground">
+          <h1 className="font-pixel text-3xl uppercase">Issue New Credential</h1>
+          <p className="font-retro text-gray-600">
             Create a verifiable credential for your AI agent
           </p>
         </div>
@@ -217,27 +216,27 @@ export default function NewCredentialPage() {
                   }}
                   disabled={!isCompleted}
                   className={cn(
-                    'flex items-center gap-2 px-3 py-2 rounded-lg transition-all',
-                    isActive && 'bg-white/10',
-                    isCompleted && 'cursor-pointer hover:bg-white/5',
+                    'flex items-center gap-2 px-3 py-2 transition-all',
+                    isActive && 'bg-gray-100 border-2 border-black',
+                    isCompleted && 'cursor-pointer hover:bg-gray-50',
                     !isActive && !isCompleted && 'opacity-50'
                   )}
                 >
                   <div
                     className={cn(
-                      'w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium',
-                      isActive && 'bg-white text-black',
+                      'w-7 h-7 flex items-center justify-center text-sm font-pixel',
+                      isActive && 'bg-black text-white',
                       isCompleted && 'bg-emerald-500 text-white',
-                      !isActive && !isCompleted && 'bg-white/10 text-white/50'
+                      !isActive && !isCompleted && 'bg-gray-200 text-gray-500'
                     )}
                   >
                     {isCompleted ? <Check className="h-4 w-4" /> : index + 1}
                   </div>
                   <span
                     className={cn(
-                      'text-sm font-medium hidden sm:block',
-                      isActive && 'text-white',
-                      !isActive && 'text-white/50'
+                      'text-sm font-retro font-bold uppercase hidden sm:block',
+                      isActive && 'text-black',
+                      !isActive && 'text-gray-400'
                     )}
                   >
                     {step.label}
@@ -246,8 +245,8 @@ export default function NewCredentialPage() {
                 {index < STEPS.length - 1 && (
                   <div
                     className={cn(
-                      'flex-1 h-px mx-2',
-                      isCompleted ? 'bg-emerald-500' : 'bg-white/10'
+                      'flex-1 h-1 mx-2',
+                      isCompleted ? 'bg-emerald-500' : 'bg-gray-200'
                     )}
                   />
                 )}
@@ -258,9 +257,9 @@ export default function NewCredentialPage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 mb-6">
-          <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" />
-          <p className="text-sm text-red-400">{error}</p>
+        <div className="flex items-center gap-2 p-3 border-4 border-red-500 bg-red-50 mb-6">
+          <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+          <p className="text-sm font-retro text-red-700">{error}</p>
         </div>
       )}
 
@@ -268,49 +267,49 @@ export default function NewCredentialPage() {
       <div className="space-y-6">
         {/* Step 1: Profile Selection */}
         {currentStep === 'profile' && (
-          <Card className="overflow-hidden">
-            <CardHeader className="bg-white/[0.02] border-b border-white/5">
+          <div className="border-4 border-black bg-white">
+            <div className="bg-gray-50 border-b-4 border-black p-4">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                  <Sparkles className="h-4 w-4 text-white/70" />
+                <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                  <Sparkles className="h-4 w-4 text-gray-600" />
                 </div>
                 <div>
-                  <CardTitle className="text-base">Select Agent Profile</CardTitle>
-                  <CardDescription>
+                  <h3 className="font-retro font-bold text-black uppercase">Select Agent Profile</h3>
+                  <p className="font-retro text-xs text-gray-500">
                     Choose a profile that best matches your agent type
-                  </CardDescription>
+                  </p>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent className="pt-6">
+            </div>
+            <div className="p-6">
               <ProfileSelector
                 selected={selectedProfile}
                 onSelect={handleProfileSelect}
               />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {/* Step 2: Details */}
         {currentStep === 'details' && selectedProfile && (
           <>
             {/* Basic Info */}
-            <Card className="overflow-hidden">
-              <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                    <Bot className="h-4 w-4 text-white/70" />
+                  <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                    <Bot className="h-4 w-4 text-gray-600" />
                   </div>
                   <div>
-                    <CardTitle className="text-base">Agent Identity</CardTitle>
-                    <CardDescription>Basic information about your agent</CardDescription>
+                    <h3 className="font-retro font-bold text-black uppercase">Agent Identity</h3>
+                    <p className="font-retro text-xs text-gray-500">Basic information about your agent</p>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="pt-6 space-y-4">
+              </div>
+              <div className="p-6 space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="agent_id" className="text-sm font-medium">
-                    Agent ID <span className="text-red-400">*</span>
+                  <Label htmlFor="agent_id" className="text-sm font-retro font-bold uppercase">
+                    Agent ID <span className="text-red-600">*</span>
                   </Label>
                   <Input
                     id="agent_id"
@@ -322,16 +321,16 @@ export default function NewCredentialPage() {
                     required
                     pattern="^[a-zA-Z0-9_-]+$"
                     title="Only letters, numbers, underscores, and hyphens"
-                    className="bg-white/[0.02] border-white/10 focus:border-white/30"
+                    className="bg-white border-2 border-gray-300 font-retro"
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs font-retro text-gray-500">
                     Unique identifier (alphanumeric, underscores, hyphens)
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="agent_name" className="text-sm font-medium">
-                    Agent Name <span className="text-red-400">*</span>
+                  <Label htmlFor="agent_name" className="text-sm font-retro font-bold uppercase">
+                    Agent Name <span className="text-red-600">*</span>
                   </Label>
                   <Input
                     id="agent_name"
@@ -341,15 +340,15 @@ export default function NewCredentialPage() {
                       setBasicInfo((prev) => ({ ...prev, agent_name: e.target.value }))
                     }
                     required
-                    className="bg-white/[0.02] border-white/10 focus:border-white/30"
+                    className="bg-white border-2 border-gray-300 font-retro"
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs font-retro text-gray-500">
                     Human-readable name for display
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="agent_description" className="text-sm font-medium">
+                  <Label htmlFor="agent_description" className="text-sm font-retro font-bold uppercase">
                     Description
                   </Label>
                   <Input
@@ -359,85 +358,85 @@ export default function NewCredentialPage() {
                     onChange={(e) =>
                       setBasicInfo((prev) => ({ ...prev, agent_description: e.target.value }))
                     }
-                    className="bg-white/[0.02] border-white/10 focus:border-white/30"
+                    className="bg-white border-2 border-gray-300 font-retro"
                   />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Profile-Specific Fields */}
-            <Card className="overflow-hidden">
-              <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                      <Settings2 className="h-4 w-4 text-white/70" />
+                    <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                      <Settings2 className="h-4 w-4 text-gray-600" />
                     </div>
                     <div>
-                      <CardTitle className="text-base">
+                      <h3 className="font-retro font-bold text-black uppercase">
                         {PROFILE_DEFINITIONS[selectedProfile].name} Configuration
-                      </CardTitle>
-                      <CardDescription>
+                      </h3>
+                      <p className="font-retro text-xs text-gray-500">
                         Profile-specific settings and metadata
-                      </CardDescription>
+                      </p>
                     </div>
                   </div>
                   <ProfileBadge profile={selectedProfile} size="sm" />
                 </div>
-              </CardHeader>
-              <CardContent className="pt-6">
+              </div>
+              <div className="p-6">
                 <ProfileFields
                   fields={PROFILE_DEFINITIONS[selectedProfile].fields}
                   values={profileData}
                   onChange={handleProfileDataChange}
                 />
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Custom Metadata */}
-            <Card className="overflow-hidden">
-              <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                    <Plus className="h-4 w-4 text-white/70" />
+                  <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                    <Plus className="h-4 w-4 text-gray-600" />
                   </div>
                   <div>
-                    <CardTitle className="text-base">Custom Metadata</CardTitle>
-                    <CardDescription>
+                    <h3 className="font-retro font-bold text-black uppercase">Custom Metadata</h3>
+                    <p className="font-retro text-xs text-gray-500">
                       Add any additional key-value pairs (optional)
-                    </CardDescription>
+                    </p>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="pt-6">
+              </div>
+              <div className="p-6">
                 <CustomMetadata
                   metadata={customMetadata}
                   onChange={setCustomMetadata}
                 />
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </>
         )}
 
         {/* Step 3: Permissions */}
         {currentStep === 'permissions' && (
           <>
-            <Card className="overflow-hidden">
-              <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                    <Shield className="h-4 w-4 text-white/70" />
+                  <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                    <Shield className="h-4 w-4 text-gray-600" />
                   </div>
                   <div>
-                    <CardTitle className="text-base">Permissions</CardTitle>
-                    <CardDescription>What actions can this agent perform?</CardDescription>
+                    <h3 className="font-retro font-bold text-black uppercase">Permissions</h3>
+                    <p className="font-retro text-xs text-gray-500">What actions can this agent perform?</p>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="pt-6 space-y-6">
+              </div>
+              <div className="p-6 space-y-6">
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">
-                    Allowed Actions <span className="text-red-400">*</span>
+                  <Label className="text-sm font-retro font-bold uppercase">
+                    Allowed Actions <span className="text-red-600">*</span>
                   </Label>
                   <div className="flex flex-wrap gap-2">
                     {PERMISSION_ACTIONS.map((action) => (
@@ -446,10 +445,10 @@ export default function NewCredentialPage() {
                         type="button"
                         onClick={() => toggleAction(action)}
                         className={cn(
-                          'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
+                          'inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-retro font-bold uppercase transition-all border-2',
                           permissions.actions.includes(action)
-                            ? 'bg-white text-black'
-                            : 'bg-white/5 text-white/70 hover:bg-white/10'
+                            ? 'bg-black text-white border-black'
+                            : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'
                         )}
                       >
                         {permissions.actions.includes(action) && (
@@ -462,8 +461,8 @@ export default function NewCredentialPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">
-                    Allowed Domains <span className="text-red-400">*</span>
+                  <Label className="text-sm font-retro font-bold uppercase">
+                    Allowed Domains <span className="text-red-600">*</span>
                   </Label>
                   <div className="flex flex-wrap gap-2">
                     {PERMISSION_DOMAINS.map((domain) => (
@@ -472,10 +471,10 @@ export default function NewCredentialPage() {
                         type="button"
                         onClick={() => toggleDomain(domain)}
                         className={cn(
-                          'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
+                          'inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-retro font-bold uppercase transition-all border-2',
                           permissions.domains.includes(domain)
-                            ? 'bg-white text-black'
-                            : 'bg-white/5 text-white/70 hover:bg-white/10'
+                            ? 'bg-black text-white border-black'
+                            : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'
                         )}
                       >
                         {permissions.domains.includes(domain) && (
@@ -486,25 +485,25 @@ export default function NewCredentialPage() {
                     ))}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Validity */}
-            <Card className="overflow-hidden">
-              <CardHeader className="bg-white/[0.02] border-b border-white/5">
+            <div className="border-4 border-black bg-white">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                    <Clock className="h-4 w-4 text-white/70" />
+                  <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                    <Clock className="h-4 w-4 text-gray-600" />
                   </div>
                   <div>
-                    <CardTitle className="text-base">Validity Period</CardTitle>
-                    <CardDescription>How long should this credential be valid?</CardDescription>
+                    <h3 className="font-retro font-bold text-black uppercase">Validity Period</h3>
+                    <p className="font-retro text-xs text-gray-500">How long should this credential be valid?</p>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="pt-6">
+              </div>
+              <div className="p-6">
                 <div className="space-y-2">
-                  <Label htmlFor="valid_days" className="text-sm font-medium">
+                  <Label htmlFor="valid_days" className="text-sm font-retro font-bold uppercase">
                     Valid for (days)
                   </Label>
                   <Input
@@ -515,68 +514,68 @@ export default function NewCredentialPage() {
                     value={validDays}
                     onChange={(e) => setValidDays(e.target.value)}
                     required
-                    className="bg-white/[0.02] border-white/10 focus:border-white/30 max-w-[200px]"
+                    className="bg-white border-2 border-gray-300 font-retro max-w-[200px]"
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs font-retro text-gray-500">
                     Maximum 365 days. Credential expires on{' '}
                     {new Date(
                       Date.now() + parseInt(validDays || '30') * 24 * 60 * 60 * 1000
                     ).toLocaleDateString()}
                   </p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </>
         )}
 
         {/* Step 4: Review */}
         {currentStep === 'review' && selectedProfile && (
-          <Card className="overflow-hidden">
-            <CardHeader className="bg-white/[0.02] border-b border-white/5">
+          <div className="border-4 border-black bg-white">
+            <div className="bg-gray-50 border-b-4 border-black p-4">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                  <Check className="h-4 w-4 text-white/70" />
+                <div className="w-8 h-8 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                  <Check className="h-4 w-4 text-gray-600" />
                 </div>
                 <div>
-                  <CardTitle className="text-base">Review & Confirm</CardTitle>
-                  <CardDescription>Verify the credential details before issuing</CardDescription>
+                  <h3 className="font-retro font-bold text-black uppercase">Review & Confirm</h3>
+                  <p className="font-retro text-xs text-gray-500">Verify the credential details before issuing</p>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent className="pt-6 space-y-6">
+            </div>
+            <div className="p-6 space-y-6">
               {/* Profile */}
               <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground uppercase tracking-wider">Profile</Label>
+                <Label className="text-xs font-retro text-gray-500 uppercase tracking-wider">Profile</Label>
                 <ProfileBadge profile={selectedProfile} size="lg" />
               </div>
 
               {/* Basic Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">Agent ID</Label>
-                  <p className="font-mono text-sm">{basicInfo.agent_id}</p>
+                  <Label className="text-xs font-retro text-gray-500 uppercase tracking-wider">Agent ID</Label>
+                  <p className="font-mono text-sm text-black">{basicInfo.agent_id}</p>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">Agent Name</Label>
-                  <p className="text-sm">{basicInfo.agent_name}</p>
+                  <Label className="text-xs font-retro text-gray-500 uppercase tracking-wider">Agent Name</Label>
+                  <p className="font-retro text-sm text-black">{basicInfo.agent_name}</p>
                 </div>
               </div>
 
               {basicInfo.agent_description && (
                 <div className="space-y-1">
-                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">Description</Label>
-                  <p className="text-sm text-white/70">{basicInfo.agent_description}</p>
+                  <Label className="text-xs font-retro text-gray-500 uppercase tracking-wider">Description</Label>
+                  <p className="font-retro text-sm text-gray-600">{basicInfo.agent_description}</p>
                 </div>
               )}
 
               {/* Permissions */}
               <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground uppercase tracking-wider">Permissions</Label>
+                <Label className="text-xs font-retro text-gray-500 uppercase tracking-wider">Permissions</Label>
                 <div className="flex flex-wrap gap-2">
                   {permissions.actions.map((action) => (
                     <span
                       key={action}
-                      className="px-2 py-1 rounded bg-white/5 text-xs font-medium"
+                      className="px-2 py-1 bg-gray-100 border-2 border-gray-300 text-xs font-retro font-bold text-black"
                     >
                       {PERMISSION_ACTION_LABELS[action as keyof typeof PERMISSION_ACTION_LABELS] || action}
                     </span>
@@ -584,7 +583,7 @@ export default function NewCredentialPage() {
                   {permissions.domains.map((domain) => (
                     <span
                       key={domain}
-                      className="px-2 py-1 rounded bg-white/10 text-xs font-medium"
+                      className="px-2 py-1 bg-gray-200 border-2 border-gray-400 text-xs font-retro font-bold text-black"
                     >
                       {PERMISSION_DOMAIN_LABELS[domain as keyof typeof PERMISSION_DOMAIN_LABELS] || domain}
                     </span>
@@ -595,16 +594,16 @@ export default function NewCredentialPage() {
               {/* Profile Data */}
               {Object.keys(profileData).length > 0 && (
                 <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">
+                  <Label className="text-xs font-retro text-gray-500 uppercase tracking-wider">
                     {PROFILE_DEFINITIONS[selectedProfile].name} Settings
                   </Label>
                   <div className="grid grid-cols-2 gap-2">
                     {Object.entries(profileData).map(([key, value]) => {
                       if (value === undefined || value === '' || (Array.isArray(value) && value.length === 0)) return null;
                       return (
-                        <div key={key} className="p-2 rounded bg-white/[0.02] border border-white/5">
-                          <span className="text-xs text-muted-foreground">{key}:</span>
-                          <span className="text-sm ml-2">
+                        <div key={key} className="p-2 border-2 border-gray-200 bg-gray-50">
+                          <span className="text-xs font-retro text-gray-500">{key}:</span>
+                          <span className="text-sm font-retro text-black ml-2">
                             {typeof value === 'boolean' ? (value ? 'Yes' : 'No') :
                              Array.isArray(value) ? value.join(', ') : String(value)}
                           </span>
@@ -618,12 +617,12 @@ export default function NewCredentialPage() {
               {/* Custom Metadata */}
               {Object.keys(customMetadata).length > 0 && (
                 <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">Custom Metadata</Label>
+                  <Label className="text-xs font-retro text-gray-500 uppercase tracking-wider">Custom Metadata</Label>
                   <div className="grid grid-cols-2 gap-2">
                     {Object.entries(customMetadata).map(([key, value]) => (
-                      <div key={key} className="p-2 rounded bg-white/[0.02] border border-white/5">
-                        <span className="text-xs text-muted-foreground">{key}:</span>
-                        <span className="text-sm ml-2">{value}</span>
+                      <div key={key} className="p-2 border-2 border-gray-200 bg-gray-50">
+                        <span className="text-xs font-retro text-gray-500">{key}:</span>
+                        <span className="text-sm font-retro text-black ml-2">{value}</span>
                       </div>
                     ))}
                   </div>
@@ -632,14 +631,14 @@ export default function NewCredentialPage() {
 
               {/* Validity */}
               <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground uppercase tracking-wider">Validity</Label>
-                <p className="text-sm">
+                <Label className="text-xs font-retro text-gray-500 uppercase tracking-wider">Validity</Label>
+                <p className="font-retro text-sm text-black">
                   {validDays} days (expires{' '}
                   {new Date(Date.now() + parseInt(validDays) * 24 * 60 * 60 * 1000).toLocaleDateString()})
                 </p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
       </div>
 
@@ -649,7 +648,7 @@ export default function NewCredentialPage() {
           type="button"
           variant="outline"
           onClick={isFirstStep ? () => router.back() : handleBack}
-          className="gap-2 border-white/10 hover:bg-white/[0.04]"
+          className="gap-2 border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase"
         >
           <ArrowLeft className="h-4 w-4" />
           {isFirstStep ? 'Cancel' : 'Back'}
@@ -660,7 +659,7 @@ export default function NewCredentialPage() {
             type="button"
             onClick={handleSubmit}
             disabled={loading || !canProceed()}
-            className="gap-2"
+            className="gap-2 bg-black text-white hover:bg-gray-800 font-retro uppercase"
           >
             {loading ? (
               <>
@@ -679,7 +678,7 @@ export default function NewCredentialPage() {
             type="button"
             onClick={handleNext}
             disabled={!canProceed()}
-            className="gap-2"
+            className="gap-2 bg-black text-white hover:bg-gray-800 font-retro uppercase"
           >
             Continue
             <ArrowRight className="h-4 w-4" />

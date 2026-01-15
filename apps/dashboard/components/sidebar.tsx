@@ -117,14 +117,14 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-black border-r-2 border-white/10 flex flex-col">
+    <aside className="w-64 bg-white border-r-4 border-black flex flex-col relative z-10">
       {/* Logo */}
-      <div className="p-4 border-b-2 border-white/10">
+      <div className="p-4 border-b-4 border-black">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 bg-white flex items-center justify-center group-hover:scale-105 transition-transform">
-            <Shield className="w-5 h-5 text-black" />
+          <div className="w-9 h-9 bg-black flex items-center justify-center block-shadow-sm group-hover:animate-block-wiggle">
+            <Shield className="w-5 h-5 text-white" />
           </div>
-          <span className="font-mono text-lg font-bold uppercase tracking-tight">AgentID</span>
+          <span className="font-retro text-lg font-bold uppercase tracking-tight text-black">AgentID</span>
         </Link>
       </div>
 
@@ -132,7 +132,7 @@ export function Sidebar() {
       <nav className="flex-1 p-3 space-y-6 overflow-y-auto scrollbar-hide">
         {navItems.map((group) => (
           <div key={group.section}>
-            <div className="font-mono text-[10px] font-bold text-muted-foreground/50 px-3 py-2 uppercase tracking-widest">
+            <div className="font-retro text-[10px] font-bold text-gray-400 px-3 py-2 uppercase tracking-widest">
               {group.section}
             </div>
             <div className="space-y-1">
@@ -144,10 +144,10 @@ export function Sidebar() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'group relative flex items-center gap-3 px-3 py-2.5 text-sm font-mono transition-all duration-200',
+                      'group relative flex items-center gap-3 px-3 py-2.5 text-sm font-retro transition-all duration-200',
                       active
-                        ? 'bg-white/[0.08] text-white font-medium border-l-2 border-white'
-                        : 'text-muted-foreground hover:bg-white/[0.04] hover:text-white border-l-2 border-transparent hover:border-white/20'
+                        ? 'bg-black text-white font-medium border-l-4 border-black'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-black border-l-4 border-transparent hover:border-gray-300'
                     )}
                   >
                     <Icon
@@ -155,12 +155,12 @@ export function Sidebar() {
                         'h-4 w-4 shrink-0 transition-colors',
                         active
                           ? 'text-white'
-                          : 'text-muted-foreground group-hover:text-white'
+                          : 'text-gray-500 group-hover:text-black'
                       )}
                     />
-                    <span className="flex-1">{item.label}</span>
+                    <span className="flex-1 uppercase text-xs">{item.label}</span>
                     {item.badge && (
-                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-white/10 text-white">
+                      <span className="text-[10px] font-medium px-1.5 py-0.5 bg-black text-white">
                         {item.badge}
                       </span>
                     )}
@@ -180,14 +180,14 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t-2 border-white/10">
+      <div className="p-3 border-t-4 border-black">
         <form action="/api/auth/signout" method="post">
           <button
             type="submit"
-            className="w-full flex items-center gap-3 px-3 py-2 text-sm font-mono text-muted-foreground hover:bg-red-500/10 hover:text-red-400 transition-all border-l-2 border-transparent hover:border-red-400"
+            className="w-full flex items-center gap-3 px-3 py-2 text-sm font-retro text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all border-l-4 border-transparent hover:border-red-500"
           >
             <LogOut className="h-4 w-4" />
-            <span className="uppercase">Sign out</span>
+            <span className="uppercase text-xs">Sign out</span>
           </button>
         </form>
       </div>

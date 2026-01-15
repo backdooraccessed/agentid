@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CREDENTIAL_STATUS_LABELS, AGENT_TYPE_LABELS } from '@agentid/shared';
 import type { CredentialStatus, AgentType } from '@agentid/shared';
 import { Plus, Search, Shield, CheckCircle, XCircle, Clock, Bot, ArrowRight } from 'lucide-react';
@@ -159,7 +158,7 @@ export default function CredentialsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
       </div>
     );
   }
@@ -167,22 +166,18 @@ export default function CredentialsPage() {
   if (!hasIssuer) {
     return (
       <div className="max-w-2xl mx-auto">
-        <Card className="border-white/10 bg-white/[0.02]">
-          <CardHeader>
-            <CardTitle>Complete Your Setup</CardTitle>
-            <CardDescription>
-              Create your issuer profile to start issuing credentials
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/settings">
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                Create Issuer Profile
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="border-4 border-black bg-white p-6 block-shadow">
+          <h2 className="font-pixel text-xl uppercase mb-2">Complete Your Setup</h2>
+          <p className="font-retro text-gray-600 mb-4">
+            Create your issuer profile to start issuing credentials
+          </p>
+          <Link href="/settings">
+            <Button className="gap-2 bg-black text-white hover:bg-gray-800 font-retro uppercase">
+              <Plus className="h-4 w-4" />
+              Create Issuer Profile
+            </Button>
+          </Link>
+        </div>
       </div>
     );
   }
@@ -192,13 +187,13 @@ export default function CredentialsPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="font-display text-3xl font-bold">Credentials</h1>
-          <p className="text-muted-foreground">
+          <h1 className="font-pixel text-3xl uppercase">Credentials</h1>
+          <p className="font-retro text-gray-600">
             Manage credentials for your AI agents
           </p>
         </div>
         <Link href="/credentials/new">
-          <Button className="gap-2 btn-glow">
+          <Button className="gap-2 bg-black text-white hover:bg-gray-800 font-retro uppercase block-shadow-sm">
             <Plus className="h-4 w-4" />
             Issue Credential
           </Button>
@@ -206,7 +201,7 @@ export default function CredentialsPage() {
       </div>
 
       {error && (
-        <div className="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg">
+        <div className="p-3 text-sm text-red-700 bg-red-50 border-4 border-red-500 font-retro">
           {error}
         </div>
       )}
@@ -215,96 +210,96 @@ export default function CredentialsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <button
           onClick={() => updateFilter('status', 'all')}
-          className={`text-left p-4 rounded-xl border transition-all ${
+          className={`text-left p-4 border-4 transition-all ${
             status === 'all'
-              ? 'border-white/30 bg-white/[0.04]'
-              : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+              ? 'border-black bg-gray-50 block-shadow'
+              : 'border-gray-200 bg-white hover:border-gray-400'
           }`}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-              <Shield className="h-5 w-5 text-white/70" />
+            <div className="w-10 h-10 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+              <Shield className="h-5 w-5 text-gray-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{totalCredentials}</p>
-              <p className="text-xs text-muted-foreground">Total</p>
+              <p className="font-pixel text-2xl">{totalCredentials}</p>
+              <p className="font-retro text-xs text-gray-500 uppercase">Total</p>
             </div>
           </div>
         </button>
         <button
           onClick={() => updateFilter('status', 'active')}
-          className={`text-left p-4 rounded-xl border transition-all ${
+          className={`text-left p-4 border-4 transition-all ${
             status === 'active'
-              ? 'border-emerald-500/30 bg-emerald-500/10'
-              : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+              ? 'border-emerald-500 bg-emerald-50 block-shadow'
+              : 'border-gray-200 bg-white hover:border-gray-400'
           }`}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-              <CheckCircle className="h-5 w-5 text-emerald-400" />
+            <div className="w-10 h-10 bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center">
+              <CheckCircle className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-emerald-400">{activeCredentials}</p>
-              <p className="text-xs text-muted-foreground">Active</p>
+              <p className="font-pixel text-2xl text-emerald-600">{activeCredentials}</p>
+              <p className="font-retro text-xs text-gray-500 uppercase">Active</p>
             </div>
           </div>
         </button>
         <button
           onClick={() => updateFilter('status', 'expired')}
-          className={`text-left p-4 rounded-xl border transition-all ${
+          className={`text-left p-4 border-4 transition-all ${
             status === 'expired'
-              ? 'border-amber-500/30 bg-amber-500/10'
-              : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+              ? 'border-amber-500 bg-amber-50 block-shadow'
+              : 'border-gray-200 bg-white hover:border-gray-400'
           }`}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
-              <Clock className="h-5 w-5 text-amber-400" />
+            <div className="w-10 h-10 bg-amber-100 border-2 border-amber-300 flex items-center justify-center">
+              <Clock className="h-5 w-5 text-amber-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-amber-400">{expiredCredentials}</p>
-              <p className="text-xs text-muted-foreground">Expired</p>
+              <p className="font-pixel text-2xl text-amber-600">{expiredCredentials}</p>
+              <p className="font-retro text-xs text-gray-500 uppercase">Expired</p>
             </div>
           </div>
         </button>
         <button
           onClick={() => updateFilter('status', 'revoked')}
-          className={`text-left p-4 rounded-xl border transition-all ${
+          className={`text-left p-4 border-4 transition-all ${
             status === 'revoked'
-              ? 'border-red-500/30 bg-red-500/10'
-              : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+              ? 'border-red-500 bg-red-50 block-shadow'
+              : 'border-gray-200 bg-white hover:border-gray-400'
           }`}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-              <XCircle className="h-5 w-5 text-red-400" />
+            <div className="w-10 h-10 bg-red-100 border-2 border-red-300 flex items-center justify-center">
+              <XCircle className="h-5 w-5 text-red-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-red-400">{revokedCredentials}</p>
-              <p className="text-xs text-muted-foreground">Revoked</p>
+              <p className="font-pixel text-2xl text-red-600">{revokedCredentials}</p>
+              <p className="font-retro text-xs text-gray-500 uppercase">Revoked</p>
             </div>
           </div>
         </button>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 p-4 rounded-xl border border-white/10 bg-white/[0.02]">
+      <div className="flex flex-wrap gap-4 p-4 border-4 border-black bg-gray-50">
         <div className="flex-1 min-w-[200px] relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
           <Input
             placeholder="Search by name or agent ID..."
             value={search}
             onChange={(e) => updateFilter('search', e.target.value)}
-            className="pl-9 bg-white/[0.02] border-white/10"
+            className="pl-9 bg-white border-2 border-gray-300 font-retro"
           />
         </div>
         <select
           value={status}
           onChange={(e) => updateFilter('status', e.target.value)}
-          className="px-3 py-2 border border-white/10 rounded-lg bg-white/[0.02] text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
+          className="px-3 py-2 border-2 border-gray-300 bg-white text-sm font-retro focus:outline-none focus:ring-2 focus:ring-black"
         >
           {STATUS_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value} className="bg-black">
+            <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
           ))}
@@ -312,10 +307,10 @@ export default function CredentialsPage() {
         <select
           value={type}
           onChange={(e) => updateFilter('type', e.target.value)}
-          className="px-3 py-2 border border-white/10 rounded-lg bg-white/[0.02] text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
+          className="px-3 py-2 border-2 border-gray-300 bg-white text-sm font-retro focus:outline-none focus:ring-2 focus:ring-black"
         >
           {TYPE_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value} className="bg-black">
+            <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
           ))}
@@ -323,10 +318,10 @@ export default function CredentialsPage() {
         <select
           value={sort}
           onChange={(e) => updateFilter('sort', e.target.value)}
-          className="px-3 py-2 border border-white/10 rounded-lg bg-white/[0.02] text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
+          className="px-3 py-2 border-2 border-gray-300 bg-white text-sm font-retro focus:outline-none focus:ring-2 focus:ring-black"
         >
           {SORT_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value} className="bg-black">
+            <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
           ))}
@@ -334,12 +329,12 @@ export default function CredentialsPage() {
       </div>
 
       {/* Results count */}
-      <div className="text-sm text-muted-foreground">
+      <div className="text-sm font-retro text-gray-600">
         Showing {filteredCredentials.length} of {totalCredentials} credentials
         {(search || status !== 'all' || type !== 'all') && (
           <button
             onClick={() => router.push('/credentials')}
-            className="ml-2 text-white hover:text-white/80 underline underline-offset-2"
+            className="ml-2 text-black hover:text-gray-600 underline underline-offset-2"
           >
             Clear filters
           </button>
@@ -348,7 +343,7 @@ export default function CredentialsPage() {
 
       {/* Credentials List */}
       {filteredCredentials.length === 0 ? (
-        <div className="rounded-xl border border-white/10 bg-white/[0.02]">
+        <div className="border-4 border-black bg-white">
           {credentials.length === 0 ? (
             <EmptyState
               illustration="credentials"
@@ -369,26 +364,26 @@ export default function CredentialsPage() {
         <div className="space-y-3">
           {filteredCredentials.map((credential) => (
             <Link key={credential.id} href={`/credentials/${credential.id}`} className="block group">
-              <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04] transition-all">
+              <div className="p-4 border-4 border-gray-200 bg-white hover:border-black hover:bg-gray-50 transition-all">
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-                      <Bot className="h-5 w-5 text-white/70" />
+                    <div className="w-10 h-10 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                      <Bot className="h-5 w-5 text-gray-600" />
                     </div>
                     <div>
-                      <h3 className="font-medium">{credential.agent_name}</h3>
-                      <p className="font-mono text-xs text-muted-foreground">
+                      <h3 className="font-retro font-bold text-black">{credential.agent_name}</h3>
+                      <p className="font-mono text-xs text-gray-500">
                         {credential.agent_id}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <StatusBadge status={credential.status} />
-                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white group-hover:translate-x-1 transition-all" />
+                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-black group-hover:translate-x-1 transition-all" />
                   </div>
                 </div>
-                <div className="flex gap-4 text-xs text-muted-foreground pl-13">
-                  <span className="px-2 py-1 rounded bg-white/5">
+                <div className="flex gap-4 text-xs font-retro text-gray-500 pl-13">
+                  <span className="px-2 py-1 bg-gray-100 border border-gray-200">
                     {AGENT_TYPE_LABELS[credential.agent_type]}
                   </span>
                   <span>
@@ -409,14 +404,14 @@ export default function CredentialsPage() {
 
 function StatusBadge({ status }: { status: CredentialStatus }) {
   const styles = {
-    active: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    revoked: 'bg-red-500/10 text-red-400 border-red-500/20',
-    expired: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    suspended: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+    active: 'bg-emerald-100 text-emerald-700 border-emerald-300',
+    revoked: 'bg-red-100 text-red-700 border-red-300',
+    expired: 'bg-amber-100 text-amber-700 border-amber-300',
+    suspended: 'bg-orange-100 text-orange-700 border-orange-300',
   };
 
   return (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${styles[status]}`}>
+    <span className={`px-2 py-1 text-xs font-retro font-bold uppercase border-2 ${styles[status]}`}>
       {CREDENTIAL_STATUS_LABELS[status]}
     </span>
   );

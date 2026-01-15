@@ -1,4 +1,3 @@
-import { Card, CardContent } from '@/components/ui/card';
 import { type LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -23,48 +22,45 @@ export function StatCard({
   className,
 }: StatCardProps) {
   return (
-    <Card
+    <div
       className={cn(
-        'relative overflow-hidden transition-all duration-300 card-hover',
-        'hover:-translate-y-0.5',
+        'border-4 border-black bg-white p-6 transition-all hover:-translate-y-0.5 block-shadow',
         className
       )}
     >
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <div className="flex items-baseline gap-2">
-              <p className="text-3xl font-bold tracking-tight">{value}</p>
-              {trend && (
-                <span
-                  className={cn(
-                    'inline-flex items-center text-xs font-medium px-1.5 py-0.5 rounded',
-                    trend.isPositive
-                      ? 'text-emerald-400 bg-emerald-500/10'
-                      : 'text-red-400 bg-red-500/10'
-                  )}
-                >
-                  {trend.isPositive ? (
-                    <TrendingUp className="h-3 w-3 mr-0.5" />
-                  ) : (
-                    <TrendingDown className="h-3 w-3 mr-0.5" />
-                  )}
-                  {trend.value}%
-                </span>
-              )}
-            </div>
-            {description && (
-              <p className="text-xs text-muted-foreground">{description}</p>
+      <div className="flex items-start justify-between">
+        <div className="space-y-2">
+          <p className="text-xs font-retro font-bold text-gray-500 uppercase">{title}</p>
+          <div className="flex items-baseline gap-2">
+            <p className="font-pixel text-3xl text-black">{value}</p>
+            {trend && (
+              <span
+                className={cn(
+                  'inline-flex items-center text-xs font-retro font-bold px-1.5 py-0.5 border-2',
+                  trend.isPositive
+                    ? 'text-emerald-700 bg-emerald-100 border-emerald-300'
+                    : 'text-red-700 bg-red-100 border-red-300'
+                )}
+              >
+                {trend.isPositive ? (
+                  <TrendingUp className="h-3 w-3 mr-0.5" />
+                ) : (
+                  <TrendingDown className="h-3 w-3 mr-0.5" />
+                )}
+                {trend.value}%
+              </span>
             )}
           </div>
-          {Icon && (
-            <div className="rounded-xl p-3 bg-white/5 border border-white/10">
-              <Icon className="h-5 w-5 text-white/70" />
-            </div>
+          {description && (
+            <p className="text-xs font-retro text-gray-500">{description}</p>
           )}
         </div>
-      </CardContent>
-    </Card>
+        {Icon && (
+          <div className="w-12 h-12 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+            <Icon className="h-5 w-5 text-gray-600" />
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

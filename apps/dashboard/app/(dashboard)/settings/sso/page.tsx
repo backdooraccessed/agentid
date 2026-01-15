@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -189,7 +188,7 @@ export default function SSOSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-white/50" />
+        <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
       </div>
     );
   }
@@ -197,48 +196,49 @@ export default function SSOSettingsPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-white">SSO Configuration</h1>
-        <p className="text-white/60 mt-1">
+        <h1 className="font-pixel text-3xl text-black uppercase">SSO Configuration</h1>
+        <p className="font-retro text-gray-600 mt-1">
           Configure SAML 2.0 Single Sign-On for your organization
         </p>
       </div>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
-          <p className="text-red-400">{error}</p>
+        <div className="border-4 border-red-500 bg-red-50 p-4 flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <p className="font-retro text-red-600">{error}</p>
         </div>
       )}
 
       {success && (
-        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4">
-          <p className="text-emerald-400">{success}</p>
+        <div className="border-4 border-emerald-500 bg-emerald-50 p-4">
+          <p className="font-retro text-emerald-600">{success}</p>
         </div>
       )}
 
       {/* Service Provider Metadata */}
       {spMetadata && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <div className="border-4 border-black bg-white p-6 space-y-4">
+          <div>
+            <h2 className="font-pixel text-xl text-black uppercase flex items-center gap-2">
               <Shield className="h-5 w-5" />
               Service Provider Details
-            </CardTitle>
-            <CardDescription>
+            </h2>
+            <p className="font-retro text-gray-600 mt-1">
               Use these values when configuring your Identity Provider (IdP)
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            </p>
+          </div>
+          <div className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <Label className="text-white/60">Entity ID / Issuer</Label>
+                <Label className="font-retro text-gray-600">Entity ID / Issuer</Label>
                 <div className="flex items-center gap-2 mt-1">
-                  <code className="flex-1 bg-white/5 px-3 py-2 rounded text-sm text-white/80 truncate">
+                  <code className="flex-1 bg-gray-100 px-3 py-2 text-sm text-black truncate border-2 border-black">
                     {spMetadata.entity_id}
                   </code>
                   <Button
                     variant="outline"
                     size="sm"
+                    className="bg-black text-white hover:bg-gray-800 font-retro uppercase border-2 border-black"
                     onClick={() => copyToClipboard(spMetadata.entity_id, 'entity')}
                   >
                     {copied === 'entity' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
@@ -246,14 +246,15 @@ export default function SSOSettingsPage() {
                 </div>
               </div>
               <div>
-                <Label className="text-white/60">ACS URL (Callback)</Label>
+                <Label className="font-retro text-gray-600">ACS URL (Callback)</Label>
                 <div className="flex items-center gap-2 mt-1">
-                  <code className="flex-1 bg-white/5 px-3 py-2 rounded text-sm text-white/80 truncate">
+                  <code className="flex-1 bg-gray-100 px-3 py-2 text-sm text-black truncate border-2 border-black">
                     {spMetadata.acs_url}
                   </code>
                   <Button
                     variant="outline"
                     size="sm"
+                    className="bg-black text-white hover:bg-gray-800 font-retro uppercase border-2 border-black"
                     onClick={() => copyToClipboard(spMetadata.acs_url, 'acs')}
                   >
                     {copied === 'acs' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
@@ -262,43 +263,41 @@ export default function SSOSettingsPage() {
               </div>
             </div>
             <div>
-              <Label className="text-white/60">Metadata XML</Label>
+              <Label className="font-retro text-gray-600">Metadata XML</Label>
               <div className="flex items-center gap-2 mt-1">
                 <a
                   href={`/api/auth/saml/${spMetadata.entity_id.split('/').pop()}/metadata`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1"
+                  className="font-retro text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1"
                 >
                   Download SP Metadata <ExternalLink className="h-3 w-3" />
                 </a>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* IdP Configuration */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Identity Provider Configuration</CardTitle>
-              <CardDescription>
-                Enter the SAML configuration from your Identity Provider
-              </CardDescription>
-            </div>
-            {config && (
-              <Badge variant={config.is_enabled ? 'default' : 'secondary'}>
-                {config.is_enabled ? 'Enabled' : 'Disabled'}
-              </Badge>
-            )}
+      <div className="border-4 border-black bg-white p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="font-pixel text-xl text-black uppercase">Identity Provider Configuration</h2>
+            <p className="font-retro text-gray-600 mt-1">
+              Enter the SAML configuration from your Identity Provider
+            </p>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
+          {config && (
+            <Badge variant={config.is_enabled ? 'default' : 'secondary'}>
+              {config.is_enabled ? 'Enabled' : 'Disabled'}
+            </Badge>
+          )}
+        </div>
+        <div className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="name">Configuration Name</Label>
+              <Label htmlFor="name" className="font-retro text-black">Configuration Name</Label>
               <Input
                 id="name"
                 value={formData.name}
@@ -307,7 +306,7 @@ export default function SSOSettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="entity_id">IdP Entity ID / Issuer *</Label>
+              <Label htmlFor="entity_id" className="font-retro text-black">IdP Entity ID / Issuer *</Label>
               <Input
                 id="entity_id"
                 value={formData.entity_id}
@@ -319,7 +318,7 @@ export default function SSOSettingsPage() {
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="sso_url">SSO URL (Login) *</Label>
+              <Label htmlFor="sso_url" className="font-retro text-black">SSO URL (Login) *</Label>
               <Input
                 id="sso_url"
                 value={formData.sso_url}
@@ -328,7 +327,7 @@ export default function SSOSettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="slo_url">SLO URL (Logout)</Label>
+              <Label htmlFor="slo_url" className="font-retro text-black">SLO URL (Logout)</Label>
               <Input
                 id="slo_url"
                 value={formData.slo_url}
@@ -339,7 +338,7 @@ export default function SSOSettingsPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="certificate">IdP Certificate (X.509) *</Label>
+            <Label htmlFor="certificate" className="font-retro text-black">IdP Certificate (X.509) *</Label>
             <Textarea
               id="certificate"
               value={formData.certificate}
@@ -351,33 +350,33 @@ export default function SSOSettingsPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="allowed_domains">Allowed Email Domains</Label>
+            <Label htmlFor="allowed_domains" className="font-retro text-black">Allowed Email Domains</Label>
             <Input
               id="allowed_domains"
               value={formData.allowed_domains}
               onChange={(e) => setFormData({ ...formData, allowed_domains: e.target.value })}
               placeholder="example.com, company.org (leave empty for any domain)"
             />
-            <p className="text-xs text-white/50">
+            <p className="font-retro text-xs text-gray-600">
               Comma-separated list of allowed email domains. Leave empty to allow all domains.
             </p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* User Provisioning */}
-      <Card>
-        <CardHeader>
-          <CardTitle>User Provisioning</CardTitle>
-          <CardDescription>
+      <div className="border-4 border-black bg-white p-6 space-y-6">
+        <div>
+          <h2 className="font-pixel text-xl text-black uppercase">User Provisioning</h2>
+          <p className="font-retro text-gray-600 mt-1">
             Configure how users are created and assigned roles
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
+          </p>
+        </div>
+        <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <Label>Auto-provision Users</Label>
-              <p className="text-sm text-white/50">
+              <Label className="font-retro text-black">Auto-provision Users</Label>
+              <p className="font-retro text-sm text-gray-600">
                 Automatically create accounts for new SSO users
               </p>
             </div>
@@ -388,7 +387,7 @@ export default function SSOSettingsPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="default_role">Default Role</Label>
+            <Label htmlFor="default_role" className="font-retro text-black">Default Role</Label>
             <Select
               value={formData.default_role}
               onValueChange={(value) => setFormData({ ...formData, default_role: value })}
@@ -402,19 +401,19 @@ export default function SSOSettingsPage() {
                 <SelectItem value="admin">Admin</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-xs text-white/50">
+            <p className="font-retro text-xs text-gray-600">
               Role assigned to new users. Can be overridden by SAML role attribute.
             </p>
           </div>
 
-          <div className="border-t border-white/10 pt-4">
-            <Label className="text-white/80">Attribute Mapping</Label>
-            <p className="text-sm text-white/50 mb-4">
+          <div className="border-t-4 border-black pt-4">
+            <Label className="font-retro text-black">Attribute Mapping</Label>
+            <p className="font-retro text-sm text-gray-600 mb-4">
               Map SAML attributes to user fields
             </p>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="attr_email" className="text-sm">Email Attribute</Label>
+                <Label htmlFor="attr_email" className="font-retro text-sm text-black">Email Attribute</Label>
                 <Input
                   id="attr_email"
                   value={formData.attribute_mapping.email}
@@ -426,7 +425,7 @@ export default function SSOSettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="attr_role" className="text-sm">Role Attribute</Label>
+                <Label htmlFor="attr_role" className="font-retro text-sm text-black">Role Attribute</Label>
                 <Input
                   id="attr_role"
                   value={formData.attribute_mapping.role}
@@ -438,7 +437,7 @@ export default function SSOSettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="attr_first" className="text-sm">First Name Attribute</Label>
+                <Label htmlFor="attr_first" className="font-retro text-sm text-black">First Name Attribute</Label>
                 <Input
                   id="attr_first"
                   value={formData.attribute_mapping.firstName}
@@ -450,7 +449,7 @@ export default function SSOSettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="attr_last" className="text-sm">Last Name Attribute</Label>
+                <Label htmlFor="attr_last" className="font-retro text-sm text-black">Last Name Attribute</Label>
                 <Input
                   id="attr_last"
                   value={formData.attribute_mapping.lastName}
@@ -463,43 +462,50 @@ export default function SSOSettingsPage() {
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Enable SSO */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Enable SSO</CardTitle>
-          <CardDescription>
+      <div className="border-4 border-black bg-white p-6 space-y-4">
+        <div>
+          <h2 className="font-pixel text-xl text-black uppercase">Enable SSO</h2>
+          <p className="font-retro text-gray-600 mt-1">
             Once enabled, users can log in via your Identity Provider
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <Label>SSO Enabled</Label>
-              <p className="text-sm text-white/50">
-                Enable SAML SSO authentication for this organization
-              </p>
-            </div>
-            <Switch
-              checked={formData.is_enabled}
-              onCheckedChange={(checked) => setFormData({ ...formData, is_enabled: checked })}
-            />
+          </p>
+        </div>
+        <div className="flex items-center justify-between">
+          <div>
+            <Label className="font-retro text-black">SSO Enabled</Label>
+            <p className="font-retro text-sm text-gray-600">
+              Enable SAML SSO authentication for this organization
+            </p>
           </div>
-        </CardContent>
-      </Card>
+          <Switch
+            checked={formData.is_enabled}
+            onCheckedChange={(checked) => setFormData({ ...formData, is_enabled: checked })}
+          />
+        </div>
+      </div>
 
       {/* Actions */}
       <div className="flex items-center justify-between">
         <div>
           {config && (
-            <Button variant="destructive" onClick={handleDelete} disabled={saving}>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={saving}
+              className="bg-red-600 text-white hover:bg-red-700 font-retro uppercase"
+            >
               Delete Configuration
             </Button>
           )}
         </div>
-        <Button onClick={handleSave} disabled={saving}>
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="bg-black text-white hover:bg-gray-800 font-retro uppercase"
+        >
           {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {config ? 'Update Configuration' : 'Save Configuration'}
         </Button>

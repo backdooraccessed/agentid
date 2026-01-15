@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -164,20 +163,20 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
       {/* Create Template Dialog */}
       <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
         <DialogTrigger asChild>
-          <Button className="gap-2">
+          <Button className="gap-2 bg-black text-white hover:bg-gray-800 font-retro uppercase block-shadow-sm">
             <Plus className="h-4 w-4" />
             Create Template
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-lg bg-black border-white/10">
+        <DialogContent className="sm:max-w-lg border-4 border-black bg-white">
           <DialogHeader>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
-                <FileText className="h-5 w-5 text-white/70" />
+              <div className="w-10 h-10 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                <FileText className="h-5 w-5 text-gray-600" />
               </div>
               <div>
-                <DialogTitle>Create Template</DialogTitle>
-                <DialogDescription>
+                <DialogTitle className="font-pixel text-xl uppercase">Create Template</DialogTitle>
+                <DialogDescription className="font-retro text-gray-600">
                   Create a reusable template for issuing credentials
                 </DialogDescription>
               </div>
@@ -185,33 +184,33 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
           </DialogHeader>
           <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-medium">Template Name</Label>
+              <Label htmlFor="name" className="text-sm font-retro font-bold uppercase">Template Name</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Production Assistant"
-                className="bg-white/[0.02] border-white/10 focus:border-white/30"
+                className="bg-white border-2 border-gray-300 font-retro"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description" className="text-sm font-medium">Description (optional)</Label>
+              <Label htmlFor="description" className="text-sm font-retro font-bold uppercase">Description (optional)</Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Template for production AI assistants"
                 rows={2}
-                className="bg-white/[0.02] border-white/10 focus:border-white/30 resize-none"
+                className="bg-white border-2 border-gray-300 font-retro resize-none"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Agent Type</Label>
+              <Label className="text-sm font-retro font-bold uppercase">Agent Type</Label>
               <Select value={agentType} onValueChange={setAgentType}>
-                <SelectTrigger className="bg-white/[0.02] border-white/10">
+                <SelectTrigger className="bg-white border-2 border-gray-300 font-retro">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-black border-white/10">
+                <SelectContent className="bg-white border-2 border-gray-300">
                   {AGENT_TYPES.map((type) => (
                     <SelectItem key={type.value} value={type.value}>
                       {type.label}
@@ -221,26 +220,26 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Permissions</Label>
+              <Label className="text-sm font-retro font-bold uppercase">Permissions</Label>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {COMMON_PERMISSIONS.map((permission) => (
                   <label
                     key={permission.value}
                     className={cn(
-                      'flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-all',
+                      'flex items-center gap-3 p-2.5 border-2 cursor-pointer transition-all',
                       permissions.includes(permission.value)
-                        ? 'bg-white/[0.04] border-white/20'
-                        : 'bg-white/[0.02] border-white/10 hover:border-white/15'
+                        ? 'bg-gray-50 border-black'
+                        : 'bg-white border-gray-200 hover:border-gray-400'
                     )}
                   >
                     <div className={cn(
-                      'w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0',
+                      'w-4 h-4 border-2 flex items-center justify-center transition-colors flex-shrink-0',
                       permissions.includes(permission.value)
-                        ? 'bg-white border-white'
-                        : 'border-white/30'
+                        ? 'bg-black border-black'
+                        : 'border-gray-300'
                     )}>
                       {permissions.includes(permission.value) && (
-                        <Check className="h-2.5 w-2.5 text-black" />
+                        <Check className="h-2.5 w-2.5 text-white" />
                       )}
                     </div>
                     <input
@@ -250,19 +249,19 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
                       className="sr-only"
                     />
                     <div className="min-w-0">
-                      <div className="text-sm font-medium">{permission.label}</div>
+                      <div className="text-sm font-retro font-bold text-black">{permission.label}</div>
                     </div>
                   </label>
                 ))}
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Default Validity Period</Label>
+              <Label className="text-sm font-retro font-bold uppercase">Default Validity Period</Label>
               <Select value={validityDays} onValueChange={setValidityDays}>
-                <SelectTrigger className="bg-white/[0.02] border-white/10">
+                <SelectTrigger className="bg-white border-2 border-gray-300 font-retro">
                   <SelectValue placeholder="No default (set per credential)" />
                 </SelectTrigger>
-                <SelectContent className="bg-black border-white/10">
+                <SelectContent className="bg-white border-2 border-gray-300">
                   <SelectItem value="">No default</SelectItem>
                   <SelectItem value="30">30 days</SelectItem>
                   <SelectItem value="90">90 days</SelectItem>
@@ -272,9 +271,9 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
               </Select>
             </div>
             {error && (
-              <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                <AlertCircle className="h-4 w-4 text-red-400" />
-                <p className="text-sm text-red-400">{error}</p>
+              <div className="flex items-center gap-2 p-3 border-4 border-red-500 bg-red-50">
+                <AlertCircle className="h-4 w-4 text-red-600" />
+                <p className="text-sm font-retro text-red-700">{error}</p>
               </div>
             )}
           </div>
@@ -282,7 +281,7 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
             <Button
               onClick={handleCreate}
               disabled={isCreating || !name || permissions.length === 0}
-              className="w-full gap-2"
+              className="w-full gap-2 bg-black text-white hover:bg-gray-800 font-retro uppercase"
             >
               {isCreating ? (
                 <>
@@ -303,55 +302,55 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
       {/* Templates List */}
       <div className="space-y-4 mt-6">
         {templates.length === 0 ? (
-          <Card className="overflow-hidden">
+          <div className="border-4 border-black bg-white">
             <EmptyState
               illustration="templates"
               title="No templates yet"
               description="Create a template to issue credentials faster"
             />
-          </Card>
+          </div>
         ) : (
           templates.map((template) => (
-            <Card
+            <div
               key={template.id}
               className={cn(
-                'overflow-hidden transition-opacity',
+                'border-4 border-black bg-white transition-opacity',
                 !template.is_active && 'opacity-60'
               )}
             >
-              <CardHeader className="bg-white/[0.02] border-b border-white/5 pb-4">
+              <div className="bg-gray-50 border-b-4 border-black p-4">
                 <div className="flex justify-between items-start gap-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <div className={cn(
-                        'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
-                        template.is_active ? 'bg-white/5' : 'bg-amber-500/10'
+                        'w-8 h-8 border-2 flex items-center justify-center flex-shrink-0',
+                        template.is_active ? 'bg-gray-100 border-gray-300' : 'bg-amber-100 border-amber-300'
                       )}>
                         {template.is_active ? (
-                          <FileText className="h-4 w-4 text-white/70" />
+                          <FileText className="h-4 w-4 text-gray-600" />
                         ) : (
-                          <Power className="h-4 w-4 text-amber-400" />
+                          <Power className="h-4 w-4 text-amber-600" />
                         )}
                       </div>
-                      <CardTitle className="text-base flex items-center gap-2">
-                        {template.name}
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-retro font-bold text-black">{template.name}</h3>
                         {!template.is_active && (
-                          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400">
+                          <span className="text-xs font-retro font-bold uppercase px-2 py-0.5 bg-amber-100 text-amber-700 border-2 border-amber-300">
                             Inactive
                           </span>
                         )}
-                      </CardTitle>
+                      </div>
                     </div>
-                    <CardDescription className="ml-11">
+                    <p className="font-retro text-gray-500 text-sm ml-11">
                       {AGENT_TYPE_LABELS[template.agent_type as AgentType] || template.agent_type}
-                    </CardDescription>
+                    </p>
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
                     <Link href={`/credentials/new?template=${template.id}`}>
                       <Button
                         variant="outline"
                         size="sm"
-                        className="gap-1.5 border-white/10 hover:bg-white/[0.04]"
+                        className="gap-1.5 border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase"
                       >
                         <Play className="h-3.5 w-3.5" />
                         Use
@@ -361,7 +360,7 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
                       variant="outline"
                       size="sm"
                       onClick={() => handleToggleActive(template.id, template.is_active)}
-                      className="gap-1.5 border-white/10 hover:bg-white/[0.04]"
+                      className="gap-1.5 border-2 border-gray-300 hover:bg-gray-50 font-retro uppercase"
                     >
                       <Power className="h-3.5 w-3.5" />
                       {template.is_active ? 'Deactivate' : 'Activate'}
@@ -370,36 +369,36 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
                       variant="outline"
                       size="sm"
                       onClick={() => handleDelete(template.id)}
-                      className="gap-1.5 border-red-500/20 text-red-400 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30"
+                      className="gap-1.5 border-2 border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 font-retro uppercase"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       Delete
                     </Button>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="pt-4">
+              </div>
+              <div className="p-4">
                 <div className="flex flex-wrap gap-4 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
+                  <div className="flex items-center gap-2 font-retro text-gray-600">
                     <Check className="h-3.5 w-3.5" />
                     <span>Permissions: {template.permissions.join(', ')}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
+                  <div className="flex items-center gap-2 font-retro text-gray-600">
                     <Hash className="h-3.5 w-3.5" />
                     <span>Used {template.usage_count} times</span>
                   </div>
                   {template.validity_days && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="flex items-center gap-2 font-retro text-gray-600">
                       <Clock className="h-3.5 w-3.5" />
                       <span>Default: {template.validity_days} days</span>
                     </div>
                   )}
                 </div>
                 {template.description && (
-                  <p className="text-sm text-muted-foreground mt-3">{template.description}</p>
+                  <p className="text-sm font-retro text-gray-500 mt-3">{template.description}</p>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))
         )}
       </div>
