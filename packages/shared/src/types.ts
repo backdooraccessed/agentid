@@ -325,3 +325,121 @@ export interface ReputationResponse {
   credential_age_days: number;
   issuer_verified: boolean;
 }
+
+// =============================================================================
+// MARKETPLACE
+// =============================================================================
+
+export type AppStatus = 'draft' | 'pending' | 'live' | 'rejected' | 'unlisted';
+
+export type PricingType = 'free' | 'freemium' | 'paid' | 'contact';
+
+export interface AppCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  icon?: string | null;
+  display_order: number;
+  created_at: string;
+}
+
+export interface App {
+  id: string;
+  issuer_id: string;
+  credential_id?: string | null;
+  name: string;
+  slug: string;
+  tagline: string;
+  description: string;
+  icon_url?: string | null;
+  demo_video_url?: string | null;
+  app_url: string;
+  demo_url?: string | null;
+  github_url?: string | null;
+  docs_url?: string | null;
+  pricing_type: PricingType;
+  pricing_amount?: number | null;
+  pricing_currency: string;
+  status: AppStatus;
+  featured: boolean;
+  verified: boolean;
+  view_count: number;
+  click_count: number;
+  review_count: number;
+  average_rating?: number | null;
+  tags?: string[] | null;
+  created_at: string;
+  updated_at: string;
+  published_at?: string | null;
+}
+
+export interface AppWithDetails extends App {
+  categories: AppCategory[];
+  screenshots: AppScreenshot[];
+  issuer?: {
+    name: string;
+    is_verified: boolean;
+  };
+  credential?: {
+    agent_name: string;
+    trust_score?: number;
+  } | null;
+}
+
+export interface AppScreenshot {
+  id: string;
+  app_id: string;
+  image_url: string;
+  caption?: string | null;
+  display_order: number;
+  created_at: string;
+}
+
+export interface AppReview {
+  id: string;
+  app_id: string;
+  user_id: string;
+  rating: number;
+  title?: string | null;
+  content?: string | null;
+  helpful_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateAppRequest {
+  name: string;
+  tagline: string;
+  description: string;
+  icon_url?: string;
+  demo_video_url?: string;
+  app_url: string;
+  demo_url?: string;
+  github_url?: string;
+  docs_url?: string;
+  pricing_type: PricingType;
+  pricing_amount?: number;
+  category_ids: string[];
+  tags?: string[];
+  credential_id?: string;
+  screenshots?: { image_url: string; caption?: string }[];
+}
+
+export interface UpdateAppRequest {
+  name?: string;
+  tagline?: string;
+  description?: string;
+  icon_url?: string;
+  demo_video_url?: string;
+  app_url?: string;
+  demo_url?: string;
+  github_url?: string;
+  docs_url?: string;
+  pricing_type?: PricingType;
+  pricing_amount?: number;
+  category_ids?: string[];
+  tags?: string[];
+  credential_id?: string;
+  screenshots?: { image_url: string; caption?: string }[];
+}

@@ -23,6 +23,8 @@ import {
   MessageSquare,
   ShieldCheck,
   Sparkles,
+  Store,
+  Package,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -72,6 +74,14 @@ const navItems: NavGroup[] = [
       { href: '/analytics', label: 'Analytics', icon: BarChart3 },
       { href: '/alerts', label: 'Alerts', icon: Bell },
       { href: '/audit-logs', label: 'Audit Logs', icon: ScrollText },
+    ],
+  },
+  {
+    section: 'Marketplace',
+    items: [
+      { href: '/marketplace', label: 'Browse Apps', icon: Store },
+      { href: '/apps', label: 'My Apps', icon: Package },
+      { href: '/apps/new', label: 'Submit App', icon: PlusCircle },
     ],
   },
   {
