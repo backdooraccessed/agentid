@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
+import { triggerWebhooks } from '@/lib/webhooks';
 
 // Service client for internal operations
 function getServiceSupabase() {
@@ -114,6 +115,45 @@ export async function POST(
       }
       return NextResponse.json({ error: 'Failed to respond to authorization' }, { status: 500 });
     }
+
+    // Send notifications to requester (fire and forget)
+    void (async () => {
+      try {
+        // Get authorization request details
+        const { data: authRequest } = await serviceSupabase
+          .from('a2a_authorization_requests')
+          .select(`
+            requester_credential_id,
+            grantor_credential_id,
+            requested_permissions,
+            requester:credentials!requester_credential_id(issuer_id, agent_name),
+            grantor:credentials!grantor_credential_id(agent_name)
+          `)
+          .eq('id', id)
+          .single();
+
+        if (authRequest?.requester) {
+          const requesterIssuerId = (authRequest.requester as unknown as { issuer_id: string }).issuer_id;
+          const grantorAgentName = (authRequest.grantor as unknown as { agent_name: string })?.agent_name || 'Unknown Agent';
+
+          // Trigger webhooks for requester's issuer
+          await triggerWebhooks(
+            requesterIssuerId,
+            'authorization.responded',
+            {
+              authorization_id: id,
+              requester_credential_id: authRequest.requester_credential_id,
+              grantor_credential_id: authRequest.grantor_credential_id,
+              grantor_agent_name: grantorAgentName,
+              approved,
+              message,
+            }
+          );
+        }
+      } catch (notifyError) {
+        console.error('Failed to send authorization response notifications:', notifyError);
+      }
+    })();
 
     return NextResponse.json({
       message: `Authorization request ${approved ? 'approved' : 'denied'}`,

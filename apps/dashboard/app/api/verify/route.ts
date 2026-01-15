@@ -10,6 +10,8 @@ import {
   rateLimitHeaders,
   rateLimitExceededResponse,
 } from '@/lib/rate-limit';
+import { sendAlertNotificationEmail } from '@/lib/email';
+import { checkPermission, PermissionCheckResult } from '@/lib/permissions';
 
 // Error codes for structured error responses
 const ErrorCodes = {
@@ -120,15 +122,26 @@ async function sendAlertNotifications(alertEventId: string) {
       }
     }
 
-    // Email notification would be sent here via a service like Resend
-    // For now, we'll just mark it as sent if configured
+    // Send email notification
     if (rule?.notify_email) {
-      // TODO: Integrate with email service (Resend, SendGrid, etc.)
-      console.log(`Would send alert email to: ${rule.notify_email}`);
-      await getSupabase()
-        .from('alert_events')
-        .update({ email_sent_at: new Date().toISOString() })
-        .eq('id', alertEventId);
+      const emailResult = await sendAlertNotificationEmail({
+        email: rule.notify_email,
+        alertTitle: event.title,
+        alertMessage: event.message,
+        severity: event.severity,
+        ruleName: rule.name,
+        credentialId: event.credential_id,
+        eventData: event.event_data,
+      });
+
+      if (emailResult.success) {
+        await getSupabase()
+          .from('alert_events')
+          .update({ email_sent_at: new Date().toISOString() })
+          .eq('id', alertEventId);
+      } else {
+        console.error(`[Alert] Failed to send email: ${emailResult.error}`);
+      }
     }
   } catch (err) {
     console.error('Failed to send alert notifications:', err);
@@ -165,16 +178,16 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const { credential_id, credential } = parsed.data;
+    const { credential_id, credential, check_permission } = parsed.data;
 
     // Route 1: Verify by credential_id (database lookup)
     if (credential_id) {
-      return await verifyById(credential_id, startTime, requestId, region);
+      return await verifyById(credential_id, startTime, requestId, region, check_permission);
     }
 
     // Route 2: Verify provided credential payload
     if (credential) {
-      return await verifyPayload(credential, startTime, requestId, region);
+      return await verifyPayload(credential, startTime, requestId, region, check_permission);
     }
 
     return logAndRespond({
@@ -203,7 +216,13 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function verifyById(credentialId: string, startTime: number, requestId: string, region: string | null) {
+async function verifyById(
+  credentialId: string,
+  startTime: number,
+  requestId: string,
+  region: string | null,
+  permissionCheck?: { action: string; resource?: string; context?: Record<string, unknown> }
+) {
   // Fetch credential with issuer info and permission policy
   const { data: dbCredential, error } = await getSupabase()
     .from('credentials')
@@ -298,6 +317,24 @@ async function verifyById(credentialId: string, startTime: number, requestId: st
   const usePolicy = policy && policy.is_active;
   const effectivePermissions = usePolicy ? policy.permissions : payload.permissions;
 
+  // Perform permission check if requested
+  let permissionCheckResult: PermissionCheckResult | undefined;
+  if (permissionCheck) {
+    permissionCheckResult = checkPermission(
+      {
+        action: permissionCheck.action,
+        resource: permissionCheck.resource,
+        context: permissionCheck.context,
+      },
+      effectivePermissions,
+      {
+        region,
+        currentHour: new Date().getHours(),
+        currentDay: new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+      }
+    );
+  }
+
   // SUCCESS
   return logAndRespond({
     credentialId: dbCredential.id,
@@ -323,6 +360,8 @@ async function verifyById(credentialId: string, startTime: number, requestId: st
           version: policy.version,
         }
       : undefined,
+    // Include permission check result if requested
+    permissionCheckResult,
   });
 }
 
@@ -330,7 +369,8 @@ async function verifyPayload(
   credential: NonNullable<ReturnType<typeof verificationRequestSchema.parse>['credential']>,
   startTime: number,
   requestId: string,
-  region: string | null
+  region: string | null,
+  permissionCheck?: { action: string; resource?: string; context?: Record<string, unknown> }
 ) {
   // Check validity period first (no DB call needed)
   const now = new Date();
@@ -420,6 +460,24 @@ async function verifyPayload(
     });
   }
 
+  // Perform permission check if requested
+  let permissionCheckResult: PermissionCheckResult | undefined;
+  if (permissionCheck) {
+    permissionCheckResult = checkPermission(
+      {
+        action: permissionCheck.action,
+        resource: permissionCheck.resource,
+        context: permissionCheck.context,
+      },
+      credential.permissions,
+      {
+        region,
+        currentHour: new Date().getHours(),
+        currentDay: new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+      }
+    );
+  }
+
   // SUCCESS
   return logAndRespond({
     credentialId: credential.credential_id,
@@ -437,6 +495,7 @@ async function verifyPayload(
       permissions: credential.permissions,
       valid_until: credential.constraints.valid_until,
     },
+    permissionCheckResult,
   });
 }
 
@@ -519,6 +578,7 @@ interface LogAndRespondParams {
     name: string;
     version: number;
   };
+  permissionCheckResult?: PermissionCheckResult;
 }
 
 async function logAndRespond({
@@ -532,6 +592,7 @@ async function logAndRespond({
   region,
   credential,
   policy,
+  permissionCheckResult,
 }: LogAndRespondParams) {
   const verificationTimeMs = Math.round(performance.now() - startTime);
 
@@ -608,6 +669,11 @@ async function logAndRespond({
     if (policy) {
       response.permission_policy = policy;
       response.live_permissions = true;
+    }
+
+    // Include permission check result if a check was requested
+    if (permissionCheckResult) {
+      response.permission_check = permissionCheckResult;
     }
 
     return NextResponse.json(response);

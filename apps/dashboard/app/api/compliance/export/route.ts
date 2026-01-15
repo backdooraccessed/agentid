@@ -3,12 +3,13 @@ import { createClient } from '@/lib/supabase/server';
 
 /**
  * GET /api/compliance/export - Comprehensive compliance export
- * Exports all audit-relevant data: credentials, verifications, audit logs
+ * Exports all audit-relevant data for compliance reporting
  * Query params:
  *   - format: json | csv (default: json)
  *   - from: Start date (ISO format, default: 30 days ago)
  *   - to: End date (ISO format, default: now)
- *   - include: Comma-separated list of data types (credentials,verifications,audit_logs)
+ *   - include: Comma-separated list of data types:
+ *       credentials, verifications, audit_logs, policies, authorizations, team_activity
  */
 export async function GET(request: NextRequest) {
   try {
@@ -39,8 +40,8 @@ export async function GET(request: NextRequest) {
     const from = searchParams.get('from') || defaultFrom.toISOString();
     const to = searchParams.get('to') || new Date().toISOString();
 
-    const includeParam = searchParams.get('include') || 'credentials,verifications,audit_logs';
-    const include = includeParam.split(',');
+    const includeParam = searchParams.get('include') || 'credentials,verifications,audit_logs,policies,authorizations,team_activity';
+    const include = includeParam.split(',').map(s => s.trim());
 
     const exportData: ComplianceExport = {
       meta: {
@@ -59,6 +60,9 @@ export async function GET(request: NextRequest) {
       credentials: [],
       verifications: [],
       audit_logs: [],
+      policies: [],
+      authorizations: [],
+      team_activity: [],
     };
 
     // Fetch credentials
@@ -100,6 +104,109 @@ export async function GET(request: NextRequest) {
       exportData.audit_logs = auditLogs || [];
     }
 
+    // Fetch permission policies
+    if (include.includes('policies')) {
+      const { data: policies } = await supabase
+        .from('permission_policies')
+        .select('id, name, description, permissions, conditions, is_default, priority, created_at, updated_at')
+        .eq('issuer_id', issuer.id)
+        .order('created_at', { ascending: false });
+
+      exportData.policies = (policies || []).map(p => ({
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        permissions: p.permissions,
+        conditions: p.conditions,
+        is_default: p.is_default,
+        priority: p.priority,
+        created_at: p.created_at,
+        updated_at: p.updated_at,
+      }));
+    }
+
+    // Fetch A2A authorization history
+    if (include.includes('authorizations')) {
+      // Get credentials for this issuer first
+      const { data: issuerCredentials } = await supabase
+        .from('credentials')
+        .select('id')
+        .eq('issuer_id', issuer.id);
+
+      const credentialIds = (issuerCredentials || []).map(c => c.id);
+
+      if (credentialIds.length > 0) {
+        const { data: authorizations } = await supabase
+          .from('a2a_authorization_requests')
+          .select(`
+            id,
+            requester_credential_id,
+            grantor_credential_id,
+            requested_permissions,
+            scope_description,
+            status,
+            response_message,
+            created_at,
+            responded_at
+          `)
+          .or(`requester_credential_id.in.(${credentialIds.join(',')}),grantor_credential_id.in.(${credentialIds.join(',')})`)
+          .gte('created_at', from)
+          .lte('created_at', to)
+          .order('created_at', { ascending: false });
+
+        exportData.authorizations = (authorizations || []).map(a => ({
+          id: a.id,
+          requester_credential_id: a.requester_credential_id,
+          grantor_credential_id: a.grantor_credential_id,
+          requested_permissions: a.requested_permissions,
+          scope_description: a.scope_description,
+          status: a.status,
+          response_message: a.response_message,
+          created_at: a.created_at,
+          responded_at: a.responded_at,
+          role: credentialIds.includes(a.requester_credential_id) ? 'requester' : 'grantor',
+        }));
+      }
+    }
+
+    // Fetch team activity
+    if (include.includes('team_activity')) {
+      // Get team members
+      const { data: teamMembers } = await supabase
+        .from('team_members')
+        .select('id, user_id, role, status, created_at, updated_at')
+        .eq('issuer_id', issuer.id);
+
+      // Get team invitations
+      const { data: invitations } = await supabase
+        .from('team_invitations')
+        .select('id, email, role, created_at, expires_at, accepted_at')
+        .eq('issuer_id', issuer.id)
+        .gte('created_at', from)
+        .lte('created_at', to)
+        .order('created_at', { ascending: false });
+
+      exportData.team_activity = {
+        members: (teamMembers || []).map(m => ({
+          id: m.id,
+          user_id: m.user_id,
+          role: m.role,
+          status: m.status,
+          joined_at: m.created_at,
+          updated_at: m.updated_at,
+        })),
+        invitations: (invitations || []).map(i => ({
+          id: i.id,
+          email: i.email,
+          role: i.role,
+          sent_at: i.created_at,
+          expires_at: i.expires_at,
+          accepted_at: i.accepted_at,
+          status: i.accepted_at ? 'accepted' : new Date(i.expires_at) < new Date() ? 'expired' : 'pending',
+        })),
+      };
+    }
+
     // Log export action
     await supabase.from('audit_logs').insert({
       issuer_id: issuer.id,
@@ -113,6 +220,10 @@ export async function GET(request: NextRequest) {
           credentials: exportData.credentials.length,
           verifications: exportData.verifications.length,
           audit_logs: exportData.audit_logs.length,
+          policies: exportData.policies.length,
+          authorizations: exportData.authorizations.length,
+          team_members: Array.isArray(exportData.team_activity) ? 0 : exportData.team_activity.members?.length || 0,
+          team_invitations: Array.isArray(exportData.team_activity) ? 0 : exportData.team_activity.invitations?.length || 0,
         },
       },
     });
@@ -172,6 +283,82 @@ export async function GET(request: NextRequest) {
             a.ip_address || '',
             a.created_at,
           ].join(','));
+        }
+      }
+
+      if (include.includes('policies') && exportData.policies.length > 0) {
+        csvSections.push('');
+        csvSections.push('# PERMISSION POLICIES');
+        csvSections.push('id,name,description,permissions,conditions,is_default,priority,created_at,updated_at');
+        for (const p of exportData.policies) {
+          csvSections.push([
+            p.id,
+            escapeCsv(p.name),
+            escapeCsv(p.description || ''),
+            escapeCsv(JSON.stringify(p.permissions)),
+            escapeCsv(JSON.stringify(p.conditions)),
+            p.is_default,
+            p.priority,
+            p.created_at,
+            p.updated_at,
+          ].join(','));
+        }
+      }
+
+      if (include.includes('authorizations') && exportData.authorizations.length > 0) {
+        csvSections.push('');
+        csvSections.push('# A2A AUTHORIZATIONS');
+        csvSections.push('id,requester_credential_id,grantor_credential_id,requested_permissions,scope_description,status,response_message,role,created_at,responded_at');
+        for (const a of exportData.authorizations) {
+          csvSections.push([
+            a.id,
+            a.requester_credential_id,
+            a.grantor_credential_id,
+            escapeCsv(JSON.stringify(a.requested_permissions)),
+            escapeCsv(a.scope_description || ''),
+            a.status,
+            escapeCsv(a.response_message || ''),
+            a.role,
+            a.created_at,
+            a.responded_at || '',
+          ].join(','));
+        }
+      }
+
+      if (include.includes('team_activity') && !Array.isArray(exportData.team_activity)) {
+        const teamData = exportData.team_activity;
+
+        if (teamData.members && teamData.members.length > 0) {
+          csvSections.push('');
+          csvSections.push('# TEAM MEMBERS');
+          csvSections.push('id,user_id,role,status,joined_at,updated_at');
+          for (const m of teamData.members) {
+            csvSections.push([
+              m.id,
+              m.user_id,
+              m.role,
+              m.status,
+              m.joined_at,
+              m.updated_at,
+            ].join(','));
+          }
+        }
+
+        if (teamData.invitations && teamData.invitations.length > 0) {
+          csvSections.push('');
+          csvSections.push('# TEAM INVITATIONS');
+          csvSections.push('id,email,role,status,sent_at,expires_at,accepted_at');
+          for (const i of teamData.invitations) {
+            csvSections.push([
+              i.id,
+              escapeCsv(i.email),
+              i.role,
+              i.status,
+              i.sent_at,
+              i.expires_at,
+              i.accepted_at || '',
+            ].join(','));
+          }
         }
       }
 
@@ -239,6 +426,48 @@ interface ComplianceExport {
     ip_address: string | null;
     created_at: string;
   }>;
+  policies: Array<{
+    id: string;
+    name: string;
+    description: string | null;
+    permissions: unknown;
+    conditions: unknown;
+    is_default: boolean;
+    priority: number;
+    created_at: string;
+    updated_at: string;
+  }>;
+  authorizations: Array<{
+    id: string;
+    requester_credential_id: string;
+    grantor_credential_id: string;
+    requested_permissions: string[];
+    scope_description: string | null;
+    status: string;
+    response_message: string | null;
+    created_at: string;
+    responded_at: string | null;
+    role: 'requester' | 'grantor';
+  }>;
+  team_activity: Array<never> | {
+    members: Array<{
+      id: string;
+      user_id: string;
+      role: string;
+      status: string;
+      joined_at: string;
+      updated_at: string;
+    }>;
+    invitations: Array<{
+      id: string;
+      email: string;
+      role: string;
+      sent_at: string;
+      expires_at: string;
+      accepted_at: string | null;
+      status: 'pending' | 'accepted' | 'expired';
+    }>;
+  };
 }
 
 function escapeCsv(value: string): string {

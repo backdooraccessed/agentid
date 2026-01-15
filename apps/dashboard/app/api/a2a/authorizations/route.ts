@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
+import { triggerWebhooks } from '@/lib/webhooks';
+import { sendAuthorizationRequestEmail } from '@/lib/email';
 
 // Service client for internal operations
 function getServiceSupabase() {
@@ -178,6 +180,61 @@ export async function POST(request: NextRequest) {
       console.error('Failed to create authorization request:', error);
       return NextResponse.json({ error: 'Failed to create authorization request' }, { status: 500 });
     }
+
+    // Send notifications (fire and forget)
+    void (async () => {
+      try {
+        // Get requester and grantor details for notifications
+        const { data: requesterDetails } = await serviceSupabase
+          .from('credentials')
+          .select('agent_name, agent_id, issuer_id')
+          .eq('id', requester_credential_id)
+          .single();
+
+        const { data: grantorDetails } = await serviceSupabase
+          .from('credentials')
+          .select('agent_name, issuer_id, issuer:issuers(user_id)')
+          .eq('id', grantor_credential_id)
+          .single();
+
+        // Trigger webhooks for grantor's issuer
+        if (grantorDetails?.issuer_id) {
+          await triggerWebhooks(
+            grantorDetails.issuer_id,
+            'authorization.requested',
+            {
+              authorization_id: requestId,
+              requester_credential_id,
+              grantor_credential_id,
+              requester_agent_name: requesterDetails?.agent_name,
+              requested_permissions,
+              scope,
+            }
+          );
+        }
+
+        // Send email notification to grantor's issuer
+        if (grantorDetails?.issuer) {
+          const grantorUserId = (grantorDetails.issuer as unknown as { user_id: string }).user_id;
+          // Get user email from Supabase Auth
+          const { data: userData } = await serviceSupabase.auth.admin.getUserById(grantorUserId);
+          if (userData?.user?.email) {
+            await sendAuthorizationRequestEmail({
+              email: userData.user.email,
+              requesterAgentName: requesterDetails?.agent_name || 'Unknown Agent',
+              requesterAgentId: requesterDetails?.agent_id || requester_credential_id,
+              requestedPermissions: requested_permissions.map((p: unknown) =>
+                typeof p === 'string' ? p : (p as { action?: string }).action || JSON.stringify(p)
+              ),
+              scopeDescription: scope,
+              authorizationId: requestId,
+            });
+          }
+        }
+      } catch (notifyError) {
+        console.error('Failed to send authorization notifications:', notifyError);
+      }
+    })();
 
     return NextResponse.json({
       authorization_id: requestId,

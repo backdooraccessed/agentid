@@ -21,7 +21,12 @@ function getServiceClient(): SupabaseClient<any> {
 /**
  * Webhook event types
  */
-export type WebhookEvent = 'credential.revoked' | 'credential.issued' | 'credential.expired';
+export type WebhookEvent =
+  | 'credential.revoked'
+  | 'credential.issued'
+  | 'credential.expired'
+  | 'authorization.requested'
+  | 'authorization.responded';
 
 /**
  * Webhook payload structure

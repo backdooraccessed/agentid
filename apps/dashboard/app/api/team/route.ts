@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { nanoid } from 'nanoid';
+import { sendTeamInvitationEmail } from '@/lib/email';
 
 /**
  * GET /api/team - Get team members for the issuer
@@ -164,7 +165,21 @@ export async function POST(request: NextRequest) {
       details: { email, role },
     });
 
-    // TODO: Send invitation email in production
+    // Get issuer name for the email
+    const { data: issuerData } = await supabase
+      .from('issuers')
+      .select('name')
+      .eq('id', issuerId)
+      .single();
+
+    // Send invitation email (fire and forget)
+    void sendTeamInvitationEmail({
+      email,
+      inviterName: user.email || 'A team member',
+      issuerName: issuerData?.name || 'your organization',
+      role,
+      token,
+    });
 
     return NextResponse.json({
       message: 'Invitation sent',

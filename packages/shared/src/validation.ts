@@ -88,6 +88,13 @@ export const registerIssuerRequestSchema = z.object({
 // VERIFICATION REQUESTS
 // =============================================================================
 
+// Permission check request - used to verify if a specific action is permitted
+export const permissionCheckSchema = z.object({
+  action: z.string().min(1, 'action is required'),
+  resource: z.string().optional(),
+  context: z.record(z.unknown()).optional(),
+});
+
 export const verificationRequestSchema = z
   .object({
     credential_id: z.string().uuid().optional(),
@@ -114,6 +121,8 @@ export const verificationRequestSchema = z
         signature: z.string(),
       })
       .optional(),
+    // Optional permission check - verifies if a specific action is permitted
+    check_permission: permissionCheckSchema.optional(),
   })
   .refine((data) => data.credential_id || data.credential, {
     message: 'Either credential_id or credential must be provided',
@@ -171,7 +180,13 @@ export const batchVerificationRequestSchema = z.object({
 // WEBHOOK REQUESTS
 // =============================================================================
 
-export const webhookEventSchema = z.enum(['credential.revoked', 'credential.issued', 'credential.expired']);
+export const webhookEventSchema = z.enum([
+  'credential.revoked',
+  'credential.issued',
+  'credential.expired',
+  'authorization.requested',
+  'authorization.responded',
+]);
 
 export const createWebhookRequestSchema = z.object({
   url: z.string().url('Invalid webhook URL'),
@@ -194,6 +209,7 @@ export type IssueCredentialRequestInput = z.infer<typeof issueCredentialRequestS
 export type RevokeCredentialRequestInput = z.infer<typeof revokeCredentialRequestSchema>;
 export type RegisterIssuerRequestInput = z.infer<typeof registerIssuerRequestSchema>;
 export type VerificationRequestInput = z.infer<typeof verificationRequestSchema>;
+export type PermissionCheckInput = z.infer<typeof permissionCheckSchema>;
 export type BatchVerificationRequestInput = z.infer<typeof batchVerificationRequestSchema>;
 export type CreateWebhookRequestInput = z.infer<typeof createWebhookRequestSchema>;
 export type UpdateWebhookRequestInput = z.infer<typeof updateWebhookRequestSchema>;
