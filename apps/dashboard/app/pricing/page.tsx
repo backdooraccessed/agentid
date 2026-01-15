@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
   Check,
   X,
@@ -12,7 +11,10 @@ import {
   Activity,
   Users,
   Headphones,
+  Sparkles,
+  CreditCard,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const plans = [
   {
@@ -93,27 +95,29 @@ const enterpriseFeatures = [
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black">
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+      <header className="border-b border-white/10 sticky top-0 bg-black z-50">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <span className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-sm font-bold">
+          <Link href="/" className="flex items-center gap-3 font-bold text-xl">
+            <span className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black text-sm font-bold">
               A
             </span>
-            AgentID
+            <span className="text-white">AgentID</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            <Link href="/docs" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/docs" className="text-white/60 hover:text-white transition-colors">
               Docs
             </Link>
-            <Link href="/directory" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/directory" className="text-white/60 hover:text-white transition-colors">
               Directory
             </Link>
           </nav>
           <div className="flex items-center gap-3">
             <Link href="/login">
-              <Button variant="ghost" size="sm">Sign In</Button>
+              <Button variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/[0.04]">
+                Sign In
+              </Button>
             </Link>
             <Link href="/register">
               <Button size="sm">Get Started</Button>
@@ -125,11 +129,18 @@ export default function PricingPage() {
       {/* Hero */}
       <section className="py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <Badge variant="secondary" className="mb-4">Simple, Transparent Pricing</Badge>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+              <CreditCard className="h-8 w-8 text-white/70" />
+            </div>
+          </div>
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-white/70 border border-white/10 mb-4">
+            Simple, Transparent Pricing
+          </span>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
             Start free, scale as you grow
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-white/60 max-w-2xl mx-auto">
             All plans include our public verification API. Only pay for what you need.
           </p>
         </div>
@@ -138,48 +149,53 @@ export default function PricingPage() {
       {/* Pricing Cards */}
       <section className="pb-24">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {plans.map((plan) => {
               const Icon = plan.icon;
               return (
                 <div
                   key={plan.name}
-                  className={`relative rounded-2xl border ${
+                  className={cn(
+                    'relative rounded-2xl border p-8 transition-all',
                     plan.highlight
-                      ? 'border-primary shadow-lg shadow-primary/10 scale-105'
-                      : 'border-border'
-                  } bg-background p-8`}
+                      ? 'border-white/30 bg-white/[0.04] scale-105'
+                      : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+                  )}
                 >
                   {plan.badge && (
-                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white text-black">
                       {plan.badge}
-                    </Badge>
+                    </span>
                   )}
 
                   <div className="flex items-center gap-3 mb-4">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      plan.highlight ? 'bg-primary text-primary-foreground' : 'bg-muted'
-                    }`}>
-                      <Icon className="h-5 w-5" />
+                    <div className={cn(
+                      'w-10 h-10 rounded-lg flex items-center justify-center',
+                      plan.highlight ? 'bg-white text-black' : 'bg-white/5'
+                    )}>
+                      <Icon className={cn('h-5 w-5', !plan.highlight && 'text-white/70')} />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">{plan.name}</h3>
-                      <p className="text-sm text-muted-foreground">{plan.description}</p>
+                      <p className="text-sm text-white/50">{plan.description}</p>
                     </div>
                   </div>
 
                   <div className="mb-6">
                     <span className="text-4xl font-bold">{plan.price}</span>
-                    <span className="text-muted-foreground">{plan.period}</span>
+                    <span className="text-white/50">{plan.period}</span>
                   </div>
 
                   <Link href={plan.ctaLink}>
                     <Button
-                      className="w-full mb-6"
+                      className={cn(
+                        'w-full mb-6 gap-2',
+                        !plan.highlight && 'border-white/10 hover:bg-white/[0.04]'
+                      )}
                       variant={plan.highlight ? 'default' : 'outline'}
                     >
                       {plan.cta}
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      <ArrowRight className="h-4 w-4" />
                     </Button>
                   </Link>
 
@@ -187,11 +203,11 @@ export default function PricingPage() {
                     {plan.features.map((feature, index) => (
                       <li key={index} className="flex items-center gap-3 text-sm">
                         {feature.included ? (
-                          <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                          <Check className="h-4 w-4 text-emerald-400 flex-shrink-0" />
                         ) : (
-                          <X className="h-4 w-4 text-muted-foreground/50 flex-shrink-0" />
+                          <X className="h-4 w-4 text-white/20 flex-shrink-0" />
                         )}
-                        <span className={feature.included ? '' : 'text-muted-foreground'}>
+                        <span className={feature.included ? 'text-white/70' : 'text-white/30'}>
                           {feature.text}
                         </span>
                       </li>
@@ -205,40 +221,42 @@ export default function PricingPage() {
       </section>
 
       {/* Enterprise */}
-      <section className="py-16 bg-muted/30">
+      <section className="py-16 bg-white/[0.02]">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Need more?</h2>
-            <p className="text-muted-foreground">
+            <p className="text-white/60">
               Enterprise plans for large-scale deployments
             </p>
           </div>
 
-          <div className="bg-background rounded-2xl border p-8 md:p-12">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 md:p-12">
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
-                <Badge variant="secondary" className="mb-4">Enterprise</Badge>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-white/70 border border-white/10 mb-4">
+                  Enterprise
+                </span>
                 <h3 className="text-2xl font-bold mb-4">
                   Custom solutions for your organization
                 </h3>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-white/60 mb-6">
                   Get custom limits, dedicated support, SLA guarantees, and enterprise-grade features.
                 </p>
                 <Link href="mailto:enterprise@agentid.dev">
-                  <Button size="lg">
+                  <Button size="lg" className="gap-2">
                     Contact Sales
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 {enterpriseFeatures.map((feature, index) => {
-                  const Icon = feature.icon;
+                  const FeatureIcon = feature.icon;
                   return (
-                    <div key={index} className="flex items-center gap-3 p-4 rounded-lg bg-muted/50">
-                      <Icon className="h-5 w-5 text-primary" />
-                      <span className="text-sm font-medium">{feature.text}</span>
+                    <div key={index} className="flex items-center gap-3 p-4 rounded-lg bg-white/5 border border-white/10">
+                      <FeatureIcon className="h-5 w-5 text-white/70" />
+                      <span className="text-sm font-medium text-white/80">{feature.text}</span>
                     </div>
                   );
                 })}
@@ -279,10 +297,15 @@ export default function PricingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-muted/30">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to get started?</h2>
-          <p className="text-muted-foreground mb-8">
+      <section className="py-16 bg-white/[0.02]">
+        <div className="max-w-4xl mx-auto px-4 text-center space-y-6">
+          <div className="flex justify-center">
+            <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+              <Sparkles className="h-7 w-7 text-white/70" />
+            </div>
+          </div>
+          <h2 className="text-3xl font-bold">Ready to get started?</h2>
+          <p className="text-white/60">
             Start with our free plan and upgrade when you need more.
           </p>
           <Link href="/register">
@@ -295,8 +318,8 @@ export default function PricingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-8">
-        <div className="max-w-6xl mx-auto px-4 text-center text-sm text-muted-foreground">
+      <footer className="border-t border-white/10 py-8">
+        <div className="max-w-6xl mx-auto px-4 text-center text-sm text-white/40">
           <p>&copy; {new Date().getFullYear()} AgentID. All rights reserved.</p>
         </div>
       </footer>
@@ -306,9 +329,9 @@ export default function PricingPage() {
 
 function FaqItem({ question, answer }: { question: string; answer: string }) {
   return (
-    <div className="border-b pb-6">
-      <h3 className="font-semibold mb-2">{question}</h3>
-      <p className="text-muted-foreground">{answer}</p>
+    <div className="border-b border-white/10 pb-6">
+      <h3 className="font-semibold mb-2 text-white">{question}</h3>
+      <p className="text-white/60">{answer}</p>
     </div>
   );
 }
