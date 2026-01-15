@@ -16,6 +16,7 @@ function LogoMark({ className }: { className?: string }) {
 
 const navLinks = [
   { label: 'Features', href: '#features' },
+  { label: 'Marketplace', href: '/marketplace' },
   { label: 'Docs', href: '/docs' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Directory', href: '/directory' },

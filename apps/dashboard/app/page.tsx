@@ -6,6 +6,7 @@ import {
   Features,
   HowItWorks,
   CodeExample,
+  Marketplace,
   Stats,
   CTA,
   Footer,
@@ -18,6 +19,7 @@ export default function Home() {
       <main>
         <Hero />
         <Features />
+        <Marketplace />
         <HowItWorks />
         <CodeExample />
         <Stats />
