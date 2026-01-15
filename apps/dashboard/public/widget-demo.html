@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgentID Widget Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: #f3f4f6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 2rem;
+    }
+
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .section h2 {
+      font-size: 1.25rem;
+      margin: 0 0 16px 0;
+    }
+
+    .demo-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .demo-label {
+      font-size: 14px;
+      color: #6b7280;
+      min-width: 120px;
+    }
+
+    pre {
+      background: #1f2937;
+      color: #f9fafb;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: 'SF Mono', Monaco, Consolas, monospace;
+    }
+
+    .dark-section {
+      background: #1f2937;
+      color: #f9fafb;
+    }
+
+    .dark-section h2 {
+      color: #f9fafb;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px 16px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    #dynamic-widget {
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AgentID Widget Demo</h1>
+    <p class="subtitle">Embed verification badges for AI agents on any website</p>
+
+    <!-- Light Theme -->
+    <div class="section">
+      <h2>Light Theme</h2>
+      <div class="demo-row">
+        <span class="demo-label">Default:</span>
+        <div data-agentid-widget data-credential-id="afe6bcc1-0ec5-42fd-ab88-67187b9c9be0" data-theme="light"></div>
+      </div>
+      <div class="demo-row">
+        <span class="demo-label">Compact:</span>
+        <div data-agentid-widget data-credential-id="ec17bb55-f76d-4595-8120-ca7c58c9d18d" data-theme="light" data-compact></div>
+      </div>
+    </div>
+
+    <!-- Dark Theme -->
+    <div class="section dark-section">
+      <h2>Dark Theme</h2>
+      <div class="demo-row">
+        <span class="demo-label" style="color: #9ca3af;">Default:</span>
+        <div data-agentid-widget data-credential-id="3282e082-3db6-461b-8657-b199592c34b6" data-theme="dark"></div>
+      </div>
+      <div class="demo-row">
+        <span class="demo-label" style="color: #9ca3af;">Compact:</span>
+        <div data-agentid-widget data-credential-id="c77fc02d-dc8c-450e-aecf-e3d7c013dc5c" data-theme="dark" data-compact></div>
+      </div>
+    </div>
+
+    <!-- Dynamic Widget -->
+    <div class="section">
+      <h2>Try Your Own Credential</h2>
+      <div class="input-group">
+        <input type="text" id="credential-input" placeholder="Enter credential ID...">
+        <button onclick="loadWidget()">Load Widget</button>
+      </div>
+      <div id="dynamic-widget"></div>
+    </div>
+
+    <!-- Code Examples -->
+    <div class="section">
+      <h2>Installation</h2>
+      <h3 style="font-size: 14px; margin: 16px 0 8px;">1. Add the script</h3>
+      <pre><code>&lt;script src="https://agentid.dev/widget.js"&gt;&lt;/script&gt;</code></pre>
+
+      <h3 style="font-size: 14px; margin: 16px 0 8px;">2. Add a widget container</h3>
+      <pre><code>&lt;div
+  data-agentid-widget
+  data-credential-id="your-credential-id"
+  data-theme="light"
+&gt;&lt;/div&gt;</code></pre>
+
+      <h3 style="font-size: 14px; margin: 16px 0 8px;">3. Or use JavaScript API</h3>
+      <pre><code>AgentID.widget({
+  container: '#my-container',
+  credentialId: 'your-credential-id',
+  theme: 'dark',
+  compact: false,
+  onVerified: (result) =&gt; {
+    console.log('Verified:', result);
+  },
+  onError: (error) =&gt; {
+    console.error('Error:', error);
+  }
+});</code></pre>
+    </div>
+
+    <!-- Attributes Reference -->
+    <div class="section">
+      <h2>Data Attributes</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <th style="text-align: left; padding: 8px 0;">Attribute</th>
+            <th style="text-align: left; padding: 8px 0;">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 8px 0;"><code>data-credential-id</code></td>
+            <td style="padding: 8px 0;">The credential ID to verify (required)</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 8px 0;"><code>data-theme</code></td>
+            <td style="padding: 8px 0;">"light" or "dark" (default: light)</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 8px 0;"><code>data-compact</code></td>
+            <td style="padding: 8px 0;">Enable compact mode (no value needed)</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><code>data-hide-score</code></td>
+            <td style="padding: 8px 0;">Hide the trust score badge</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Load the widget script -->
+  <script src="/widget.js"></script>
+  <script>
+    function loadWidget() {
+      const credentialId = document.getElementById('credential-input').value.trim();
+      if (!credentialId) {
+        alert('Please enter a credential ID');
+        return;
+      }
+
+      const container = document.getElementById('dynamic-widget');
+      container.innerHTML = '';
+
+      AgentID.widget({
+        container: container,
+        credentialId: credentialId,
+        theme: 'light',
+        onVerified: (result) => {
+          console.log('Verified:', result);
+        },
+        onError: (error) => {
+          console.error('Error:', error);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

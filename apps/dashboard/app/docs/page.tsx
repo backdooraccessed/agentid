@@ -91,7 +91,13 @@ export default function DocsPage() {
                 })}
               </ul>
 
-              <div className="mt-8 pt-8 border-t border-white/10">
+              <div className="mt-8 pt-8 border-t border-white/10 space-y-3">
+                <Link href="/docs/playground">
+                  <Button variant="outline" className="w-full gap-2 border-white/10 hover:bg-white/[0.04]">
+                    <Code className="h-4 w-4" />
+                    API Playground
+                  </Button>
+                </Link>
                 <Link href="/register">
                   <Button className="w-full gap-2">
                     Get Started Free
