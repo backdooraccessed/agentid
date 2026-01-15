@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/select';
 import { Plus, Key, Copy, Check, Shield, Clock, Hash, Activity, Trash2, XCircle, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { EmptyState } from '@/components/shared/empty-state';
 
 interface ApiKey {
   id: string;
@@ -314,15 +315,11 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKey[] }) {
       <div className="space-y-4 mt-6">
         {keys.length === 0 ? (
           <Card className="overflow-hidden">
-            <CardContent className="py-12 text-center">
-              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
-                <Key className="h-6 w-6 text-white/30" />
-              </div>
-              <p className="text-muted-foreground">No API keys yet</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Create your first key to get started
-              </p>
-            </CardContent>
+            <EmptyState
+              illustration="api-keys"
+              title="No API keys yet"
+              description="Create your first key to get started"
+            />
           </Card>
         ) : (
           keys.map((key) => (

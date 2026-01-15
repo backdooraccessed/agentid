@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Download, FileJson, FileSpreadsheet, Calendar, ScrollText, Shield, Key, Webhook, FileText, Users, Settings, AlertCircle, Loader2, ChevronDown, Plus, Trash2, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { EmptyState } from '@/components/shared/empty-state';
 
 interface AuditLog {
   id: string;
@@ -351,15 +352,12 @@ export default function AuditLogsPage() {
         </CardHeader>
         <CardContent className="pt-6">
           {logs.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
-                <ScrollText className="h-6 w-6 text-white/30" />
-              </div>
-              <p className="text-muted-foreground">No audit logs recorded yet</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Actions will appear here as you use the platform
-              </p>
-            </div>
+            <EmptyState
+              illustration="audit-logs"
+              title="No audit logs recorded yet"
+              description="Actions will appear here as you use the platform"
+              className="py-8"
+            />
           ) : (
             <div className="space-y-2">
               {logs.map((log) => (

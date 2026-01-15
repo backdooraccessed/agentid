@@ -28,6 +28,7 @@ import { AGENT_TYPE_LABELS } from '@agentid/shared';
 import type { AgentType } from '@agentid/shared';
 import { Plus, FileText, Play, Power, Trash2, Check, AlertCircle, Loader2, Clock, Hash } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { EmptyState } from '@/components/shared/empty-state';
 
 interface Template {
   id: string;
@@ -303,15 +304,11 @@ export function TemplatesClient({ initialTemplates }: { initialTemplates: Templa
       <div className="space-y-4 mt-6">
         {templates.length === 0 ? (
           <Card className="overflow-hidden">
-            <CardContent className="py-12 text-center">
-              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
-                <FileText className="h-6 w-6 text-white/30" />
-              </div>
-              <p className="text-muted-foreground">No templates yet</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Create a template to issue credentials faster
-              </p>
-            </CardContent>
+            <EmptyState
+              illustration="templates"
+              title="No templates yet"
+              description="Create a template to issue credentials faster"
+            />
           </Card>
         ) : (
           templates.map((template) => (

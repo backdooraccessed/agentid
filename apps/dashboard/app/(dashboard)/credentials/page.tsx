@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { CREDENTIAL_STATUS_LABELS, AGENT_TYPE_LABELS } from '@agentid/shared';
 import type { CredentialStatus, AgentType } from '@agentid/shared';
 import { Plus, Search, Shield, CheckCircle, XCircle, Clock, Bot, ArrowRight } from 'lucide-react';
+import { EmptyState } from '@/components/shared/empty-state';
 
 interface Credential {
   id: string;
@@ -347,27 +348,21 @@ export default function CredentialsPage() {
 
       {/* Credentials List */}
       {filteredCredentials.length === 0 ? (
-        <div className="text-center py-16 px-4 rounded-xl border border-white/10 bg-white/[0.02]">
-          <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-            <Bot className="h-8 w-8 text-muted-foreground/30" />
-          </div>
-          <p className="text-muted-foreground font-medium">
-            {credentials.length === 0
-              ? 'No credentials issued yet'
-              : 'No credentials match your filters'}
-          </p>
-          <p className="text-sm text-muted-foreground mt-1 mb-4">
-            {credentials.length === 0
-              ? 'Create your first credential to get started'
-              : 'Try adjusting your search or filters'}
-          </p>
-          {credentials.length === 0 && (
-            <Link href="/credentials/new">
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                Issue First Credential
-              </Button>
-            </Link>
+        <div className="rounded-xl border border-white/10 bg-white/[0.02]">
+          {credentials.length === 0 ? (
+            <EmptyState
+              illustration="credentials"
+              title="No credentials issued yet"
+              description="Create your first credential to get started"
+              actionLabel="Issue First Credential"
+              actionHref="/credentials/new"
+            />
+          ) : (
+            <EmptyState
+              illustration="search"
+              title="No credentials match your filters"
+              description="Try adjusting your search or filters"
+            />
           )}
         </div>
       ) : (

@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dialog';
 import { Plus, Copy, Check, Webhook, ExternalLink, Play, Power, Trash2, AlertCircle, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { EmptyState } from '@/components/shared/empty-state';
 
 interface WebhookType {
   id: string;
@@ -306,15 +307,11 @@ export function WebhooksClient({ initialWebhooks }: { initialWebhooks: WebhookTy
       <div className="space-y-4 mt-6">
         {webhooks.length === 0 ? (
           <Card className="overflow-hidden">
-            <CardContent className="py-12 text-center">
-              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
-                <Webhook className="h-6 w-6 text-white/30" />
-              </div>
-              <p className="text-muted-foreground">No webhooks configured</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Add a webhook to receive event notifications
-              </p>
-            </CardContent>
+            <EmptyState
+              illustration="webhooks"
+              title="No webhooks configured"
+              description="Add a webhook to receive event notifications"
+            />
           </Card>
         ) : (
           webhooks.map((webhook) => (

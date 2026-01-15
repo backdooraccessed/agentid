@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Users, UserPlus, Mail, Shield, Eye, Settings, Trash2, X, Check, AlertCircle, CheckCircle, Loader2, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { EmptyState } from '@/components/shared/empty-state';
 
 interface TeamMember {
   id: string;
@@ -275,15 +276,12 @@ export default function TeamPage() {
         </CardHeader>
         <CardContent className="pt-6">
           {members.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
-                <Users className="h-6 w-6 text-white/30" />
-              </div>
-              <p className="text-muted-foreground">No team members yet</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Start by inviting someone to join
-              </p>
-            </div>
+            <EmptyState
+              illustration="team"
+              title="No team members yet"
+              description="Start by inviting someone to join"
+              className="py-8"
+            />
           ) : (
             <div className="space-y-2">
               {members.map((member) => (
