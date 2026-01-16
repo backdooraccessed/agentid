@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { triggerWebhooks } from '@/lib/webhooks';
 import { sendAuthorizationRequestEmail } from '@/lib/email';
+import { verifyA2AAuthorizationSignature } from '@/lib/a2a-signature';
 
 // Service client for internal operations
 function getServiceSupabase() {
@@ -162,6 +163,28 @@ export async function POST(request: NextRequest) {
 
     if (grantorCred.status !== 'active') {
       return NextResponse.json({ error: 'Grantor credential is not active' }, { status: 400 });
+    }
+
+    // Verify the authorization request signature
+    const signatureResult = await verifyA2AAuthorizationSignature({
+      requesterCredentialId: requester_credential_id,
+      grantorCredentialId: grantor_credential_id,
+      requestedPermissions: requested_permissions,
+      scope,
+      constraints,
+      validUntil: valid_until,
+      signature,
+    });
+
+    if (!signatureResult.valid) {
+      console.error('A2A authorization request signature verification failed:', signatureResult.error);
+      return NextResponse.json(
+        {
+          error: 'Signature verification failed',
+          details: signatureResult.error,
+        },
+        { status: 403 }
+      );
     }
 
     // Create authorization request

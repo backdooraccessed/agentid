@@ -34,6 +34,32 @@ export {
   base64Encode,
 } from './crypto';
 
+// A2A utilities
+export {
+  // Message signing
+  signMessage,
+  // Authorization signing
+  signAuthorizationRequest,
+  signAuthorizationResponse,
+  // Key generation
+  generateSigningKeyPair,
+  generateEncryptionKeyPair,
+  getPublicKey,
+  // Nonce/timestamp
+  generateNonce,
+  getCurrentTimestamp,
+  // Verification
+  verifyMessageSignature,
+} from './a2a';
+
+export type {
+  A2AMessageType,
+  A2APermission,
+  A2ASignedMessage,
+  A2ASignedAuthorization,
+  A2ASignedAuthorizationResponse,
+} from './a2a';
+
 // Types
 export type {
   // Client types

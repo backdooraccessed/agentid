@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { triggerWebhooks } from '@/lib/webhooks';
+import { verifyA2AAuthorizationResponseSignature } from '@/lib/a2a-signature';
 
 // Service client for internal operations
 function getServiceSupabase() {
@@ -94,6 +95,25 @@ export async function POST(
       return NextResponse.json({ error: 'You do not own this credential' }, { status: 403 });
     }
 
+    // Verify the authorization response signature
+    const signatureResult = await verifyA2AAuthorizationResponseSignature({
+      grantorCredentialId: grantor_credential_id,
+      authorizationId: id,
+      approved,
+      signature,
+    });
+
+    if (!signatureResult.valid) {
+      console.error('A2A authorization response signature verification failed:', signatureResult.error);
+      return NextResponse.json(
+        {
+          error: 'Signature verification failed',
+          details: signatureResult.error,
+        },
+        { status: 403 }
+      );
+    }
+
     // Respond to authorization request
     const serviceSupabase = getServiceSupabase();
     const { error } = await serviceSupabase
@@ -180,7 +200,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { action } = body;
+    const { action, reason } = body;
 
     if (action !== 'revoke') {
       return NextResponse.json(
@@ -221,10 +241,16 @@ export async function PATCH(
       );
     }
 
-    // Revoke the authorization
+    // Revoke the authorization with audit fields
+    const now = new Date().toISOString();
     const { error } = await supabase
       .from('a2a_authorization_requests')
-      .update({ status: 'revoked', updated_at: new Date().toISOString() })
+      .update({
+        status: 'revoked',
+        revoked_at: now,
+        revocation_reason: reason || null,
+        updated_at: now,
+      })
       .eq('id', id);
 
     if (error) {
@@ -235,6 +261,8 @@ export async function PATCH(
     return NextResponse.json({
       message: 'Authorization revoked',
       status: 'revoked',
+      revoked_at: now,
+      reason: reason || null,
     });
   } catch (error) {
     console.error('Revoke authorization error:', error);

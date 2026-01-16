@@ -1,64 +1,85 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { checkA2AAuthorizationWithConstraints } from '@/lib/a2a-permissions';
 
-// Public Supabase client for verification
-function getPublicSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+/**
+ * Extract region from request headers (Vercel/Cloudflare)
+ */
+function getRegionFromRequest(request: NextRequest): string | null {
+  const country = request.headers.get('x-vercel-ip-country');
+  if (country) return country;
+
+  const cfCountry = request.headers.get('cf-ipcountry');
+  if (cfCountry) return cfCountry;
+
+  return null;
 }
 
-// Service client for internal operations
-function getServiceSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-}
-
-// POST /api/a2a/authorizations/check - Check if agent is authorized for an action
+/**
+ * POST /api/a2a/authorizations/check - Check if agent is authorized for an action
+ *
+ * This is a public endpoint (no authentication required) that verifies
+ * whether one agent has been granted permission by another.
+ *
+ * Constraints are now fully evaluated:
+ * - Time windows (e.g., "09:00-17:00")
+ * - Day restrictions (e.g., ["monday", "tuesday"])
+ * - Geographic restrictions (e.g., ["US", "EU"])
+ * - Rate limits (per minute and per day)
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { requester_credential_id, grantor_credential_id, permission } = body;
+    const {
+      requester_credential_id,
+      grantor_credential_id,
+      action,
+      permission, // Legacy support - alias for action
+      resource,
+      context: userContext = {},
+    } = body;
 
-    if (!requester_credential_id || !grantor_credential_id || !permission) {
+    // Support both 'action' and 'permission' for backwards compatibility
+    const actionToCheck = action || permission;
+
+    if (!requester_credential_id || !grantor_credential_id || !actionToCheck) {
       return NextResponse.json(
-        { error: 'Missing required fields: requester_credential_id, grantor_credential_id, permission' },
+        {
+          error: 'Missing required fields',
+          required: ['requester_credential_id', 'grantor_credential_id', 'action'],
+        },
         { status: 400 }
       );
     }
 
-    const supabase = getServiceSupabase();
+    // Build evaluation context
+    const region = getRegionFromRequest(request);
+    const now = new Date();
 
-    // Check authorization using the function
-    const { data, error } = await supabase
-      .rpc('check_a2a_authorization', {
-        p_requester_id: requester_credential_id,
-        p_grantor_id: grantor_credential_id,
-        p_permission: permission,
-      });
+    const result = await checkA2AAuthorizationWithConstraints({
+      requesterCredentialId: requester_credential_id,
+      grantorCredentialId: grantor_credential_id,
+      action: actionToCheck,
+      resource,
+      context: {
+        region: userContext.region || region,
+        currentHour: userContext.current_hour ?? now.getHours(),
+        currentDay: userContext.current_day ?? now.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+      },
+    });
 
-    if (error) {
-      console.error('Authorization check failed:', error);
-      return NextResponse.json({ error: 'Authorization check failed' }, { status: 500 });
-    }
-
-    const result = data?.[0];
-
-    if (!result || !result.authorized) {
+    if (!result.authorized) {
       return NextResponse.json({
         authorized: false,
-        message: 'No valid authorization found',
+        reason: result.reason || 'No valid authorization found',
       });
     }
 
     return NextResponse.json({
       authorized: true,
       authorization_id: result.authorization_id,
-      constraints: result.constraints,
       valid_until: result.valid_until,
+      constraints_applied: result.constraints_applied,
+      rate_limit_remaining: result.rate_limit_remaining,
     });
   } catch (error) {
     console.error('Check authorization error:', error);

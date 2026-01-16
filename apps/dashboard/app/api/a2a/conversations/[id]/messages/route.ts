@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
+import { verifyA2AMessageSignature } from '@/lib/a2a-signature';
 
 // Service client for internal operations
 function getServiceSupabase() {
@@ -150,6 +151,28 @@ export async function POST(
 
     if (senderCred.issuer_id !== user.id) {
       return NextResponse.json({ error: 'You do not own this credential' }, { status: 403 });
+    }
+
+    // Verify the message signature
+    const signatureResult = await verifyA2AMessageSignature({
+      senderCredentialId: sender_credential_id,
+      conversationId: id,
+      messageType: message_type || 'text',
+      content,
+      signature,
+      signatureTimestamp: signature_timestamp,
+      nonce,
+    });
+
+    if (!signatureResult.valid) {
+      console.error('A2A message signature verification failed:', signatureResult.error);
+      return NextResponse.json(
+        {
+          error: 'Signature verification failed',
+          details: signatureResult.error,
+        },
+        { status: 403 }
+      );
     }
 
     // Send message via function
